@@ -33,22 +33,17 @@ const TopNav = () => {
       className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 xl:px-24 h-18 md:h-20 bg-[#0F172A] border-b border-gray-800 shadow-sm"
     >
       {/* Far Left on Mobile (Back button if available, or left-align on desktop) */}
-      <div className="flex items-center">
+      <div className="flex items-center gap-2">
         {isCourseDetails || isCourseList ? (
           <button onClick={() => navigate(-1)} className="md:hidden flex items-center gap-1.5 text-[#D4AF37] p-2 -ml-2 hover:bg-[#D4AF37]/10 rounded-full transition-colors">
             <FaArrowLeft size={17} />
           </button>
         ) : null}
 
-        {/* Desktop-Left Logo */}
-        <div className="hidden md:flex items-center">
-          <img src="/logo.png" alt="MarketMax Logo" className="h-16 w-auto object-contain drop-shadow-sm cursor-pointer" onClick={() => navigate('/')} />
+        {/* Logo */}
+        <div className="flex items-center">
+          <img src="/logo.png" alt="MarketMax Logo" className="h-14 md:h-16 w-auto object-contain drop-shadow-sm cursor-pointer mix-blend-lighten" onClick={() => navigate('/')} />
         </div>
-      </div>
-
-      {/* Mobile-Centered Large Logo */}
-      <div className="md:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
-        <img src="/logo.png" alt="MarketMax Logo" className="h-14 w-auto object-contain drop-shadow-sm cursor-pointer" onClick={() => navigate('/')} />
       </div>
 
       {/* Desktop Nav Links */}

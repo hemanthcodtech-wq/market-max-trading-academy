@@ -48,29 +48,21 @@ const PublicNavbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex justify-between items-center w-full relative">
             
-            {/* Far Left on Mobile */}
-            <div className="flex items-center">
+            {/* Left Side: Back Button & Logo */}
+            <div className="flex items-center gap-2">
               {isCourseDetails || isCourseList ? (
                 <button onClick={() => navigate(-1)} className="md:hidden flex items-center gap-1.5 text-[#D4AF37] p-2 -ml-2 hover:bg-[#D4AF37]/10 rounded-full transition-colors">
                   <FaArrowLeft size={17} />
                 </button>
-              ) : (
-                <div className="w-8 h-10 md:hidden"></div>
-              )}
+              ) : null}
 
-              {/* Desktop Logo */}
-              <Link to="/" className="hidden md:flex flex-shrink-0 items-center gap-2">
-                <img src="/logo.png" alt="MarketMax Logo" className="h-16 w-auto object-contain" />
+              <Link to="/" className="flex flex-shrink-0 items-center gap-2">
+                <img src="/logo.png" alt="MarketMax Logo" className="h-14 md:h-16 w-auto object-contain mix-blend-lighten" />
                 <span className="font-outfit font-bold text-lg text-white hidden lg:block tracking-wide">
                   MARKET<span className="text-[#D4AF37]">MAX</span>
                 </span>
               </Link>
             </div>
-
-            {/* Mobile-Centered Large Logo */}
-            <Link to="/" className="md:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
-              <img src="/logo.png" alt="MarketMax Logo" className="h-14 w-auto object-contain" />
-            </Link>
 
             {/* Desktop Nav */}
             <div className="hidden md:flex space-x-8 items-center">
