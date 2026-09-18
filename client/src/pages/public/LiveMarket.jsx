@@ -8,6 +8,7 @@ import SEO from '../../components/common/SEO';
 import TradingViewWidget from '../../components/common/TradingViewWidget';
 import LiveMarketCards from '../../components/common/LiveMarketCards';
 import LiveRealtimeChart from '../../components/common/LiveRealtimeChart';
+import IndianSectorHeatmap from '../../components/common/IndianSectorHeatmap';
 
 
 // ──────────────────────────────────────────────────────────────────
@@ -53,6 +54,7 @@ const IntervalBtn = ({ label, value, active, onClick }) => (
 // ──────────────────────────────────────────────────────────────────
 const LiveMarket = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [chartEngine, setChartEngine] = useState('lightweight'); // 'lightweight' (exact live feed) | 'tradingview'
   const [chartSymbol, setChartSymbol] = useState('NSE:NIFTY');
   const [chartInterval, setChartInterval] = useState('15');
   const [foSymbol, setFoSymbol] = useState('NSE:NIFTY');
@@ -67,13 +69,21 @@ const LiveMarket = () => {
   }, []);
 
   const formatTime = (d) =>
-    d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+    d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
   const isMarketOpen = () => {
-    const now = new Date();
-    const h = now.getHours(), m = now.getMinutes();
-    const totalMin = h * 60 + m;
-    return totalMin >= 555 && totalMin <= 930; // 9:15 – 15:30 IST
+    try {
+      const istString = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+      const istDate = new Date(istString);
+      const day = istDate.getDay();
+      if (day === 0 || day === 6) return false; // Closed on Sat/Sun
+      const totalMin = istDate.getHours() * 60 + istDate.getMinutes();
+      return totalMin >= 555 && totalMin <= 930; // 9:15 AM to 3:30 PM IST
+    } catch (e) {
+      const now = new Date();
+      const totalMin = now.getHours() * 60 + now.getMinutes();
+      return totalMin >= 555 && totalMin <= 930;
+    }
   };
 
   const tabs = [
@@ -223,12 +233,23 @@ const LiveMarket = () => {
                 }}
               />
 
-              {/* Market Overview + Heatmap Side by Side */}
+              {/* Indian Market Sector Heatmap (Replaces US Heatmap) */}
+              <div className="w-full">
+                <IndianSectorHeatmap
+                  onSelectStock={(sym) => {
+                    setChartSymbol(sym);
+                    setActiveTab('intraday');
+                  }}
+                  activeSymbol={chartSymbol}
+                />
+              </div>
+
+              {/* Market Overview & Indian Stock Screener Side by Side */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
                   <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <FaGlobe className="text-[#D4AF37]" />
-                    Market Overview
+                    NSE & BSE Market Watch
                   </h2>
                   <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
                     <TradingViewWidget type="market-overview" theme="dark" height="500px" width="100%" />
@@ -236,11 +257,11 @@ const LiveMarket = () => {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <FaFire className="text-[#D4AF37]" />
-                    NSE Sector Heatmap
+                    <FaChartLine className="text-[#D4AF37]" />
+                    Indian Stock Screener (NSE / BSE)
                   </h2>
                   <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
-                    <TradingViewWidget type="heatmap" theme="dark" height="500px" width="100%" exchange="NSE" />
+                    <TradingViewWidget type="screener" theme="dark" height="500px" width="100%" market="india" />
                   </div>
                 </div>
               </div>
@@ -328,9 +349,9 @@ const LiveMarket = () => {
                 </div>
               </div>
 
-              {/* Chart Status & Info Bar */}
-              <div className="flex items-center justify-between px-4 py-2.5 bg-[#131722] rounded-xl border border-gray-800 text-xs">
-                <div className="flex items-center gap-2">
+              {/* Chart Status & Engine Switcher Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-2.5 bg-[#131722] rounded-xl border border-gray-800 text-xs gap-3">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="font-bold text-white tracking-wide">{chartSymbol.replace('NSE:', '').replace('BSE:', '')}</span>
                   <span className="text-gray-400">· {chartInterval === 'D' ? 'Daily' : `${chartInterval}m`} Timeframe</span>
@@ -338,8 +359,32 @@ const LiveMarket = () => {
                     {isMarketOpen() ? 'NSE LIVE' : 'NSE CLOSED'}
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-gray-400 hidden sm:inline">Advanced Candlestick Chart</span>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* Chart Engine Switcher */}
+                  <div className="flex items-center bg-[#0B0F19] p-1 rounded-lg border border-gray-700">
+                    <button
+                      onClick={() => setChartEngine('lightweight')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all ${
+                        chartEngine === 'lightweight'
+                          ? 'bg-[#D4AF37] text-[#0B0F19] shadow-sm'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      ⚡ Exact Live Feed
+                    </button>
+                    <button
+                      onClick={() => setChartEngine('tradingview')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all ${
+                        chartEngine === 'tradingview'
+                          ? 'bg-[#D4AF37] text-[#0B0F19] shadow-sm'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      TradingView Widget
+                    </button>
+                  </div>
+
                   <a
                     href={`https://in.tradingview.com/symbols/${chartSymbol.replace(':', '-')}/`}
                     target="_blank"
@@ -352,15 +397,23 @@ const LiveMarket = () => {
               </div>
 
               {/* Main Realtime Chart */}
-              <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
-                <TradingViewWidget
-                  type="chart"
+              {chartEngine === 'lightweight' ? (
+                <LiveRealtimeChart
                   symbol={chartSymbol}
                   interval={chartInterval}
                   height="580px"
-                  theme="dark"
                 />
-              </div>
+              ) : (
+                <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
+                  <TradingViewWidget
+                    type="chart"
+                    symbol={chartSymbol}
+                    interval={chartInterval}
+                    height="580px"
+                    theme="dark"
+                  />
+                </div>
+              )}
 
               {/* Live Market Cards — indices */}
               <LiveMarketCards
@@ -483,14 +536,24 @@ const LiveMarket = () => {
                   <FaChartPie className="text-[#D4AF37]" />
                   Futures & Options Chart
                 </h2>
-                <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl mb-6">
-                  <TradingViewWidget
-                    type="chart"
-                    symbol={foSymbol}
-                    interval={foInterval}
-                    height="580px"
-                    theme="dark"
-                  />
+                <div className="mb-6">
+                  {chartEngine === 'lightweight' ? (
+                    <LiveRealtimeChart
+                      symbol={foSymbol}
+                      interval={foInterval}
+                      height="580px"
+                    />
+                  ) : (
+                    <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
+                      <TradingViewWidget
+                        type="chart"
+                        symbol={foSymbol}
+                        interval={foInterval}
+                        height="580px"
+                        theme="dark"
+                      />
+                    </div>
+                  )}
                 </div>
                 <LiveMarketCards
                   filter="indices"

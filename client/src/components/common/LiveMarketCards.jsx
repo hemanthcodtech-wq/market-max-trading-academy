@@ -8,8 +8,8 @@ import TradingViewWidget from './TradingViewWidget';
 
 /**
  * LiveMarketCards
- * Live real-time market data cards that update every second (1s tick streaming),
- * with visual price flash indicators and periodic backend sync.
+ * Live real-time market data cards streaming exact market prices,
+ * with visual green/red tick flash indicators and fast 2.5s background synchronization.
  *
  * Props:
  *  filter  — 'indices' | 'crypto' | 'global' | 'all'  (default: 'all')
@@ -34,18 +34,18 @@ const FILTER_KEYS = {
 };
 
 const INITIAL_MARKET_DATA = [
-  { key: 'nifty', name: 'NIFTY 50', exchange: 'NSE', price: 25375.80, change: 89.20, changePct: 0.35, high: 25420.50, low: 25290.10, prevClose: 25286.60 },
-  { key: 'banknifty', name: 'BANK NIFTY', exchange: 'NSE', price: 52195.40, change: -115.30, changePct: -0.22, high: 52450.00, low: 52080.50, prevClose: 52310.70 },
-  { key: 'sensex', name: 'SENSEX', exchange: 'BSE', price: 82980.20, change: 252.40, changePct: 0.31, high: 83150.00, low: 82720.00, prevClose: 82727.80 },
-  { key: 'indiavix', name: 'INDIA VIX', exchange: 'NSE', price: 13.40, change: -0.35, changePct: -2.55, high: 14.10, low: 13.15, prevClose: 13.75 },
-  { key: 'finnifty', name: 'FIN NIFTY', exchange: 'NSE', price: 24135.60, change: 48.90, changePct: 0.20, high: 24205.00, low: 24060.00, prevClose: 24086.70 },
-  { key: 'midcap', name: 'MIDCAP 50', exchange: 'NSE', price: 13260.10, change: 98.40, changePct: 0.75, high: 13295.00, low: 13150.00, prevClose: 13161.70 },
-  { key: 'btc', name: 'BITCOIN', exchange: 'CRYPTO', price: 68450.00, change: 1280.00, changePct: 1.91, high: 68980.00, low: 67100.00, prevClose: 67170.00 },
-  { key: 'eth', name: 'ETHEREUM', exchange: 'CRYPTO', price: 2645.20, change: 52.80, changePct: 2.04, high: 2685.00, low: 2580.00, prevClose: 2592.40 },
-  { key: 'bnb', name: 'BNB', exchange: 'CRYPTO', price: 596.50, change: 15.20, changePct: 2.61, high: 604.00, low: 579.00, prevClose: 581.30 },
-  { key: 'gold', name: 'GOLD', exchange: 'COMEX', price: 2738.40, change: 14.20, changePct: 0.52, high: 2745.00, low: 2721.00, prevClose: 2724.20 },
-  { key: 'crude', name: 'CRUDE OIL', exchange: 'NYMEX', price: 71.60, change: -0.80, changePct: -1.10, high: 72.90, low: 70.80, prevClose: 72.40 },
-  { key: 'usdinr', name: 'USD/INR', exchange: 'FOREX', price: 84.07, change: 0.03, changePct: 0.04, high: 84.12, low: 84.02, prevClose: 84.04 },
+  { key: 'nifty', name: 'NIFTY 50', exchange: 'NSE', price: 23325.10, change: 54.50, changePct: 0.23, high: 23360.55, low: 23286.60, prevClose: 23270.60 },
+  { key: 'banknifty', name: 'BANK NIFTY', exchange: 'NSE', price: 56214.70, change: 158.95, changePct: 0.28, high: 56350.45, low: 56040.20, prevClose: 56055.75 },
+  { key: 'sensex', name: 'SENSEX', exchange: 'BSE', price: 74458.92, change: 144.33, changePct: 0.19, high: 74589.80, low: 74300.20, prevClose: 74314.59 },
+  { key: 'indiavix', name: 'INDIA VIX', exchange: 'NSE', price: 12.09, change: -0.20, changePct: -1.63, high: 12.50, low: 11.95, prevClose: 12.29 },
+  { key: 'finnifty', name: 'FIN NIFTY', exchange: 'NSE', price: 25406.50, change: 86.10, changePct: 0.34, high: 25480.00, low: 25310.00, prevClose: 25320.40 },
+  { key: 'midcap', name: 'MIDCAP 50', exchange: 'NSE', price: 14420.00, change: 37.70, changePct: 0.26, high: 14450.00, low: 14360.00, prevClose: 14382.30 },
+  { key: 'btc', name: 'BITCOIN', exchange: 'CRYPTO', price: 77222.58, change: 854.58, changePct: 1.12, high: 77600.00, low: 76100.00, prevClose: 76368.00 },
+  { key: 'eth', name: 'ETHEREUM', exchange: 'CRYPTO', price: 2465.00, change: 25.80, changePct: 1.06, high: 2480.00, low: 2420.00, prevClose: 2439.20 },
+  { key: 'bnb', name: 'BNB', exchange: 'CRYPTO', price: 728.50, change: 3.35, changePct: 0.46, high: 732.00, low: 721.00, prevClose: 725.15 },
+  { key: 'gold', name: 'GOLD', exchange: 'COMEX', price: 4355.00, change: 11.70, changePct: 0.27, high: 4368.00, low: 4330.00, prevClose: 4343.30 },
+  { key: 'crude', name: 'CRUDE OIL', exchange: 'NYMEX', price: 101.80, change: 0.36, changePct: 0.35, high: 102.60, low: 100.90, prevClose: 101.44 },
+  { key: 'usdinr', name: 'USD/INR', exchange: 'FOREX', price: 95.84, change: -0.04, changePct: -0.04, high: 96.05, low: 95.75, prevClose: 95.88 },
 ];
 
 const KEY_TO_SYMBOL = {
@@ -72,12 +72,12 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
   const itemSymbol = KEY_TO_SYMBOL[item.key] || `NSE:${item.name.toUpperCase().replace(/\s+/g, '')}`;
   const isActive = activeSymbol === itemSymbol;
 
-  // Flash styling on 1s tick
+  // Flash styling on live tick
   const tickColor =
     item.lastTick === 'up'
-      ? 'text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.6)]'
+      ? 'text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]'
       : item.lastTick === 'down'
-      ? 'text-rose-400 drop-shadow-[0_0_12px_rgba(244,63,94,0.6)]'
+      ? 'text-rose-400 drop-shadow-[0_0_12px_rgba(244,63,94,0.8)]'
       : 'text-white';
 
   const tickBadgeBg =
@@ -90,14 +90,14 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
   return (
     <div
       onClick={() => onSelect && onSelect(itemSymbol)}
-      className={`relative bg-[#131722] rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(212,175,55,0.1)] overflow-hidden group cursor-pointer ${
+      className={`glossy-card rounded-2xl border transition-all duration-300 hover:-translate-y-1 overflow-hidden group cursor-pointer ${
         isActive
-          ? 'border-[#D4AF37] ring-1 ring-[#D4AF37]/50 shadow-[0_0_20px_rgba(212,175,55,0.2)] bg-gradient-to-b from-[#D4AF37]/10 to-[#131722]'
+          ? 'border-[#D4AF37] ring-2 ring-[#D4AF37]/50 shadow-[0_0_25px_rgba(212,175,55,0.3)] bg-gradient-to-b from-[#D4AF37]/15 to-[#0B0F19]'
           : item.lastTick === 'up'
-          ? 'border-emerald-500/40 bg-gradient-to-b from-emerald-950/20 to-[#131722]'
+          ? 'border-emerald-500/50 bg-gradient-to-b from-emerald-950/30 to-[#0B0F19]'
           : item.lastTick === 'down'
-          ? 'border-rose-500/40 bg-gradient-to-b from-rose-950/20 to-[#131722]'
-          : 'border-gray-800'
+          ? 'border-rose-500/50 bg-gradient-to-b from-rose-950/30 to-[#0B0F19]'
+          : 'border-white/10'
       } ${compact ? 'p-3' : 'p-4'}`}
     >
       {/* Top glow on hover / active */}
@@ -120,7 +120,7 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
             <span className={`inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full ${exStyle.bg} ${exStyle.text} border ${exStyle.border}`}>
               {item.exchange}
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" title="Live 1s Tick" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" title="Live Market Feed" />
           </div>
         </div>
 
@@ -138,7 +138,7 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
         )}
       </div>
 
-      {/* Price with 1-second Flash Animation */}
+      {/* Exact Real Price with Live Flash Animation */}
       {item.price !== null ? (
         <div>
           <div className="flex items-baseline gap-2">
@@ -147,7 +147,7 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
             </p>
             {item.lastTick && (
               <span className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded border transition-all animate-pulse ${tickBadgeBg}`}>
-                {item.lastTick === 'up' ? '▲ 1s' : '▼ 1s'}
+                {item.lastTick === 'up' ? '▲ LIVE' : '▼ LIVE'}
               </span>
             )}
           </div>
@@ -195,40 +195,58 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
 const LiveMarketCards = ({ filter = 'all', compact = false, autoRefresh = true, activeSymbol, onSelectSymbol }) => {
   const [data, setData] = useState(INITIAL_MARKET_DATA);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [tickCount, setTickCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const isFetchingRef = useRef(false);
 
-  // 1. Periodic background fetch from server (every 15s) to anchor prices
+  // Fast background fetch from server (every 2.5s)
   const fetchServerData = useCallback(async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/market-data`, {
-        timeout: 5000,
+        timeout: 4000,
       });
+
       if (res.data?.data && res.data.data.length > 0) {
+        setLastUpdated(new Date());
         setData(prev =>
           prev.map(item => {
             const fresh = res.data.data.find(d => d.key === item.key);
-            if (!fresh || fresh.price === null) return item;
+            if (!fresh || fresh.price == null) return item;
+
+            const tick =
+              fresh.price > item.price ? 'up' :
+              fresh.price < item.price ? 'down' :
+              null;
+
             return {
               ...item,
               ...fresh,
               prevClose: fresh.prevClose || item.prevClose,
+              lastTick: tick || (item.lastTick ? item.lastTick : null),
             };
           })
         );
+
+        // Reset flash highlight after 1.2s
+        setTimeout(() => {
+          setData(prev => prev.map(item => ({ ...item, lastTick: null })));
+        }, 1200);
       }
     } catch (err) {
-      // Keep running locally on network failure
+      // Keep running with latest cached data
+    } finally {
+      isFetchingRef.current = false;
     }
   }, []);
 
   useEffect(() => {
     fetchServerData();
-    const serverSyncInterval = setInterval(fetchServerData, 15000);
+    if (!autoRefresh) return;
+    const serverSyncInterval = setInterval(fetchServerData, 2500);
     return () => clearInterval(serverSyncInterval);
-  }, [fetchServerData]);
-
-  // Fake tick generator removed to ensure values match TradingView exactly.
+  }, [fetchServerData, autoRefresh]);
 
   // Filter the data
   const keys = FILTER_KEYS[filter];
@@ -242,7 +260,7 @@ const LiveMarketCards = ({ filter = 'all', compact = false, autoRefresh = true, 
 
   return (
     <div>
-      {/* Header with 1s Live indicator */}
+      {/* Header with Live indicator */}
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-3 flex-wrap">
           {filter === 'indices' && <><FaChartLine className="text-[#D4AF37]" /><span className="text-lg font-bold text-white">Indian Market Indices</span></>}
@@ -250,13 +268,13 @@ const LiveMarketCards = ({ filter = 'all', compact = false, autoRefresh = true, 
           {filter === 'global' && <><FaGlobeAsia className="text-[#D4AF37]" /><span className="text-lg font-bold text-white">Global Commodities</span></>}
           {filter === 'all' && <><FaBolt className="text-[#D4AF37]" /><span className="text-lg font-bold text-white">Live Market Data</span></>}
 
-          {/* 1s Live Feed Badge */}
+          {/* Live Feed Badge */}
           <span className="flex items-center gap-1.5 text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-mono">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="font-bold">LIVE 1s TICKS</span>
+            <span className="font-bold">LIVE STREAM</span>
             <span className="text-gray-400 text-[10px]">
               {lastUpdated.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
             </span>

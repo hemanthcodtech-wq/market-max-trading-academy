@@ -26,11 +26,15 @@ const PublicNavbar = () => {
   }, []);
 
   const navLinks = [
-    { name: t('nav_home'), path: '/' },
-    { name: t('nav_about'), path: '/about' },
-    { name: t('nav_courses'), path: '/courses' },
-    { name: 'Live Market', path: '/live-market' },
-    { name: t('nav_contact'), path: '/contact' }
+    { name: 'Home', path: '/' },
+    { name: 'Courses', path: '/courses' },
+    { name: 'Services', path: '/services' },
+    { name: 'Certificates', path: '/certificates' },
+    { name: 'E-Books', path: '/ebooks' },
+    { name: 'Tools', path: '/tools' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'About Us', path: '/about' },
+    { name: 'Contact', path: '/contact' },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -42,14 +46,16 @@ const PublicNavbar = () => {
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 flex items-center h-18 md:h-20 ${
-          isScrolled ? 'bg-[#0B0F19]/90 backdrop-blur-md shadow-lg border-b border-gray-800' : 'bg-[#0B0F19] shadow-sm'
+          isScrolled
+            ? 'bg-[#06080e]/95 backdrop-blur-xl shadow-2xl border-b border-white/10'
+            : 'bg-[#06080e]/80 backdrop-blur-md border-b border-white/5 shadow-md'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex justify-between items-center w-full relative">
             
             {/* Left Side: Back Button & Logo */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               {isCourseDetails || isCourseList ? (
                 <button onClick={() => navigate(-1)} className="md:hidden flex items-center gap-1.5 text-[#D4AF37] p-2 -ml-2 hover:bg-[#D4AF37]/10 rounded-full transition-colors">
                   <FaArrowLeft size={17} />
@@ -57,20 +63,20 @@ const PublicNavbar = () => {
               ) : null}
 
               <Link to="/" className="flex flex-shrink-0 items-center gap-2">
-                <img src="/logo.png" alt="MarketMax Logo" className="h-14 md:h-16 w-auto object-contain mix-blend-lighten" />
-                <span className="font-outfit font-bold text-lg text-white hidden lg:block tracking-wide">
+                <img src="/logo.png" alt="MarketMax Logo" className="h-12 md:h-14 w-auto object-contain mix-blend-lighten" />
+                <span className="font-outfit font-black text-base md:text-lg text-white hidden xl:block tracking-wide">
                   MARKET<span className="text-[#D4AF37]">MAX</span>
                 </span>
               </Link>
             </div>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex space-x-8 items-center">
+            <div className="hidden lg:flex items-center space-x-4 xl:space-x-5">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`relative font-outfit font-medium text-[16px] transition-colors ${
+                  className={`relative font-outfit font-bold text-[13px] xl:text-[14px] transition-colors ${
                     isActive(link.path) ? 'text-[#D4AF37]' : 'text-gray-300 hover:text-white'
                   }`}
                 >
@@ -83,6 +89,19 @@ const PublicNavbar = () => {
                   )}
                 </Link>
               ))}
+
+              {/* Live Market Pulsing Button */}
+              <Link
+                to="/live-market"
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition-all ${
+                  isActive('/live-market')
+                    ? 'bg-[#D4AF37] text-[#0B0F19] shadow-[0_0_15px_rgba(212,175,55,0.4)]'
+                    : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.2)]'
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Live Market</span>
+              </Link>
             </div>
 
             {/* Right side: Language + Auth */}

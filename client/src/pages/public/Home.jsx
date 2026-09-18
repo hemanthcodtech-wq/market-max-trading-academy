@@ -582,9 +582,9 @@ const Home = () => {
 
               {/* Main Headline */}
               <h1 className="text-4xl sm:text-5xl md:text-[3.5rem] lg:text-[4rem] font-black font-outfit text-white mb-6 tracking-tight leading-[1.1]">
-                STOP GAMBLING. <br className="hidden md:block lg:hidden" />
+                BUILD KNOWLEDGE. <br className="hidden md:block lg:hidden" />
                 <span className="bg-gradient-to-r from-[#F5D77F] via-[#D4AF37] to-[#E5C158] bg-clip-text text-transparent drop-shadow-sm">
-                  TRADE WITH EDGE.
+                  BUILD CONFIDENCE.
                 </span>
               </h1>
 
@@ -1057,6 +1057,70 @@ const Home = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION 5.5: COMPREHENSIVE TRADING SERVICES WE PROVIDE
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-20 bg-gradient-to-b from-[#0A0D14] via-[#06080e] to-[#0A0D14] border-t border-gray-800/80 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between md:items-end mb-12 gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-bold mb-3">
+                <FaBolt /> Complete Trading Ecosystem
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black text-white font-outfit">
+                SERVICES WE PROVIDE
+              </h2>
+              <p className="text-gray-400 text-sm md:text-base mt-2 max-w-2xl">
+                From real-time floor execution and personalized mentorship to quantitative indicator suites and accredited community support.
+              </p>
+            </div>
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 text-[#D4AF37] font-bold hover:text-white transition-colors text-sm"
+            >
+              Explore All 10 Services <FaArrowRight className="text-xs" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {[
+              { num: '01', title: 'Premium Calls Group', desc: 'Real-time high R:R intraday & swing alerts with strict SL & targets.' },
+              { num: '02', title: 'Trading Account Services', desc: 'Zero AMC onboarding, API linkages & discounted institutional terminals.' },
+              { num: '03', title: 'Portfolio Education Support', desc: 'Strategic asset allocation, beta balancing & index put hedging.' },
+              { num: '04', title: 'E-books & Study Materials', desc: '15+ strategy playbooks, candlestick cheat sheets in English & Telugu.' },
+              { num: '05', title: 'Trading Tools & Indicators', desc: 'Custom Pine Script SMC order block scanners and liquidity plotters.' },
+              { num: '06', title: 'Trade Journal / Tracker', desc: 'Analytical performance audit software tracking win-rates and psychology.' },
+              { num: '07', title: 'One-to-One Mentorship', desc: 'Direct private desk coaching customized to your capital and schedule.' },
+              { num: '08', title: 'Live Market Sessions', desc: 'Trade live side-by-side with mentors every morning from 9:15 AM IST.' },
+              { num: '09', title: 'Doubt-Clearing Sessions', desc: 'Every weekend interactive Zoom workshops analyzing student trade logs.' },
+              { num: '10', title: 'Community Discussion', desc: 'VIP network of 15,000+ active traders sharing daily setups and charts.' },
+            ].map((svc) => (
+              <Link
+                key={svc.num}
+                to="/services"
+                className="glossy-card rounded-2xl p-5 border border-white/10 hover:border-[#D4AF37]/50 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1.5"
+              >
+                <div>
+                  <span className="text-xs font-mono font-bold text-gray-500 group-hover:text-[#D4AF37] transition-colors">
+                    #{svc.num}
+                  </span>
+                  <h3 className="text-sm font-black text-white font-outfit mt-2 mb-1.5 group-hover:text-[#D4AF37] transition-colors leading-snug">
+                    {svc.title}
+                  </h3>
+                  <p className="text-[11px] text-gray-400 leading-relaxed">
+                    {svc.desc}
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-gray-800/80 flex items-center justify-between text-[11px] text-[#D4AF37] font-bold">
+                  <span>Learn More</span>
+                  <FaArrowRight size={9} className="group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

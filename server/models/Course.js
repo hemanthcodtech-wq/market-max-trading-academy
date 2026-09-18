@@ -25,7 +25,8 @@ const courseSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['Technical Analysis', 'Options Trading', 'Risk Management', 'Investing', 'Other']
+    trim: true,
+    default: 'Technical Analysis'
   },
   instructorId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -99,7 +100,6 @@ const courseSchema = new mongoose.Schema({
   },
   level: {
     type: String,
-    enum: ['Beginner', 'Intermediate', 'Advanced'],
     default: 'Beginner'
   },
   price: {

@@ -20,6 +20,11 @@ import Home from '../pages/public/Home';
 import About from '../pages/public/About';
 import Contact from '../pages/public/Contact';
 import LiveMarket from '../pages/public/LiveMarket';
+import Services from '../pages/public/Services';
+import PublicCertificates from '../pages/public/Certificates';
+import Tools from '../pages/public/Tools';
+import Ebooks from '../pages/public/Ebooks';
+import Blog from '../pages/public/Blog';
 import TermsAndConditions from '../pages/public/TermsAndConditions';
 import PrivacyPolicy from '../pages/public/PrivacyPolicy';
 import RefundPolicy from '../pages/public/RefundPolicy';
@@ -75,6 +80,11 @@ const AppRoutes = () => {
           <Route path="/live-market" element={<LiveMarket />} />
           <Route path="/courses" element={<CourseList />} />
           <Route path="/courses/:slug" element={<CourseDetails />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/certificates" element={<PublicCertificates />} />
+          <Route path="/tools" element={<Tools />} />
+          <Route path="/ebooks" element={<Ebooks />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
