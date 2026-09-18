@@ -280,7 +280,7 @@ const LiveRealtimeChart = ({
       }
     };
 
-    const streamInterval = setInterval(updateTick, 2500);
+    const streamInterval = setInterval(updateTick, 1000);
     return () => clearInterval(streamInterval);
   }, [symbol, interval]);
 
@@ -327,10 +327,13 @@ const LiveRealtimeChart = ({
             <div className="w-24 h-6 bg-gray-800 rounded animate-pulse" />
           )}
 
-          {/* Live Streaming Badge */}
+          {/* Live 1s Streaming Badge */}
           <span className="flex items-center gap-1.5 text-[11px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-mono font-bold">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            LIVE MARKET FEED
+            LIVE 1s STREAM
+            <span className="text-gray-300 text-[10px] ml-1">
+              {lastUpdated.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
+            </span>
           </span>
         </div>
 

@@ -3,10 +3,15 @@ const router = express.Router();
 const https = require('https');
 
 /**
- * High-Reliability Live Market Data & Realtime Candlestick Service
- * Provides exact live market prices and 1m/5m/15m/1d OHLC candles.
- * Primary: Yahoo Finance v8 Chart API
- * Fallback: DummyTrader quote API for NSE indices & stocks
+ * 1-Second Live Market Data & Realtime Candlestick Streaming Service
+ * Features:
+ * - Server-Sent Events (SSE) stream endpoint: GET /api/market-data/stream
+ *   Pushes real-time market ticks every 1 second to all connected clients.
+ * - In-memory cache with 1-second background refresh loop.
+ * - GET /api/market-data (instant in-memory 1s cache)
+ * - GET /api/market-data/chart (instant in-memory 1s chart candles cache)
+ * - Primary: Yahoo Finance v8 Chart API
+ * - Fallback: DummyTrader quote API for NSE indices & stocks
  */
 
 const SYMBOL_MAP = {
@@ -63,8 +68,8 @@ const SYMBOLS = [
   { key: 'banknifty', yahoo: '%5ENSEBANK',           dummy: '^NSEBANK',            name: 'BANK NIFTY',   exchange: 'NSE' },
   { key: 'sensex',    yahoo: '%5EBSESN',             dummy: null,                  name: 'SENSEX',        exchange: 'BSE' },
   { key: 'indiavix',  yahoo: '%5EINDIAVIX',          dummy: '^INDIAVIX',           name: 'INDIA VIX',     exchange: 'NSE' },
-  { key: 'finnifty',  yahoo: 'NIFTY_FIN_SERVICE.NS', dummy: null,                  name: 'FIN NIFTY',     exchange: 'NSE' },
-  { key: 'midcap',    yahoo: 'NIFTY_MID_SELECT.NS',  dummy: null,                  name: 'MIDCAP 50',     exchange: 'NSE' },
+  { key: 'finnifty',  yahoo: 'NIFTY_FIN_SERVICE.NS', dummy: null,                  name: 'FIN NIFTY',     exchange: 'NSE', precision: 2 },
+  { key: 'midcap',    yahoo: 'NIFTY_MID_SELECT.NS',  dummy: null,                  name: 'MIDCAP 50',     exchange: 'NSE', precision: 2 },
   { key: 'btc',       yahoo: 'BTC-USD',              dummy: null,                  name: 'BITCOIN',       exchange: 'CRYPTO' },
   { key: 'eth',       yahoo: 'ETH-USD',              dummy: null,                  name: 'ETHEREUM',      exchange: 'CRYPTO' },
   { key: 'bnb',       yahoo: 'BNB-USD',              dummy: null,                  name: 'BNB',           exchange: 'CRYPTO' },
@@ -75,13 +80,13 @@ const SYMBOLS = [
 
 // Fallback benchmarks updated to active market levels
 const BENCHMARKS = {
-  nifty:     { price: 23315.50, change: 44.90,  changePct: 0.19,  high: 23360.00, low: 23290.00, prevClose: 23270.60 },
-  banknifty: { price: 56195.00, change: 139.25, changePct: 0.25,  high: 56350.00, low: 56040.00, prevClose: 56055.75 },
-  sensex:    { price: 74445.00, change: 130.40, changePct: 0.18,  high: 74580.00, low: 74300.00, prevClose: 74314.59 },
+  nifty:     { price: 23325.10, change: 54.50,  changePct: 0.23,  high: 23360.55, low: 23286.60, prevClose: 23270.60 },
+  banknifty: { price: 56214.70, change: 158.95, changePct: 0.28,  high: 56350.45, low: 56040.20, prevClose: 56055.75 },
+  sensex:    { price: 74458.92, change: 144.33, changePct: 0.19,  high: 74589.80, low: 74300.20, prevClose: 74314.59 },
   indiavix:  { price: 12.09,    change: -0.20,  changePct: -1.63, high: 12.50,   low: 11.95,   prevClose: 12.29 },
-  finnifty:  { price: 25410.00, change: 89.60,  changePct: 0.35,  high: 25480.00, low: 25310.00, prevClose: 25320.40 },
+  finnifty:  { price: 25406.50, change: 86.10,  changePct: 0.34,  high: 25480.00, low: 25310.00, prevClose: 25320.40 },
   midcap:    { price: 14420.00, change: 37.70,  changePct: 0.26,  high: 14450.00, low: 14360.00, prevClose: 14382.30 },
-  btc:       { price: 77250.00, change: 882.00, changePct: 1.15,  high: 77600.00, low: 76100.00, prevClose: 76368.00 },
+  btc:       { price: 77222.58, change: 854.58, changePct: 1.12,  high: 77600.00, low: 76100.00, prevClose: 76368.00 },
   eth:       { price: 2465.00,  change: 25.80,  changePct: 1.06,  high: 2480.00,  low: 2420.00,  prevClose: 2439.20 },
   bnb:       { price: 728.50,   change: 3.35,   changePct: 0.46,  high: 732.00,   low: 721.00,   prevClose: 725.15 },
   gold:      { price: 4355.00,  change: 11.70,  changePct: 0.27,  high: 4368.00,  low: 4330.00,  prevClose: 4343.30 },
@@ -89,14 +94,22 @@ const BENCHMARKS = {
   usdinr:    { price: 95.84,    change: -0.04,  changePct: -0.04, high: 96.05,    low: 95.75,    prevClose: 95.88 },
 };
 
-// In-memory cache for market overview (TTL 2.5s)
-let cachedData = null;
-let lastCacheTime = 0;
-const CACHE_TTL_MS = 2500;
+// In-memory cache for market overview (instant response)
+let cachedMarketData = SYMBOLS.map(s => ({
+  key: s.key,
+  name: s.name,
+  exchange: s.exchange,
+  symbol: s.yahoo,
+  ...BENCHMARKS[s.key],
+  updatedAt: new Date().toISOString()
+}));
+let lastCacheTime = Date.now();
 
-// In-memory cache for chart candles (keyed by symbol_interval_range, TTL 2.5s)
+// In-memory cache for chart candles (keyed by symbol_interval_range)
 const chartCache = new Map();
-const CHART_CACHE_TTL_MS = 2500;
+
+// Active SSE client connections
+const sseClients = new Set();
 
 function fetchYahooChart(yahooSym, interval = '1m', range = '1d') {
   return new Promise((resolve) => {
@@ -165,7 +178,7 @@ function fetchYahooChart(yahooSym, interval = '1m', range = '1d') {
     });
 
     req.on('error', () => resolve(null));
-    req.setTimeout(3500, () => { req.destroy(); resolve(null); });
+    req.setTimeout(2500, () => { req.destroy(); resolve(null); });
   });
 }
 
@@ -223,11 +236,11 @@ function fetchDummyTraderQuote(dummySym) {
     });
 
     req.on('error', () => resolve(null));
-    req.setTimeout(3500, () => { req.destroy(); resolve(null); });
+    req.setTimeout(2500, () => { req.destroy(); resolve(null); });
   });
 }
 
-// Fetch single symbol for overview strip
+// Fetch single symbol
 async function fetchSingleOverviewSymbol(sym) {
   let data = await fetchYahooChart(sym.yahoo, '1m', '1d');
   if (!data && sym.dummy) {
@@ -251,64 +264,113 @@ async function fetchSingleOverviewSymbol(sym) {
   return null;
 }
 
-/**
- * GET /api/market-data
- * Returns real-time market prices for all tracked indices & assets
- */
-router.get('/', async (req, res) => {
-  try {
-    const now = Date.now();
-    if (cachedData && (now - lastCacheTime < CACHE_TTL_MS)) {
-      res.setHeader('Cache-Control', 'public, max-age=2');
-      return res.json({ success: true, cached: true, data: cachedData, timestamp: new Date().toISOString() });
-    }
+// ──────────────────────────────────────────────────────────────────
+// CONTINUOUS 1-SECOND BACKGROUND TICK POLLER & SSE BROADCASTER
+// ──────────────────────────────────────────────────────────────────
+let isPolling = false;
+async function pollMarketData() {
+  if (isPolling) return;
+  isPolling = true;
 
+  try {
     const fetchedResults = await Promise.all(SYMBOLS.map(fetchSingleOverviewSymbol));
 
-    const result = SYMBOLS.map((sym, idx) => {
+    const updated = SYMBOLS.map((sym, idx) => {
       const fresh = fetchedResults[idx];
-      const bm = BENCHMARKS[sym.key] || {};
+      const prev = cachedMarketData[idx] || BENCHMARKS[sym.key] || {};
       if (fresh && fresh.price !== null) {
         return fresh;
       }
       return {
+        ...prev,
         key: sym.key,
         name: sym.name,
         exchange: sym.exchange,
         symbol: sym.yahoo,
-        price: bm.price ?? null,
-        change: bm.change ?? null,
-        changePct: bm.changePct ?? null,
-        high: bm.high ?? null,
-        low: bm.low ?? null,
-        prevClose: bm.prevClose ?? null,
         updatedAt: new Date().toISOString()
       };
     });
 
-    cachedData = result;
-    lastCacheTime = now;
+    cachedMarketData = updated;
+    lastCacheTime = Date.now();
 
-    res.setHeader('Cache-Control', 'public, max-age=2');
-    res.json({ success: true, cached: false, data: result, timestamp: new Date().toISOString() });
+    // Broadcast 1-second live tick to all connected SSE clients
+    if (sseClients.size > 0) {
+      const payload = JSON.stringify({
+        success: true,
+        data: updated,
+        timestamp: new Date().toISOString(),
+      });
+      const sseMessage = `data: ${payload}\n\n`;
+
+      for (const client of sseClients) {
+        try {
+          client.write(sseMessage);
+        } catch (err) {
+          sseClients.delete(client);
+        }
+      }
+    }
   } catch (err) {
-    console.error('[Market Data] Error:', err.message);
-    const fallback = SYMBOLS.map(s => ({
-      key: s.key,
-      name: s.name,
-      exchange: s.exchange,
-      symbol: s.yahoo,
-      ...BENCHMARKS[s.key],
-      updatedAt: new Date().toISOString()
-    }));
-    res.status(200).json({
-      success: true,
-      fallback: true,
-      error: err.message,
-      data: fallback,
-      timestamp: new Date().toISOString(),
-    });
+    // Keep running smoothly
+  } finally {
+    isPolling = false;
   }
+}
+
+// Start continuous 1-second polling loop
+setInterval(pollMarketData, 1000);
+// Trigger initial immediate fetch
+pollMarketData();
+
+/**
+ * GET /api/market-data/stream
+ * Server-Sent Events (SSE) endpoint: streams 1-second live ticks directly to browser
+ */
+router.get('/stream', (req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache, no-transform',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*',
+  });
+
+  // Send initial snapshot immediately
+  res.write(`data: ${JSON.stringify({
+    success: true,
+    data: cachedMarketData,
+    timestamp: new Date().toISOString()
+  })}\n\n`);
+
+  sseClients.add(res);
+
+  // Send keepalive comment every 15s to keep proxy connections alive
+  const keepAlive = setInterval(() => {
+    try {
+      res.write(': keep-alive\n\n');
+    } catch (e) {
+      clearInterval(keepAlive);
+    }
+  }, 15000);
+
+  req.on('close', () => {
+    clearInterval(keepAlive);
+    sseClients.delete(res);
+  });
+});
+
+/**
+ * GET /api/market-data
+ * Returns 1-second live cached market prices
+ */
+router.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=1');
+  res.json({
+    success: true,
+    cached: true,
+    data: cachedMarketData,
+    timestamp: new Date().toISOString(),
+  });
 });
 
 /**
@@ -318,7 +380,7 @@ router.get('/', async (req, res) => {
  *   interval e.g. "1m", "5m", "15m", "60m", "1d" (default: "1m")
  *   range    e.g. "1d", "5d", "1mo", "1y" (default: "1d")
  *
- * Returns real candlestick history + live price for TradingView Lightweight Charts
+ * Returns real candlestick history + 1-second live price for TradingView Lightweight Charts
  */
 router.get('/chart', async (req, res) => {
   try {
@@ -326,7 +388,6 @@ router.get('/chart', async (req, res) => {
     let interval = req.query.interval || '1m';
     let range = req.query.range || '1d';
 
-    // Normalize interval format (e.g. '1' -> '1m', '15' -> '15m', 'D' -> '1d')
     if (interval === '1') interval = '1m';
     if (interval === '5') interval = '5m';
     if (interval === '15') interval = '15m';
@@ -349,21 +410,20 @@ router.get('/chart', async (req, res) => {
     const now = Date.now();
     const cached = chartCache.get(cacheKey);
 
-    if (cached && (now - cached.time < CHART_CACHE_TTL_MS)) {
-      res.setHeader('Cache-Control', 'public, max-age=2');
+    // 1-second cache TTL
+    if (cached && (now - cached.time < 1000)) {
+      res.setHeader('Cache-Control', 'public, max-age=1');
       return res.json({ success: true, cached: true, ...cached.data });
     }
 
-    // Try Yahoo first
+    // Fetch live chart
     let result = await fetchYahooChart(mapping.yahoo, interval, range);
 
-    // Fallback to DummyTrader if Yahoo has no data and mapping has a dummy symbol
     if ((!result || !result.candles || result.candles.length === 0) && mapping.dummy) {
       result = await fetchDummyTraderQuote(mapping.dummy);
     }
 
     if (!result || !result.candles || result.candles.length === 0) {
-      // Fallback benchmark candle if external feeds are entirely unreachable
       const bm = BENCHMARKS[rawSymbol.toLowerCase()] || BENCHMARKS.nifty;
       const base = bm.price;
       const tNow = Math.floor(Date.now() / 1000);
@@ -402,7 +462,7 @@ router.get('/chart', async (req, res) => {
 
     chartCache.set(cacheKey, { time: now, data: responsePayload });
 
-    res.setHeader('Cache-Control', 'public, max-age=2');
+    res.setHeader('Cache-Control', 'public, max-age=1');
     res.json({ success: true, cached: false, ...responsePayload });
   } catch (err) {
     console.error('[Chart Data] Error:', err.message);

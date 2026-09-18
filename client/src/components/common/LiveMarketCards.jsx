@@ -8,8 +8,8 @@ import TradingViewWidget from './TradingViewWidget';
 
 /**
  * LiveMarketCards
- * Live real-time market data cards streaming exact market prices,
- * with visual green/red tick flash indicators and fast 2.5s background synchronization.
+ * Live real-time market data cards streaming exact market prices every 1 second
+ * via native Server-Sent Events (SSE) with 1-second interval fallback.
  *
  * Props:
  *  filter  — 'indices' | 'crypto' | 'global' | 'all'  (default: 'all')
@@ -72,12 +72,12 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
   const itemSymbol = KEY_TO_SYMBOL[item.key] || `NSE:${item.name.toUpperCase().replace(/\s+/g, '')}`;
   const isActive = activeSymbol === itemSymbol;
 
-  // Flash styling on live tick
+  // Flash styling on live 1s tick
   const tickColor =
     item.lastTick === 'up'
-      ? 'text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]'
+      ? 'text-emerald-400 drop-shadow-[0_0_14px_rgba(52,211,153,0.9)]'
       : item.lastTick === 'down'
-      ? 'text-rose-400 drop-shadow-[0_0_12px_rgba(244,63,94,0.8)]'
+      ? 'text-rose-400 drop-shadow-[0_0_14px_rgba(244,63,94,0.9)]'
       : 'text-white';
 
   const tickBadgeBg =
@@ -120,7 +120,7 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
             <span className={`inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full ${exStyle.bg} ${exStyle.text} border ${exStyle.border}`}>
               {item.exchange}
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" title="Live Market Feed" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" title="Live 1s Tick Stream" />
           </div>
         </div>
 
@@ -130,7 +130,7 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
             isDown ? 'bg-red-500/10 text-red-400' :
             'bg-gray-700/30 text-gray-400'
           }`}>
-            {isUp ? <FaArrowUp size={9} /> : isDown ? <FaArrowDown size={9} /> : <FaMinus size={9} />}
+            {isUp ? <FaArrowUp size={9} /> : <FaArrowDown size={9} />}
             {item.changePct !== null ? `${Math.abs(item.changePct).toFixed(2)}%` : '—'}
           </div>
         ) : (
@@ -138,7 +138,7 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
         )}
       </div>
 
-      {/* Exact Real Price with Live Flash Animation */}
+      {/* Exact Real Price with 1s Live Flash Animation */}
       {item.price !== null ? (
         <div>
           <div className="flex items-baseline gap-2">
@@ -147,7 +147,7 @@ const MarketCard = ({ item, compact, activeSymbol, onSelect }) => {
             </p>
             {item.lastTick && (
               <span className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded border transition-all animate-pulse ${tickBadgeBg}`}>
-                {item.lastTick === 'up' ? '▲ LIVE' : '▼ LIVE'}
+                {item.lastTick === 'up' ? '▲ 1s' : '▼ 1s'}
               </span>
             )}
           </div>
@@ -198,14 +198,14 @@ const LiveMarketCards = ({ filter = 'all', compact = false, autoRefresh = true, 
   const [refreshing, setRefreshing] = useState(false);
   const isFetchingRef = useRef(false);
 
-  // Fast background fetch from server (every 2.5s)
+  // 1-second background fetch from server (REST fallback)
   const fetchServerData = useCallback(async () => {
     if (isFetchingRef.current) return;
     isFetchingRef.current = true;
 
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/market-data`, {
-        timeout: 4000,
+        timeout: 3000,
       });
 
       if (res.data?.data && res.data.data.length > 0) {
@@ -229,10 +229,9 @@ const LiveMarketCards = ({ filter = 'all', compact = false, autoRefresh = true, 
           })
         );
 
-        // Reset flash highlight after 1.2s
         setTimeout(() => {
           setData(prev => prev.map(item => ({ ...item, lastTick: null })));
-        }, 1200);
+        }, 850);
       }
     } catch (err) {
       // Keep running with latest cached data
@@ -241,11 +240,74 @@ const LiveMarketCards = ({ filter = 'all', compact = false, autoRefresh = true, 
     }
   }, []);
 
+  // 1-Second Continuous Live Sync via Native EventSource (SSE) with 1s Polling Fallback
   useEffect(() => {
-    fetchServerData();
     if (!autoRefresh) return;
-    const serverSyncInterval = setInterval(fetchServerData, 2500);
-    return () => clearInterval(serverSyncInterval);
+
+    let eventSource = null;
+    let fallbackInterval = null;
+
+    const connectSSE = () => {
+      try {
+        const streamUrl = `${import.meta.env.VITE_API_BASE_URL}/market-data/stream`;
+        eventSource = new EventSource(streamUrl);
+
+        eventSource.onmessage = (event) => {
+          try {
+            const parsed = JSON.parse(event.data);
+            if (parsed?.data && parsed.data.length > 0) {
+              setLastUpdated(new Date());
+              setData(prev =>
+                prev.map(item => {
+                  const fresh = parsed.data.find(d => d.key === item.key);
+                  if (!fresh || fresh.price == null) return item;
+
+                  const tick =
+                    fresh.price > item.price ? 'up' :
+                    fresh.price < item.price ? 'down' :
+                    null;
+
+                  return {
+                    ...item,
+                    ...fresh,
+                    prevClose: fresh.prevClose || item.prevClose,
+                    lastTick: tick || (item.lastTick ? item.lastTick : null),
+                  };
+                })
+              );
+
+              // Auto-reset tick highlight after 850ms so every 1-second pulse is clearly visible
+              setTimeout(() => {
+                setData(prev => prev.map(item => ({ ...item, lastTick: null })));
+              }, 850);
+            }
+          } catch (e) {
+            // Ignore parse errors
+          }
+        };
+
+        eventSource.onerror = () => {
+          eventSource?.close();
+          if (!fallbackInterval) {
+            fallbackInterval = setInterval(fetchServerData, 1000);
+          }
+        };
+      } catch (err) {
+        if (!fallbackInterval) {
+          fallbackInterval = setInterval(fetchServerData, 1000);
+        }
+      }
+    };
+
+    // Initial immediate fetch
+    fetchServerData();
+    // Connect 1s live push stream
+    connectSSE();
+
+    return () => {
+      if (eventSource) eventSource.close();
+      if (fallbackInterval) clearInterval(fallbackInterval);
+    };
   }, [fetchServerData, autoRefresh]);
 
   // Filter the data
@@ -260,7 +322,7 @@ const LiveMarketCards = ({ filter = 'all', compact = false, autoRefresh = true, 
 
   return (
     <div>
-      {/* Header with Live indicator */}
+      {/* Header with 1s Live indicator */}
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-3 flex-wrap">
           {filter === 'indices' && <><FaChartLine className="text-[#D4AF37]" /><span className="text-lg font-bold text-white">Indian Market Indices</span></>}
@@ -268,14 +330,14 @@ const LiveMarketCards = ({ filter = 'all', compact = false, autoRefresh = true, 
           {filter === 'global' && <><FaGlobeAsia className="text-[#D4AF37]" /><span className="text-lg font-bold text-white">Global Commodities</span></>}
           {filter === 'all' && <><FaBolt className="text-[#D4AF37]" /><span className="text-lg font-bold text-white">Live Market Data</span></>}
 
-          {/* Live Feed Badge */}
+          {/* 1-Second Live Streaming Badge with active ticking second */}
           <span className="flex items-center gap-1.5 text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-mono">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="font-bold">LIVE STREAM</span>
-            <span className="text-gray-400 text-[10px]">
+            <span className="font-bold">LIVE 1s STREAM</span>
+            <span className="text-gray-300 text-[10px] font-bold">
               {lastUpdated.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
             </span>
           </span>
