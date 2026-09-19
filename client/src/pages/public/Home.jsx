@@ -650,7 +650,7 @@ const Home = () => {
                   <img 
                     src="/images/trading_floor_mentor.jpg" 
                     alt="Live Trading Floor" 
-                    className="w-full h-full object-cover object-center opacity-80 mix-blend-luminosity hover:mix-blend-normal transition-all duration-700"
+                    className="w-full h-full object-cover object-center opacity-90 transition-all duration-700"
                     onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=2070&auto=format&fit=crop'; }}
                   />
                   

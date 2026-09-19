@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHome, FaBook, FaInfoCircle, FaUser, FaGlobe, FaArrowLeft, FaTimes, FaBars, FaChartLine } from 'react-icons/fa';
+import { FaHome, FaBook, FaInfoCircle, FaUser, FaGlobe, FaArrowLeft, FaTimes, FaBars, FaChartLine, FaChevronDown } from 'react-icons/fa';
 import { useLanguage } from '../../context/LanguageContext';
 
 const PublicNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -37,7 +38,23 @@ const PublicNavbar = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
+  const mainNavLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Courses', path: '/courses' },
+    { name: 'Services', path: '/services' },
+    { name: 'About Us', path: '/about' },
+  ];
+
+  const moreNavLinks = [
+    { name: 'Certificates', path: '/certificates' },
+    { name: 'E-Books', path: '/ebooks' },
+    { name: 'Tools', path: '/tools' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Contact', path: '/contact' },
+  ];
+
   const isActive = (path) => location.pathname === path;
+  const isMoreActive = moreNavLinks.some(link => isActive(link.path));
 
   return (
     <>
@@ -70,9 +87,8 @@ const PublicNavbar = () => {
               </Link>
             </div>
 
-            {/* Desktop Nav */}
             <div className="hidden lg:flex items-center space-x-4 xl:space-x-5">
-              {navLinks.map((link) => (
+              {mainNavLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -89,6 +105,49 @@ const PublicNavbar = () => {
                   )}
                 </Link>
               ))}
+
+              {/* More Dropdown */}
+              <div 
+                className="relative group"
+                onMouseEnter={() => setIsMoreOpen(true)}
+                onMouseLeave={() => setIsMoreOpen(false)}
+              >
+                <button className={`relative font-outfit font-bold text-[13px] xl:text-[14px] transition-colors flex items-center gap-1 ${
+                  isMoreActive ? 'text-[#D4AF37]' : 'text-gray-300 hover:text-white'
+                }`}>
+                  More <FaChevronDown size={10} className={`transition-transform duration-200 ${isMoreOpen ? 'rotate-180' : ''}`} />
+                  {isMoreActive && (
+                    <motion.div
+                      layoutId="navbar-indicator"
+                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#D4AF37] rounded-full shadow-[0_0_8px_rgba(212,175,55,0.8)]"
+                    />
+                  )}
+                </button>
+                
+                <AnimatePresence>
+                  {isMoreOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10, transition: { duration: 0.1 } }}
+                      className="absolute top-full right-0 mt-4 w-48 bg-[#0F172A] border border-gray-800 rounded-xl shadow-2xl py-2 flex flex-col z-50"
+                    >
+                      {moreNavLinks.map(link => (
+                          <Link 
+                            key={link.path} 
+                            to={link.path} 
+                            onClick={() => setIsMoreOpen(false)}
+                            className={`px-4 py-2 hover:bg-[#1E293B] text-sm transition-colors ${
+                              isActive(link.path) ? 'text-[#D4AF37] font-bold bg-[#D4AF37]/5' : 'text-gray-300 hover:text-white'
+                            }`}
+                          >
+                            {link.name}
+                          </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               {/* Live Market Pulsing Button */}
               <Link

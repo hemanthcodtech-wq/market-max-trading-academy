@@ -110,7 +110,7 @@ const AdminDashboard = () => {
       value: `₹${(stats.totalRevenue || 0).toLocaleString('en-IN')}`, 
       icon: FaRupeeSign, 
       gradient: 'from-emerald-500 to-green-600',
-      iconBg: 'bg-blue-600/100/10 text-blue-600 border-emerald-500/20',
+      iconBg: 'bg-[#D4AF37]/10 text-[#D4AF37] border-emerald-500/20',
       subtitle: 'Verified course sales'
     },
     { 
@@ -126,7 +126,7 @@ const AdminDashboard = () => {
       value: stats.totalCourses || 0, 
       icon: FaBookOpen, 
       gradient: 'from-blue-500 to-cyan-600',
-      iconBg: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+      iconBg: 'bg-[#D4AF37]/100/10 text-[#D4AF37] border-blue-500/20',
       subtitle: 'Published curricula'
     },
     { 
@@ -157,7 +157,7 @@ const AdminDashboard = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-24 right-8 z-50 bg-blue-600 text-slate-800 px-6 py-3.5 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-2 border border-blue-600-dark"
+            className="fixed top-24 right-8 z-50 bg-blue-600 text-white px-6 py-3.5 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-2 border border-[#C99C29]"
           >
             <FaCheckCircle className="text-yellow-300" /> {toastMessage}
           </motion.div>
@@ -165,14 +165,14 @@ const AdminDashboard = () => {
       </AnimatePresence>
       
       {/* Top Banner with Glassmorphism */}
-      <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-[#131722]/80 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-gray-800 shadow-[0_8px_32px_rgba(0,0,0,0.3)] flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-600/10 text-blue-600-dark text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#D4AF37]/10 text-[#C99C29] text-xs font-bold uppercase tracking-wider mb-2">
             <span className="w-2 h-2 rounded-full bg-blue-600"></span>
             Operational Intelligence
           </div>
-          <h1 className="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight">Admin Control Center</h1>
-          <p className="text-gray-500 text-sm mt-1">Real-time enrollment trends, revenue tracking, and live Zoom schedule.</p>
+          <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tight">Admin Control Center</h1>
+          <p className="text-gray-400 text-sm mt-1">Real-time enrollment trends, revenue tracking, and live Zoom schedule.</p>
         </div>
 
         {/* Quick Action Buttons */}
@@ -181,7 +181,7 @@ const AdminDashboard = () => {
           {/* Edit Public Stats Button */}
           <button
             onClick={() => setStatsModalOpen(true)}
-            className="px-4 py-3 bg-amber-500/10 hover:bg-amber-500 hover:text-slate-800 text-amber-800 border border-amber-300 rounded-2xl text-xs lg:text-sm font-bold shadow-xs transition-all flex items-center gap-2"
+            className="px-4 py-3 bg-amber-500/10 hover:bg-amber-500 hover:text-white text-amber-500 border border-amber-300 rounded-2xl text-xs lg:text-sm font-bold shadow-xs transition-all flex items-center gap-2"
             title="Edit public metrics shown on Home and About pages"
           >
             <FaSlidersH size={13} />
@@ -190,7 +190,7 @@ const AdminDashboard = () => {
 
           <button
             onClick={() => navigate('/admin/courses')}
-            className="px-5 py-3 bg-blue-600 hover:bg-blue-600-dark text-slate-800 rounded-2xl text-xs lg:text-sm font-bold shadow-[0_4px_16px_rgba(41,120,56,0.3)] transition-all flex items-center gap-2 group"
+            className="px-5 py-3 bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] rounded-2xl text-xs lg:text-sm font-bold shadow-[0_4px_16px_rgba(212,175,55,0.3)] transition-all flex items-center gap-2 group"
           >
             <FaPlus size={12} className="group-hover:rotate-90 transition-transform" />
             <span>Create Course</span>
@@ -198,9 +198,9 @@ const AdminDashboard = () => {
           
           <button
             onClick={() => navigate('/admin/materials')}
-            className="px-5 py-3 bg-white/90 hover:bg-white text-slate-600 border border-slate-200/80 rounded-2xl text-xs lg:text-sm font-bold shadow-xs hover:shadow-md transition-all flex items-center gap-2"
+            className="px-5 py-3 bg-[#131722]/90 hover:bg-[#131722] text-gray-300 border border-gray-800 rounded-2xl text-xs lg:text-sm font-bold shadow-xs hover:shadow-md transition-all flex items-center gap-2"
           >
-            <FaFolderOpen className="text-blue-600" />
+            <FaFolderOpen className="text-[#D4AF37]" />
             <span>Upload Materials</span>
           </button>
         </div>
@@ -214,13 +214,13 @@ const AdminDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.08 }}
-            className="bg-white/70 backdrop-blur-2xl rounded-[2rem] p-6 lg:p-7 shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1.5 transition-all duration-300 group relative overflow-hidden"
+            className="bg-[#131722]/80 backdrop-blur-2xl rounded-[2rem] p-6 lg:p-7 shadow-[0_8px_30px_rgba(0,0,0,0.3)] border border-gray-800 hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1.5 transition-all duration-300 group relative overflow-hidden"
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{card.title}</p>
-                <h3 className="text-2xl lg:text-3xl font-black text-slate-800 mt-2 tracking-tight">{card.value}</h3>
-                <p className="text-xs font-semibold text-gray-500 mt-1">{card.subtitle}</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{card.title}</p>
+                <h3 className="text-2xl lg:text-3xl font-black text-white mt-2 tracking-tight">{card.value}</h3>
+                <p className="text-xs font-semibold text-gray-400 mt-1">{card.subtitle}</p>
               </div>
               <div className={`w-14 h-14 rounded-2xl ${card.iconBg} border flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-xs`}>
                 <card.icon size={22} />
@@ -236,15 +236,15 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         
         {/* Recent Enrollments */}
-        <div className="bg-white/70 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 p-6 lg:p-8 flex flex-col h-[480px]">
-          <div className="flex items-center justify-between mb-6 shrink-0 pb-4 border-b border-slate-100">
+        <div className="bg-[#131722]/80 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_8px_30px_rgba(0,0,0,0.3)] border border-gray-800 p-6 lg:p-8 flex flex-col h-[480px]">
+          <div className="flex items-center justify-between mb-6 shrink-0 pb-4 border-b border-gray-800">
             <div>
-              <h2 className="text-lg font-extrabold text-slate-800 tracking-tight">Recent Enrollments</h2>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Learners joining live Market programs</p>
+              <h2 className="text-lg font-extrabold text-white tracking-tight">Recent Enrollments</h2>
+              <p className="text-xs text-gray-400 font-medium mt-0.5">Learners joining live Market programs</p>
             </div>
             <button 
               onClick={() => navigate('/admin/users')}
-              className="text-xs font-bold text-blue-600 hover:text-blue-600-dark flex items-center gap-1.5 transition-colors"
+              className="text-xs font-bold text-[#D4AF37] hover:text-[#C99C29] flex items-center gap-1.5 transition-colors"
             >
               <span>View All Users</span>
               <FaArrowRight size={10} />
@@ -254,28 +254,28 @@ const AdminDashboard = () => {
           <div className="overflow-y-auto flex-1 pr-1.5 space-y-3.5 custom-scrollbar">
             {stats.recentActivity && stats.recentActivity.length > 0 ? (
               stats.recentActivity.map((activity, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-4 bg-white/80 rounded-2xl border border-slate-100/90 shadow-xs hover:shadow-md transition-all">
-                  <div className="w-11 h-11 rounded-2xl bg-blue-600/10 text-blue-600 flex items-center justify-center shrink-0 border border-blue-600/20 font-bold">
+                <div key={idx} className="flex items-center gap-4 p-4 bg-[#131722]/80 rounded-2xl border border-gray-800/90 shadow-xs hover:shadow-md transition-all">
+                  <div className="w-11 h-11 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center shrink-0 border border-[#D4AF37]/20 font-bold">
                     <FaUserCircle size={22} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-800 truncate">{activity.studentEmail}</p>
-                    <p className="text-xs text-gray-500 mt-0.5 truncate">
-                      Course: <span className="font-semibold text-blue-600-dark">{activity.course?.title || 'Program Enrollment'}</span>
+                    <p className="text-sm font-bold text-white truncate">{activity.studentEmail}</p>
+                    <p className="text-xs text-gray-400 mt-0.5 truncate">
+                      Course: <span className="font-semibold text-[#C99C29]">{activity.course?.title || 'Program Enrollment'}</span>
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="text-xs font-semibold text-slate-500 block">
+                    <span className="text-xs font-semibold text-gray-400 block">
                       {new Date(activity.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
                     </span>
-                    <span className="text-xs font-black text-blue-600 bg-green-50 border border-green-200/60 px-2.5 py-0.5 rounded-full mt-1 inline-block">
+                    <span className="text-xs font-black text-[#D4AF37] bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full mt-1 inline-block">
                       +₹{activity.amountPaid || 0}
                     </span>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-sm text-slate-500 italic py-16 text-center bg-white/50 rounded-2xl border border-dashed border-slate-200 h-full flex items-center justify-center">
+              <div className="text-sm text-gray-400 italic py-16 text-center bg-[#131722]/50 rounded-2xl border border-dashed border-gray-700 h-full flex items-center justify-center">
                 No recent enrollments recorded.
               </div>
             )}
@@ -283,15 +283,15 @@ const AdminDashboard = () => {
         </div>
 
         {/* Upcoming Zoom Live Classes */}
-        <div className="bg-white/70 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 p-6 lg:p-8 flex flex-col h-[480px]">
-          <div className="flex items-center justify-between mb-6 shrink-0 pb-4 border-b border-slate-100">
+        <div className="bg-[#131722]/80 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_8px_30px_rgba(0,0,0,0.3)] border border-gray-800 p-6 lg:p-8 flex flex-col h-[480px]">
+          <div className="flex items-center justify-between mb-6 shrink-0 pb-4 border-b border-gray-800">
             <div>
-              <h2 className="text-lg font-extrabold text-slate-800 tracking-tight">Live Zoom Classes (Next 7 Days)</h2>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Automated schedule and instructor links</p>
+              <h2 className="text-lg font-extrabold text-white tracking-tight">Live Zoom Classes (Next 7 Days)</h2>
+              <p className="text-xs text-gray-400 font-medium mt-0.5">Automated schedule and instructor links</p>
             </div>
             <button 
               onClick={() => navigate('/admin/courses')}
-              className="text-xs font-bold text-blue-600 hover:text-blue-600-dark flex items-center gap-1.5 transition-colors"
+              className="text-xs font-bold text-[#D4AF37] hover:text-[#C99C29] flex items-center gap-1.5 transition-colors"
             >
               <span>Manage Sessions</span>
               <FaArrowRight size={10} />
@@ -301,16 +301,16 @@ const AdminDashboard = () => {
           <div className="overflow-y-auto flex-1 pr-1.5 space-y-3.5 custom-scrollbar">
             {stats.upcomingClasses && stats.upcomingClasses.length > 0 ? (
               stats.upcomingClasses.map((cls, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-4 bg-white/80 rounded-2xl border border-slate-100/90 shadow-xs hover:shadow-md transition-all">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-700 flex flex-col items-center justify-center shrink-0 border border-blue-100 font-bold">
+                <div key={idx} className="flex items-center gap-4 p-4 bg-[#131722]/80 rounded-2xl border border-gray-800/90 shadow-xs hover:shadow-md transition-all">
+                  <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] flex flex-col items-center justify-center shrink-0 border border-[#D4AF37]/20 font-bold">
                     <span className="text-[10px] uppercase tracking-wider">{new Date(cls.date).toLocaleString('en-US', { month: 'short' })}</span>
                     <span className="text-base font-black leading-tight">{new Date(cls.date).getDate()}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-slate-800 text-sm truncate">{cls.title || cls.courseId?.title}</h4>
-                    <div className="flex items-center gap-3 text-xs font-medium text-gray-500 mt-1">
-                      <span className="flex items-center gap-1 text-blue-600"><FaClock size={11} /> {cls.time}</span>
-                      {cls.meetingId && <span className="text-[11px] text-slate-500 font-mono">ID: {cls.meetingId}</span>}
+                    <h4 className="font-bold text-white text-sm truncate">{cls.title || cls.courseId?.title}</h4>
+                    <div className="flex items-center gap-3 text-xs font-medium text-gray-400 mt-1">
+                      <span className="flex items-center gap-1 text-[#D4AF37]"><FaClock size={11} /> {cls.time}</span>
+                      {cls.meetingId && <span className="text-[11px] text-gray-400 font-mono">ID: {cls.meetingId}</span>}
                     </div>
                   </div>
                   <div className="shrink-0">
@@ -319,18 +319,18 @@ const AdminDashboard = () => {
                         href={cls.zoomLink} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-xs font-bold text-slate-800 bg-blue-600 hover:bg-blue-700 px-3.5 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+                        className="text-xs font-bold text-white bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] px-3.5 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                       >
                         <FaVideo size={11} /> Launch
                       </a>
                     ) : (
-                      <span className="text-xs font-bold text-slate-500 bg-gray-800 px-3 py-1.5 rounded-xl">No Link</span>
+                      <span className="text-xs font-bold text-gray-400 bg-[#1E293B] px-3 py-1.5 rounded-xl">No Link</span>
                     )}
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-sm text-slate-500 italic py-16 text-center bg-white/50 rounded-2xl border border-dashed border-slate-200 h-full flex items-center justify-center">
+              <div className="text-sm text-gray-400 italic py-16 text-center bg-[#131722]/50 rounded-2xl border border-dashed border-gray-700 h-full flex items-center justify-center">
                 No classes scheduled for the next 7 days.
               </div>
             )}
@@ -347,23 +347,23 @@ const AdminDashboard = () => {
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-white rounded-[2.5rem] max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-white/80 my-8 space-y-6 max-h-[90vh] overflow-y-auto"
+              className="bg-[#131722] rounded-[2.5rem] max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-gray-800 my-8 space-y-6 max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-center justify-between border-b border-gray-800 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl border border-amber-200">
                     <FaSlidersH />
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-slate-800">Manage Public Platform Stats</h3>
-                    <p className="text-xs text-gray-500">
+                    <h3 className="text-lg font-black text-white">Manage Public Platform Stats</h3>
+                    <p className="text-xs text-gray-400">
                       Sync and edit metrics shown on Home & About pages (eliminates contradictions & errors).
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setStatsModalOpen(false)}
-                  className="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition-all"
+                  className="w-8 h-8 rounded-full bg-[#1E293B] hover:bg-gray-700 text-gray-400 flex items-center justify-center transition-all"
                 >
                   <FaTimes size={13} />
                 </button>
@@ -372,187 +372,187 @@ const AdminDashboard = () => {
               <form onSubmit={handleSavePublicStats} className="space-y-4">
                 
                 {/* Students Metric */}
-                <div className="grid grid-cols-3 gap-3 p-3.5 bg-white rounded-2xl border border-slate-100 items-center">
+                <div className="grid grid-cols-3 gap-3 p-3.5 bg-[#131722] rounded-2xl border border-gray-800 items-center">
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Students Count</label>
+                    <label className="text-xs font-bold text-gray-300 block">Students Count</label>
                     <input
                       type="number"
                       required
                       value={publicStats.studentsCount}
                       onChange={(e) => setPublicStats({ ...publicStats, studentsCount: Number(e.target.value) })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Suffix</label>
+                    <label className="text-xs font-bold text-gray-300 block">Suffix</label>
                     <input
                       type="text"
                       value={publicStats.studentsSuffix}
                       onChange={(e) => setPublicStats({ ...publicStats, studentsSuffix: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                       placeholder="e.g. +"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Label</label>
+                    <label className="text-xs font-bold text-gray-300 block">Label</label>
                     <input
                       type="text"
                       value={publicStats.studentsLabel}
                       onChange={(e) => setPublicStats({ ...publicStats, studentsLabel: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm text-gray-300 outline-none focus:border-blue-600"
                       placeholder="e.g. Successful Traders"
                     />
                   </div>
                 </div>
 
                 {/* Courses Metric */}
-                <div className="grid grid-cols-3 gap-3 p-3.5 bg-white rounded-2xl border border-slate-100 items-center">
+                <div className="grid grid-cols-3 gap-3 p-3.5 bg-[#131722] rounded-2xl border border-gray-800 items-center">
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Courses Count</label>
+                    <label className="text-xs font-bold text-gray-300 block">Courses Count</label>
                     <input
                       type="number"
                       required
                       value={publicStats.coursesCount}
                       onChange={(e) => setPublicStats({ ...publicStats, coursesCount: Number(e.target.value) })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Suffix</label>
+                    <label className="text-xs font-bold text-gray-300 block">Suffix</label>
                     <input
                       type="text"
                       value={publicStats.coursesSuffix}
                       onChange={(e) => setPublicStats({ ...publicStats, coursesSuffix: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                       placeholder="e.g. +"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Label</label>
+                    <label className="text-xs font-bold text-gray-300 block">Label</label>
                     <input
                       type="text"
                       value={publicStats.coursesLabel}
                       onChange={(e) => setPublicStats({ ...publicStats, coursesLabel: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm text-gray-300 outline-none focus:border-blue-600"
                       placeholder="e.g. Trading Strategies"
                     />
                   </div>
                 </div>
 
                 {/* Instructors Metric */}
-                <div className="grid grid-cols-3 gap-3 p-3.5 bg-white rounded-2xl border border-slate-100 items-center">
+                <div className="grid grid-cols-3 gap-3 p-3.5 bg-[#131722] rounded-2xl border border-gray-800 items-center">
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Instructors Count</label>
+                    <label className="text-xs font-bold text-gray-300 block">Instructors Count</label>
                     <input
                       type="number"
                       required
                       value={publicStats.instructorsCount}
                       onChange={(e) => setPublicStats({ ...publicStats, instructorsCount: Number(e.target.value) })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Suffix</label>
+                    <label className="text-xs font-bold text-gray-300 block">Suffix</label>
                     <input
                       type="text"
                       value={publicStats.instructorsSuffix}
                       onChange={(e) => setPublicStats({ ...publicStats, instructorsSuffix: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                       placeholder="e.g. +"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Label</label>
+                    <label className="text-xs font-bold text-gray-300 block">Label</label>
                     <input
                       type="text"
                       value={publicStats.instructorsLabel}
                       onChange={(e) => setPublicStats({ ...publicStats, instructorsLabel: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm text-gray-300 outline-none focus:border-blue-600"
                       placeholder="e.g. Professional Analysts"
                     />
                   </div>
                 </div>
 
                 {/* Satisfaction Rate */}
-                <div className="grid grid-cols-3 gap-3 p-3.5 bg-white rounded-2xl border border-slate-100 items-center">
+                <div className="grid grid-cols-3 gap-3 p-3.5 bg-[#131722] rounded-2xl border border-gray-800 items-center">
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Satisfaction Rate</label>
+                    <label className="text-xs font-bold text-gray-300 block">Satisfaction Rate</label>
                     <input
                       type="number"
                       required
                       value={publicStats.satisfactionRate}
                       onChange={(e) => setPublicStats({ ...publicStats, satisfactionRate: Number(e.target.value) })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Suffix</label>
+                    <label className="text-xs font-bold text-gray-300 block">Suffix</label>
                     <input
                       type="text"
                       value={publicStats.satisfactionSuffix}
                       onChange={(e) => setPublicStats({ ...publicStats, satisfactionSuffix: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                       placeholder="e.g. %"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Label</label>
+                    <label className="text-xs font-bold text-gray-300 block">Label</label>
                     <input
                       type="text"
                       value={publicStats.satisfactionLabel}
                       onChange={(e) => setPublicStats({ ...publicStats, satisfactionLabel: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm text-gray-300 outline-none focus:border-blue-600"
                       placeholder="e.g. Satisfaction"
                     />
                   </div>
                 </div>
 
                 {/* Trading Communities */}
-                <div className="grid grid-cols-3 gap-3 p-3.5 bg-white rounded-2xl border border-slate-100 items-center">
+                <div className="grid grid-cols-3 gap-3 p-3.5 bg-[#131722] rounded-2xl border border-gray-800 items-center">
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Communities Count</label>
+                    <label className="text-xs font-bold text-gray-300 block">Communities Count</label>
                     <input
                       type="number"
                       required
                       value={publicStats.communitiesCount}
                       onChange={(e) => setPublicStats({ ...publicStats, communitiesCount: Number(e.target.value) })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Suffix</label>
+                    <label className="text-xs font-bold text-gray-300 block">Suffix</label>
                     <input
                       type="text"
                       value={publicStats.communitiesSuffix}
                       onChange={(e) => setPublicStats({ ...publicStats, communitiesSuffix: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-600"
                       placeholder="e.g. +"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 block">Label</label>
+                    <label className="text-xs font-bold text-gray-300 block">Label</label>
                     <input
                       type="text"
                       value={publicStats.communitiesLabel}
                       onChange={(e) => setPublicStats({ ...publicStats, communitiesLabel: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-blue-600"
+                      className="w-full mt-1 px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm text-gray-300 outline-none focus:border-blue-600"
                       placeholder="e.g. Trading Communities"
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
                   <button
                     type="button"
                     onClick={() => setStatsModalOpen(false)}
-                    className="px-5 py-2.5 bg-gray-800 hover:bg-gray-200 text-slate-600 font-bold rounded-xl text-xs transition-all"
+                    className="px-5 py-2.5 bg-[#1E293B] hover:bg-gray-700 text-gray-300 font-bold rounded-xl text-xs transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={savingStats}
-                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-extrabold rounded-xl text-xs shadow-md transition-all flex items-center gap-2 disabled:opacity-50"
+                    className="px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] font-extrabold rounded-xl text-xs shadow-md transition-all flex items-center gap-2 disabled:opacity-50"
                   >
                     {savingStats ? (
                       <span>Saving...</span>

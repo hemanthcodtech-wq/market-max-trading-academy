@@ -193,7 +193,7 @@ const Ebooks = () => {
 
               <div className="pt-4 border-t border-gray-800/80 flex items-center justify-between gap-3">
                 <span className="text-[10px] text-gray-500 font-mono">
-                  {book.pages} • {book.language}
+                  {book.language}
                 </span>
                 <a
                   href="/contact"

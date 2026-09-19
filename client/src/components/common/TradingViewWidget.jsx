@@ -118,26 +118,21 @@ const TradingViewWidget = ({
             {
               title: 'Indices',
               symbols: [
-                { s: 'NSE:NIFTY', d: 'NIFTY 50' },
-                { s: 'NSE:BANKNIFTY', d: 'BANK NIFTY' },
-                { s: 'BSE:SENSEX', d: 'SENSEX' },
-                { s: 'NSE:FINNIFTY', d: 'FIN NIFTY' },
-                { s: 'NSE:MIDCPNIFTY', d: 'MIDCAP NIFTY' },
-                { s: 'NSE:INDIAVIX', d: 'INDIA VIX' },
-              ],
-              originalTitle: 'Indices',
+                { s: 'BSE:SENSEX' },
+                { s: 'BSE:BSE500' },
+                { s: 'BSE:BSEMIDCAP' },
+                { s: 'BSE:BSESMLCAP' }
+              ]
             },
             {
-              title: 'F&O Stocks',
+              title: 'Stocks',
               symbols: [
-                { s: 'NSE:RELIANCE', d: 'RELIANCE' },
-                { s: 'NSE:TCS', d: 'TCS' },
-                { s: 'NSE:HDFCBANK', d: 'HDFC BANK' },
-                { s: 'NSE:ICICIBANK', d: 'ICICI BANK' },
-                { s: 'NSE:INFY', d: 'INFOSYS' },
-                { s: 'NSE:SBIN', d: 'SBI' },
-              ],
-              originalTitle: 'F&O Stocks',
+                { s: 'BSE:RELIANCE' },
+                { s: 'BSE:TCS' },
+                { s: 'BSE:HDFCBANK' },
+                { s: 'BSE:ICICIBANK' },
+                { s: 'BSE:INFY' }
+              ]
             },
             {
               title: 'Global',
@@ -145,13 +140,10 @@ const TradingViewWidget = ({
                 { s: 'SP:SPX', d: 'S&P 500' },
                 { s: 'NASDAQ:NDX', d: 'NASDAQ 100' },
                 { s: 'TVC:GOLD', d: 'GOLD' },
-                { s: 'TVC:SILVER', d: 'SILVER' },
-                { s: 'TVC:USOIL', d: 'CRUDE OIL' },
-                { s: 'FX:USDINR', d: 'USD/INR' },
-              ],
-              originalTitle: 'Global',
-            },
-          ],
+                { s: 'FX:USDINR', d: 'USD/INR' }
+              ]
+            }
+          ]
         });
         break;
 
@@ -164,7 +156,7 @@ const TradingViewWidget = ({
           width,
           height,
           defaultColumn: 'overview',
-          defaultScreen: 'most_capitalized',
+          defaultScreen: 'general',
           market,
           showToolbar: true,
           colorTheme: theme,
