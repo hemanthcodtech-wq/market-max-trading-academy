@@ -6,9 +6,11 @@ import {
 } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
 import TradingViewWidget from '../../components/common/TradingViewWidget';
+import TradingViewScreener from '../../components/common/TradingViewScreener';
 import LiveMarketCards from '../../components/common/LiveMarketCards';
 import LiveRealtimeChart from '../../components/common/LiveRealtimeChart';
 import IndianSectorHeatmap from '../../components/common/IndianSectorHeatmap';
+import TrendlyneWidget from '../../components/common/TrendlyneWidget';
 
 
 // ──────────────────────────────────────────────────────────────────
@@ -54,10 +56,10 @@ const IntervalBtn = ({ label, value, active, onClick }) => (
 // ──────────────────────────────────────────────────────────────────
 const LiveMarket = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [chartEngine, setChartEngine] = useState('lightweight'); // 'lightweight' (exact live feed) | 'tradingview'
-  const [chartSymbol, setChartSymbol] = useState('NSE:NIFTY');
+  const [chartEngine, setChartEngine] = useState('tradingview'); // 'lightweight' (exact live feed) | 'tradingview'
+  const [chartSymbol, setChartSymbol] = useState('BSE:SENSEX');
   const [chartInterval, setChartInterval] = useState('15');
-  const [foSymbol, setFoSymbol] = useState('NSE:NIFTY');
+  const [foSymbol, setFoSymbol] = useState('BSE:SENSEX');
   const [foInterval, setFoInterval] = useState('15');
   const [cryptoSymbol, setCryptoSymbol] = useState('BINANCE:BTCUSDT');
   const [cryptoInterval, setCryptoInterval] = useState('15');
@@ -94,26 +96,25 @@ const LiveMarket = () => {
   ];
 
   const intradaySymbols = [
-    { label: 'NIFTY 50', value: 'NSE:NIFTY' },
-    { label: 'BANK NIFTY', value: 'NSE:BANKNIFTY' },
     { label: 'SENSEX', value: 'BSE:SENSEX' },
-    { label: 'FIN NIFTY', value: 'NSE:FINNIFTY' },
-    { label: 'RELIANCE', value: 'NSE:RELIANCE' },
-    { label: 'TCS', value: 'NSE:TCS' },
-    { label: 'HDFC BANK', value: 'NSE:HDFCBANK' },
-    { label: 'ICICI BANK', value: 'NSE:ICICIBANK' },
+    { label: 'BANKEX', value: 'BSE:BANKEX' },
+    { label: 'BSE 500', value: 'BSE:BSE500' },
+    { label: 'RELIANCE', value: 'BSE:RELIANCE' },
+    { label: 'TCS', value: 'BSE:TCS' },
+    { label: 'HDFC BANK', value: 'BSE:HDFCBANK' },
+    { label: 'ICICI BANK', value: 'BSE:ICICIBANK' },
+    { label: 'INFOSYS', value: 'BSE:INFY' },
   ];
 
   const foSymbols = [
-    { label: 'NIFTY 50', value: 'NSE:NIFTY' },
-    { label: 'BANK NIFTY', value: 'NSE:BANKNIFTY' },
-    { label: 'FIN NIFTY', value: 'NSE:FINNIFTY' },
-    { label: 'RELIANCE', value: 'NSE:RELIANCE' },
-    { label: 'HDFC BANK', value: 'NSE:HDFCBANK' },
-    { label: 'ICICI BANK', value: 'NSE:ICICIBANK' },
-    { label: 'TCS', value: 'NSE:TCS' },
-    { label: 'INFOSYS', value: 'NSE:INFY' },
-    { label: 'SBIN', value: 'NSE:SBIN' },
+    { label: 'SENSEX', value: 'BSE:SENSEX' },
+    { label: 'BANKEX', value: 'BSE:BANKEX' },
+    { label: 'RELIANCE', value: 'BSE:RELIANCE' },
+    { label: 'HDFC BANK', value: 'BSE:HDFCBANK' },
+    { label: 'ICICI BANK', value: 'BSE:ICICIBANK' },
+    { label: 'TCS', value: 'BSE:TCS' },
+    { label: 'INFOSYS', value: 'BSE:INFY' },
+    { label: 'SBIN', value: 'BSE:SBIN' },
   ];
 
   const cryptoSymbols = [
@@ -136,12 +137,12 @@ const LiveMarket = () => {
   ];
 
   const miniCards = [
-    { name: 'NIFTY 50', symbol: 'NSE:NIFTY', tvSymbol: 'NSE:NIFTY' },
-    { name: 'BANK NIFTY', symbol: 'NSE:BANKNIFTY', tvSymbol: 'NSE:BANKNIFTY' },
     { name: 'SENSEX', symbol: 'BSE:SENSEX', tvSymbol: 'BSE:SENSEX' },
-    { name: 'INDIA VIX', symbol: 'NSE:INDIAVIX', tvSymbol: 'NSE:INDIAVIX' },
-    { name: 'FIN NIFTY', symbol: 'NSE:FINNIFTY', tvSymbol: 'NSE:FINNIFTY' },
-    { name: 'MIDCAP NIFTY', symbol: 'NSE:MIDCPNIFTY', tvSymbol: 'NSE:MIDCPNIFTY' },
+    { name: 'BANKEX', symbol: 'BSE:BANKEX', tvSymbol: 'BSE:BANKEX' },
+    { name: 'BSE 100', symbol: 'BSE:BSE100', tvSymbol: 'BSE:BSE100' },
+    { name: 'BSE 500', symbol: 'BSE:BSE500', tvSymbol: 'BSE:BSE500' },
+    { name: 'MIDCAP', symbol: 'BSE:BSEMIDCAP', tvSymbol: 'BSE:BSEMIDCAP' },
+    { name: 'SMALLCAP', symbol: 'BSE:BSESMLCAP', tvSymbol: 'BSE:BSESMLCAP' },
   ];
 
   const cryptoMiniCards = [
@@ -179,7 +180,7 @@ const LiveMarket = () => {
               Live Market Dashboard
             </h1>
             <p className="text-gray-500 text-sm mt-1">
-              {isMarketOpen() ? '🟢 NSE Market Open' : '🔴 Market Closed'} · {formatTime(currentTime)} IST · Powered by TradingView
+              {isMarketOpen() ? '🟢 BSE Market Open' : '🔴 Market Closed'} · {formatTime(currentTime)} IST · Powered by TradingView
             </p>
           </div>
 
@@ -244,24 +245,33 @@ const LiveMarket = () => {
                 />
               </div>
 
-              {/* Market Overview & Indian Stock Screener Side by Side */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Market Overview + Tech Analysis + Screener */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 <div>
                   <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <FaGlobe className="text-[#D4AF37]" />
-                    NSE & BSE Market Watch
+                    BSE Market Watch
                   </h2>
                   <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
-                    <TradingViewWidget type="market-overview" theme="dark" height="500px" width="100%" />
+                    <TradingViewWidget type="market-overview" theme="dark" height="550px" width="100%" />
                   </div>
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <FaChartLine className="text-[#D4AF37]" />
-                    Indian Stock Screener (NSE / BSE)
+                    Technical Analysis (SENSEX)
+                  </h2>
+                  <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl bg-[#1E293B]">
+                    <TradingViewWidget type="technical-analysis" symbol="BSE:SENSEX" theme="dark" height="550px" width="100%" />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <FaChartLine className="text-[#D4AF37]" />
+                    Indian Stock Screener (BSE)
                   </h2>
                   <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
-                    <TradingViewWidget type="screener" theme="dark" height="500px" width="100%" market="india" />
+                    <TradingViewScreener theme="dark" height="550px" />
                   </div>
                 </div>
               </div>
@@ -288,16 +298,30 @@ const LiveMarket = () => {
                 </div>
               </div>
 
-              {/* India Stock Screener */}
-              <div>
-                <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                  <FaChartBar className="text-[#D4AF37]" />
-                  NSE / BSE Stock Screener
+              {/* Trendlyne Advanced Analytics */}
+              <div className="mt-8">
+                <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                  <FaChartPie className="text-[#D4AF37]" />
+                  Advanced Analytics & Insights
                 </h2>
-                <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
-                  <TradingViewWidget type="screener" theme="dark" height="550px" width="100%" market="india" exchange="NSE" />
+                <div className="bg-white rounded-3xl p-6 shadow-2xl">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                      <TrendlyneWidget url="https://trendlyne.com/web-widget/technical-widget/Poppins/INFY/?posCol=00A25B&primaryCol=006AFF&negCol=EB3B00&neuCol=F7941E" theme="light" />
+                    </div>
+                    <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                      <TrendlyneWidget url="https://trendlyne.com/web-widget/swot-widget/Poppins/INFY/?posCol=00A25B&primaryCol=006AFF&negCol=EB3B00&neuCol=F7941E" theme="light" />
+                    </div>
+                    <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                      <TrendlyneWidget url="https://trendlyne.com/web-widget/checklist-widget/Poppins/INFY/?posCol=00A25B&primaryCol=006AFF&negCol=EB3B00&neuCol=F7941E" theme="light" />
+                    </div>
+                    <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                      <TrendlyneWidget url="https://trendlyne.com/web-widget/ipo-widget/Poppins/?activeCol=006AFF&linksCol=006CFF&primary=202020&secondary=666666&positive=00a25b&negative=ff4e54" theme="light" />
+                    </div>
+                  </div>
                 </div>
               </div>
+
             </motion.div>
           )}
 
@@ -356,7 +380,7 @@ const LiveMarket = () => {
                   <span className="font-bold text-white tracking-wide">{chartSymbol.replace('NSE:', '').replace('BSE:', '')}</span>
                   <span className="text-gray-400">· {chartInterval === 'D' ? 'Daily' : `${chartInterval}m`} Timeframe</span>
                   <span className="bg-[#1E293B] text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] font-semibold">
-                    {isMarketOpen() ? 'NSE LIVE' : 'NSE CLOSED'}
+                    {isMarketOpen() ? 'BSE LIVE' : 'BSE CLOSED'}
                   </span>
                 </div>
 
@@ -454,7 +478,7 @@ const LiveMarket = () => {
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 uppercase tracking-wider font-bold">Lot Size</p>
-                    <p className="text-white font-bold text-sm">NIFTY: 75 | BNF: 30</p>
+                    <p className="text-white font-bold text-sm">SENSEX: 10 | BANKEX: 15</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -463,7 +487,7 @@ const LiveMarket = () => {
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 uppercase tracking-wider font-bold">Segment</p>
-                    <p className="text-white font-bold text-sm">NSE F&O · 9:15 – 15:30</p>
+                    <p className="text-white font-bold text-sm">BSE F&O · 9:15 – 15:30</p>
                   </div>
                 </div>
                 <div className="ml-auto flex items-center">
@@ -563,17 +587,8 @@ const LiveMarket = () => {
                 />
               </div>
 
-              {/* Options Stock Screener */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <FaChartBar className="text-[#D4AF37]" />
-                    F&O Stocks Screener
-                  </h2>
-                  <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
-                    <TradingViewWidget type="screener" theme="dark" height="500px" width="100%" market="india" exchange="NSE" />
-                  </div>
-                </div>
+              {/* F&O Market News */}
+              <div className="grid grid-cols-1 gap-6">
                 <div>
                   <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <FaNewspaper className="text-[#D4AF37]" />

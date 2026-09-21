@@ -34,19 +34,28 @@ const SYMBOL_MAP = {
   'NSE:MIDCPNIFTY':     { yahoo: 'NIFTY_MID_SELECT.NS',  dummy: null,                  name: 'MIDCAP 50',     exchange: 'NSE', precision: 2 },
   'midcap':             { yahoo: 'NIFTY_MID_SELECT.NS',  dummy: null,                  name: 'MIDCAP 50',     exchange: 'NSE', precision: 2 },
 
-  // Top Indian F&O Stocks
+  // Top Indian F&O Stocks (NSE)
   'NSE:RELIANCE':       { yahoo: 'RELIANCE.NS',          dummy: 'RELIANCE.NS',         name: 'RELIANCE',      exchange: 'NSE', precision: 2 },
-  'RELIANCE':           { yahoo: 'RELIANCE.NS',          dummy: 'RELIANCE.NS',         name: 'RELIANCE',      exchange: 'NSE', precision: 2 },
   'NSE:HDFCBANK':       { yahoo: 'HDFCBANK.NS',          dummy: 'HDFCBANK.NS',         name: 'HDFC BANK',     exchange: 'NSE', precision: 2 },
-  'HDFCBANK':           { yahoo: 'HDFCBANK.NS',          dummy: 'HDFCBANK.NS',         name: 'HDFC BANK',     exchange: 'NSE', precision: 2 },
   'NSE:ICICIBANK':      { yahoo: 'ICICIBANK.NS',         dummy: 'ICICIBANK.NS',        name: 'ICICI BANK',    exchange: 'NSE', precision: 2 },
-  'ICICIBANK':          { yahoo: 'ICICIBANK.NS',         dummy: 'ICICIBANK.NS',        name: 'ICICI BANK',    exchange: 'NSE', precision: 2 },
   'NSE:TCS':            { yahoo: 'TCS.NS',               dummy: 'TCS.NS',              name: 'TCS',           exchange: 'NSE', precision: 2 },
-  'TCS':                { yahoo: 'TCS.NS',               dummy: 'TCS.NS',              name: 'TCS',           exchange: 'NSE', precision: 2 },
   'NSE:INFY':           { yahoo: 'INFY.NS',              dummy: 'INFY.NS',             name: 'INFOSYS',       exchange: 'NSE', precision: 2 },
-  'INFY':               { yahoo: 'INFY.NS',              dummy: 'INFY.NS',             name: 'INFOSYS',       exchange: 'NSE', precision: 2 },
   'NSE:SBIN':           { yahoo: 'SBIN.NS',              dummy: 'SBIN.NS',             name: 'SBIN',          exchange: 'NSE', precision: 2 },
-  'SBIN':               { yahoo: 'SBIN.NS',              dummy: 'SBIN.NS',             name: 'SBIN',          exchange: 'NSE', precision: 2 },
+
+  // Top Indian Stocks (BSE)
+  'BSE:RELIANCE':       { yahoo: 'RELIANCE.BO',          dummy: null,                  name: 'RELIANCE',      exchange: 'BSE', precision: 2 },
+  'BSE:HDFCBANK':       { yahoo: 'HDFCBANK.BO',          dummy: null,                  name: 'HDFC BANK',     exchange: 'BSE', precision: 2 },
+  'BSE:ICICIBANK':      { yahoo: 'ICICIBANK.BO',         dummy: null,                  name: 'ICICI BANK',    exchange: 'BSE', precision: 2 },
+  'BSE:TCS':            { yahoo: 'TCS.BO',               dummy: null,                  name: 'TCS',           exchange: 'BSE', precision: 2 },
+  'BSE:INFY':           { yahoo: 'INFY.BO',              dummy: null,                  name: 'INFOSYS',       exchange: 'BSE', precision: 2 },
+  'BSE:SBIN':           { yahoo: 'SBIN.BO',              dummy: null,                  name: 'SBIN',          exchange: 'BSE', precision: 2 },
+
+  // Additional BSE Indices
+  'BSE:BANKEX':         { yahoo: '%5EBSEBANK',           dummy: null,                  name: 'BANKEX',        exchange: 'BSE', precision: 2 },
+  'BSE:BSE100':         { yahoo: '%5EBSE100',            dummy: null,                  name: 'BSE 100',       exchange: 'BSE', precision: 2 },
+  'BSE:BSE500':         { yahoo: '%5EBSE500',            dummy: null,                  name: 'BSE 500',       exchange: 'BSE', precision: 2 },
+  'BSE:BSEMIDCAP':      { yahoo: '%5EBSEMID',            dummy: null,                  name: 'MIDCAP',        exchange: 'BSE', precision: 2 },
+  'BSE:BSESMLCAP':      { yahoo: '%5EBSESML',            dummy: null,                  name: 'SMALLCAP',      exchange: 'BSE', precision: 2 },
 
   // Crypto & Global
   'BINANCE:BTCUSDT':    { yahoo: 'BTC-USD',              dummy: null,                  name: 'BITCOIN',       exchange: 'CRYPTO', precision: 2 },
@@ -398,11 +407,12 @@ router.get('/chart', async (req, res) => {
       if (range === '1d') range = '1mo';
     }
 
+    const isBSE = rawSymbol.startsWith('BSE:');
     const mapping = SYMBOL_MAP[rawSymbol] || SYMBOL_MAP[rawSymbol.toUpperCase()] || {
-      yahoo: rawSymbol.includes(':') ? rawSymbol.split(':')[1] + '.NS' : rawSymbol,
+      yahoo: rawSymbol.includes(':') ? rawSymbol.split(':')[1] + (isBSE ? '.BO' : '.NS') : rawSymbol,
       dummy: null,
       name: rawSymbol,
-      exchange: rawSymbol.startsWith('BSE:') ? 'BSE' : 'NSE',
+      exchange: isBSE ? 'BSE' : 'NSE',
       precision: 2,
     };
 

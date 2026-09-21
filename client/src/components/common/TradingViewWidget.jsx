@@ -18,7 +18,7 @@ import React, { useEffect, useRef } from 'react';
  */
 const TradingViewWidget = ({
   type = 'ticker',
-  symbol = 'NSE:NIFTY',
+  symbol = 'BSE:SENSEX',
   symbols,
   interval = '15',
   height = '100%',
@@ -27,15 +27,15 @@ const TradingViewWidget = ({
   locale = 'in',
   allowSymbolChange = true,
   market = 'india',
-  exchange = 'NSE',
+  exchange = 'BSE',
 }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Cleanup previous widget
-    containerRef.current.innerHTML = '';
+    // Cleanup previous widget and ensure the inner widget container exists
+    containerRef.current.innerHTML = '<div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>';
 
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -49,12 +49,12 @@ const TradingViewWidget = ({
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
         script.innerHTML = JSON.stringify({
           symbols: symbols || [
-            { description: 'NIFTY 50', proName: 'NSE:NIFTY' },
-            { description: 'BANK NIFTY', proName: 'NSE:BANKNIFTY' },
             { description: 'SENSEX', proName: 'BSE:SENSEX' },
-            { description: 'RELIANCE', proName: 'NSE:RELIANCE' },
-            { description: 'HDFCBANK', proName: 'NSE:HDFCBANK' },
-            { description: 'TCS', proName: 'NSE:TCS' },
+            { description: 'BSE 500', proName: 'BSE:BSE500' },
+            { description: 'RELIANCE', proName: 'BSE:RELIANCE' },
+            { description: 'HDFCBANK', proName: 'BSE:HDFCBANK' },
+            { description: 'TCS', proName: 'BSE:TCS' },
+            { description: 'INFY', proName: 'BSE:INFY' },
             { description: 'GOLD', proName: 'TVC:GOLD' },
             { description: 'CRUDE OIL', proName: 'TVC:USOIL' },
             { description: 'BTC/USDT', proName: 'BINANCE:BTCUSDT' },
@@ -74,8 +74,7 @@ const TradingViewWidget = ({
       case 'chart':
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
         script.innerHTML = JSON.stringify({
-          width,
-          height,
+          autosize: true,
           symbol,
           interval,
           timezone: 'Asia/Kolkata',
@@ -83,68 +82,57 @@ const TradingViewWidget = ({
           style: '1',
           locale,
           allow_symbol_change: allowSymbolChange,
-          studies: ['STD;RSI', 'STD;MACD', 'STD;Volume'],
           calendar: false,
+          details: false,
+          hide_side_toolbar: false,
+          hide_top_toolbar: false,
+          hide_legend: false,
+          hide_volume: false,
+          hotlist: false,
+          save_image: true,
+          withdateranges: true,
+          backgroundColor: '#0F0F0F',
+          gridColor: 'rgba(242, 242, 242, 0.2)',
           support_host: 'https://www.tradingview.com',
         });
         break;
 
-      // ─────────────────────────────────────────────
-      // 3. Market Overview (indices + sectors)
-      // ─────────────────────────────────────────────
       case 'market-overview':
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
-        script.innerHTML = JSON.stringify({
-          colorTheme: theme,
-          dateRange: '12M',
-          showChart: true,
-          locale,
-          width,
-          height,
-          largeChartUrl: '',
-          isTransparent: false,
-          showSymbolLogo: true,
-          showFloatingTooltip: false,
-          plotLineColorGrowing: 'rgba(41, 98, 255, 1)',
-          plotLineColorFalling: 'rgba(41, 98, 255, 1)',
-          gridLineColor: 'rgba(240, 243, 250, 0)',
-          scaleFontColor: 'rgba(106, 109, 120, 1)',
-          belowLineFillColorGrowing: 'rgba(41, 98, 255, 0.12)',
-          belowLineFillColorFalling: 'rgba(41, 98, 255, 0.12)',
-          belowLineFillColorGrowingBottom: 'rgba(41, 98, 255, 0)',
-          belowLineFillColorFallingBottom: 'rgba(41, 98, 255, 0)',
-          symbolActiveColor: 'rgba(41, 98, 255, 0.12)',
-          tabs: [
-            {
-              title: 'Indices',
-              symbols: [
-                { s: 'BSE:SENSEX' },
-                { s: 'BSE:BSE500' },
-                { s: 'BSE:BSEMIDCAP' },
-                { s: 'BSE:BSESMLCAP' }
-              ]
-            },
-            {
-              title: 'Stocks',
-              symbols: [
-                { s: 'BSE:RELIANCE' },
-                { s: 'BSE:TCS' },
-                { s: 'BSE:HDFCBANK' },
-                { s: 'BSE:ICICIBANK' },
-                { s: 'BSE:INFY' }
-              ]
-            },
-            {
-              title: 'Global',
-              symbols: [
-                { s: 'SP:SPX', d: 'S&P 500' },
-                { s: 'NASDAQ:NDX', d: 'NASDAQ 100' },
-                { s: 'TVC:GOLD', d: 'GOLD' },
-                { s: 'FX:USDINR', d: 'USD/INR' }
-              ]
-            }
-          ]
-        });
+        containerRef.current.innerHTML = `
+          <tv-market-overview 
+            symbol-sectors='[
+              {
+                "sectionName": "Indices",
+                "symbols": ["BSE:SENSEX", "BSE:BSE500", "BSE:BSE100"]
+              },
+              {
+                "sectionName": "Stocks",
+                "symbols": ["BSE:RELIANCE", "BSE:HDFCBANK", "BSE:TCS", "BSE:ICICIBANK", "BSE:INFY"]
+              }
+            ]'
+            theme="${theme}"
+          ></tv-market-overview>
+        `;
+        script.type = 'module';
+        script.src = 'https://widgets.tradingview-widget.com/w/en/tv-market-overview.js';
+        script.innerHTML = '';
+        break;
+
+      // ─────────────────────────────────────────────
+      // 3.5. Technical Analysis (Web Component)
+      // ─────────────────────────────────────────────
+      case 'technical-analysis':
+        containerRef.current.innerHTML = `
+          <tv-technical-analysis 
+            symbol="${symbol || 'BSE:SENSEX'}" 
+            theme="${theme}"
+            width="100%"
+            height="100%"
+          ></tv-technical-analysis>
+        `;
+        script.type = 'module';
+        script.src = 'https://widgets.tradingview-widget.com/w/en/tv-technical-analysis.js';
+        script.innerHTML = '';
         break;
 
       // ─────────────────────────────────────────────
@@ -152,16 +140,18 @@ const TradingViewWidget = ({
       // ─────────────────────────────────────────────
       case 'screener':
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
-        script.innerHTML = JSON.stringify({
-          width,
-          height,
-          defaultColumn: 'overview',
-          defaultScreen: 'general',
-          market,
-          showToolbar: true,
-          colorTheme: theme,
-          locale,
-        });
+        script.innerHTML = `
+        {
+          "market": "india",
+          "showToolbar": true,
+          "defaultColumn": "overview",
+          "defaultScreen": "most_capitalized",
+          "isTransparent": false,
+          "locale": "en",
+          "colorTheme": "${theme}",
+          "width": "${width}",
+          "height": "${height}"
+        }`;
         break;
 
       // ─────────────────────────────────────────────
@@ -216,19 +206,17 @@ const TradingViewWidget = ({
           width,
           height,
           locale,
-          importanceFilter: '0,1',
-          countryFilter: 'in,us,eu,gb,cn,jp',
+          importanceFilter: '-1,0,1',
+          countryFilter: 'in',
         });
         break;
 
       // ─────────────────────────────────────────────
-      // 8. News Feed
-      // ─────────────────────────────────────────────
       case 'news':
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-timeline.js';
         script.innerHTML = JSON.stringify({
-          feedMode: 'market',
-          market,
+          feedMode: 'symbol',
+          symbol: 'BSE:SENSEX',
           isTransparent: false,
           displayMode: 'regular',
           width,
