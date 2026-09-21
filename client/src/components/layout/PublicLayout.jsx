@@ -85,6 +85,17 @@ const PublicLayout = () => {
                   <FaPhoneAlt className="text-[#D4AF37] shrink-0" size={12} />
                   <a href="tel:+919652357824" className="hover:text-white transition-colors">+91 96523 57824 (Mon - Sat, 9 AM - 6 PM IST)</a>
                 </div>
+                <div className="flex items-center gap-2.5">
+                  <FaWhatsapp className="text-[#25D366] shrink-0" size={14} />
+                  <a
+                    href="https://wa.me/919652357824"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    WhatsApp Support
+                  </a>
+                </div>
               </div>
 
               {/* Social Channels */}

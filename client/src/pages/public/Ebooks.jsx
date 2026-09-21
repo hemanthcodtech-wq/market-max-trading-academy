@@ -1,91 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaBook, FaDownload, FaEye, FaFilePdf, FaStar, FaSearch, FaLock, FaCheckCircle } from 'react-icons/fa';
+
+
+import axios from 'axios';
 import SEO from '../../components/common/SEO';
 
-const EBOOKS = [
-  {
-    id: 'price-action-bible',
-    title: 'The Price Action Master Playbook',
-    subtitle: 'High-Probability Candlestick & Liquidity Structures',
-    pages: '124 Pages',
-    rating: '4.9/5',
-    category: 'Price Action',
-    language: 'English & Telugu',
-    description: 'A complete breakdown of institutional order blocks, fair value gaps, dynamic market structure, and entry triggers without lagging indicators.',
-    topics: ['Candlestick Anatomy', 'Order Blocks & FVG', 'Break of Structure (BOS)', 'High-Probability Entry Triggers'],
-    downloadUrl: '#'
-  },
-  {
-    id: 'options-greeks-handbook',
-    title: 'Options Greeks & Adjustment Handbook',
-    subtitle: 'Practical Guide to Delta, Theta Decay & Iron Condors',
-    pages: '98 Pages',
-    rating: '4.8/5',
-    category: 'Derivatives',
-    language: 'English & Telugu',
-    description: 'Master weekly options selling, credit spreads, theta harvesting, IV crush strategies, and real-time defensive adjustments when trades go wrong.',
-    topics: ['The 4 Greeks Explained', 'Directional vs Non-Directional Spreads', 'Expiry Day Playbook', 'Firefighting Tested Adjustments'],
-    downloadUrl: '#'
-  },
-  {
-    id: 'risk-management-manual',
-    title: 'Risk Management & Psychology Manual',
-    subtitle: 'From Gambler to Systematic Trader',
-    pages: '76 Pages',
-    rating: '5.0/5',
-    category: 'Psychology',
-    language: 'English & Telugu',
-    description: 'The definitive blueprint for capital preservation, position sizing formulas, overcoming FOMO, revenge trading, and auditing trading journals.',
-    topics: ['The 1% Capital Rule', 'Drawdown Recovery Matrix', 'Trading Biases & Mental Traps', 'Trade Journaling Architecture'],
-    downloadUrl: '#'
-  },
-  {
-    id: 'nism-viii-exam-guide',
-    title: 'NISM Series VIII Equity Derivatives Exam Guide',
-    subtitle: 'Complete Syllabus, Summary Notes & 300+ Mock MCQs',
-    pages: '160 Pages',
-    rating: '4.9/5',
-    category: 'NISM Prep',
-    language: 'English',
-    description: 'Official curriculum summary notes, regulatory guidelines, margin frameworks, and 3 full-length solved practice exam papers with explanations.',
-    topics: ['SEBI & Regulatory Environment', 'Futures & Options Accounting', 'Clearing & Settlement Mechanics', '300+ Practice MCQs'],
-    downloadUrl: '#'
-  },
-  {
-    id: 'intraday-setup-cards',
-    title: 'Intraday Trading Quick-Reference Flashcards',
-    subtitle: 'ORB, VWAP Reclaim & Momentum Scalping Setups',
-    pages: '45 Pages',
-    rating: '4.8/5',
-    category: 'Intraday',
-    language: 'English & Telugu',
-    description: 'Pocket-sized printable flashcards for morning prep: 5-min ORB rules, VWAP pullback filters, intraday risk limits, and trailing SL rules.',
-    topics: ['9:00 AM Pre-Market Scan', 'VWAP Dynamic Zones', '1-Min Index Scalping Rules', 'Daily Loss Kill-Switch'],
-    downloadUrl: '#'
-  },
-  {
-    id: 'nism-xv-research-handbook',
-    title: 'NISM Series XV Research Analyst Study Notes',
-    subtitle: 'Financial Statement Modeling & Company Valuation',
-    pages: '142 Pages',
-    rating: '4.9/5',
-    category: 'NISM Prep',
-    language: 'English',
-    description: 'In-depth guide to equity research methodology, qualitative management audits, DCF valuation models, and drafting institutional research reports.',
-    topics: ['EIC Top-Down Framework', 'Cash Flow & Ratio Analysis', 'Valuation Multiples (P/E, EV/EBITDA)', 'Drafting Research Notes'],
-    downloadUrl: '#'
-  }
-];
+const getEbookAccessUrl = (url) => {
+  if (!url) return '';
+  const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
+  return match ? `https://drive.google.com/file/d/${match[1]}/view` : url;
+};
 
 const Ebooks = () => {
+  const [EBOOKS, setEBOOKS] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState('All');
   const [selectedCat, setSelectedCat] = useState('All');
+  const [query, setQuery] = useState('');
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/ebooks`);
+        setEBOOKS(res.data.data);
+      } catch (err) {
+        console.error('Failed to fetch', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  
+  
 
   const filtered = EBOOKS.filter(b => {
     const matchesCat = selectedCat === 'All' || b.category === selectedCat;
-    const matchesSearch = b.title.toLowerCase().includes(search.toLowerCase()) ||
-                          b.description.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = (b.title || '').toLowerCase().includes(search.toLowerCase()) ||
+                (b.description || '').toLowerCase().includes(search.toLowerCase());
     return matchesCat && matchesSearch;
   });
 
@@ -145,7 +100,7 @@ const Ebooks = () => {
 
         {/* Ebooks Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map(book => (
+          {loading ? <div className="col-span-full text-center py-10">Loading...</div> : filtered.map(book => (
             <motion.div
               key={book.id}
               initial={{ opacity: 0, y: 20 }}
@@ -182,7 +137,7 @@ const Ebooks = () => {
                 </p>
 
                 <div className="space-y-1.5 mb-5 border-t border-gray-800/80 pt-3">
-                  {book.topics.map((top, idx) => (
+                  {(book.topics || []).map((top, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-[11px] text-gray-300">
                       <FaCheckCircle className="text-emerald-400 shrink-0 text-[9px]" />
                       <span>{top}</span>
@@ -196,10 +151,12 @@ const Ebooks = () => {
                   {book.language}
                 </span>
                 <a
-                  href="/contact"
+                  href={getEbookAccessUrl(book.downloadUrl) || '/contact'}
+                  target={book.downloadUrl ? '_blank' : undefined}
+                  rel={book.downloadUrl ? 'noreferrer' : undefined}
                   className="px-4 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#F3E5AB] text-[#0B0F19] font-black text-xs transition-all flex items-center gap-1.5 shadow-md"
                 >
-                  <FaDownload size={10} /> Access PDF
+                  <FaDownload size={10} /> {book.downloadUrl ? 'Access PDF' : 'Contact Us'}
                 </a>
               </div>
             </motion.div>

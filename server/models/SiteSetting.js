@@ -16,9 +16,6 @@ const siteSettingSchema = new mongoose.Schema({
     coursesSuffix: { type: String, default: '+' },
     coursesLabel: { type: String, default: 'Courses' },
 
-    instructorsCount: { type: Number, default: 15 },
-    instructorsSuffix: { type: String, default: '+' },
-    instructorsLabel: { type: String, default: 'Instructors' },
 
     satisfactionRate: { type: Number, default: 99 },
     satisfactionSuffix: { type: String, default: '%' },

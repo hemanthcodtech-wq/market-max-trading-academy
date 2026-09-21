@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaLock, FaShieldAlt, FaCreditCard, FaCheckCircle } from 'react-icons/fa';
+import { FaLock, FaShieldAlt, FaCheckCircle, FaArrowLeft } from 'react-icons/fa';
 
 const Checkout = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [agreed, setAgreed] = useState(true);
@@ -29,6 +30,7 @@ const Checkout = () => {
         setCourse(data.data);
       } catch (error) {
         console.error('Error fetching course for checkout:', error);
+        setLoadError(error.response?.data?.message || 'This course is not available for checkout.');
       } finally {
         setLoading(false);
       }
@@ -130,19 +132,32 @@ const Checkout = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-bg-cream">
+      <div className="flex min-h-screen items-center justify-center bg-[#0B0F19]">
         <div className="w-12 h-12 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (loadError || !course) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0B0F19] px-6 text-center font-inter">
+        <div className="max-w-md rounded-3xl border border-gray-800 bg-[#131722] p-8 shadow-2xl">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 text-red-400"><FaLock size={20} /></div>
+          <h1 className="mt-5 text-2xl font-black text-white">Checkout unavailable</h1>
+          <p className="mt-2 text-sm leading-relaxed text-gray-400">{loadError || 'We could not load this course. Please return to the course catalogue and try again.'}</p>
+          <button onClick={() => navigate('/courses')} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-bold text-[#0B0F19]"><FaArrowLeft size={12} /> Back to courses</button>
+        </div>
       </div>
     );
   }
 
   if (success) {
     return (
-      <div className="min-h-screen bg-bg-cream flex flex-col items-center justify-center p-4">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#0B0F19] p-4">
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-[#1E293B] p-8 rounded-3xl shadow-xl max-w-md w-full text-center"
+          className="w-full max-w-md rounded-3xl border border-gray-800 bg-[#131722] p-8 text-center shadow-xl"
         >
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-500">
             <FaCheckCircle size={40} />
@@ -156,21 +171,21 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-bg-cream py-12 px-4 sm:px-6 lg:px-8 font-inter">
+    <div className="min-h-screen bg-[#0B0F19] px-4 py-8 font-inter text-gray-300 sm:px-6 lg:px-8 lg:py-12">
       <div className="max-w-4xl mx-auto">
         
         {/* Header */}
-        <div className="mb-8 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
+        <div className="mb-7 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4AF37]/10 text-[#D4AF37]">
             <FaLock size={16} />
           </div>
-          <h1 className="text-2xl font-bold text-gray-100">Secure Checkout</h1>
+          <h1 className="text-2xl font-black text-white">Secure Checkout</h1>
         </div>
 
-        <div className="bg-[#1E293B] rounded-3xl shadow-xl overflow-hidden border border-gray-800 flex flex-col md:flex-row">
+        <div className="flex flex-col overflow-hidden rounded-3xl border border-gray-800 bg-[#131722] shadow-[0_25px_70px_rgba(0,0,0,0.3)] md:flex-row">
           
           {/* Payment Form */}
-          <div className="flex-1 p-8 md:p-12">
+          <div className="flex-1 p-6 sm:p-8 md:p-12">
             <h2 className="text-xl font-bold text-white mb-6">Payment Information</h2>
             
             <form onSubmit={handleCheckout} className="space-y-6">
@@ -209,7 +224,7 @@ const Checkout = () => {
           </div>
 
           {/* Order Summary */}
-          <div className="md:w-96 bg-[#0F172A] p-8 md:p-12 border-t md:border-t-0 md:border-l border-gray-800 flex flex-col">
+          <div className="flex flex-col border-t border-gray-800 bg-[#0F172A] p-6 sm:p-8 md:w-96 md:border-l md:border-t-0 md:p-12">
             <h2 className="text-xl font-bold text-white mb-6">Order Summary</h2>
             
             <div className="flex gap-4 mb-8">

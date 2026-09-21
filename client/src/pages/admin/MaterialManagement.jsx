@@ -123,12 +123,12 @@ const MaterialManagement = () => {
     <div className="space-y-8 pb-24 md:pb-8 font-inter">
       
       {/* Top Banner Header */}
-      <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-[#131722]/80 border-gray-800 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 text-blue-600-dark text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 text-[#D4AF37]-dark text-xs font-bold uppercase tracking-wider mb-2">
             Learning Resources
           </div>
-          <h1 className="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight">Class Materials & Recordings</h1>
+          <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tight">Class Materials & Recordings</h1>
           <p className="text-gray-500 text-sm mt-1">Upload daily session video recordings, PDF guides, and practice materials.</p>
         </div>
         
@@ -137,7 +137,7 @@ const MaterialManagement = () => {
             setFormData({ ...formData, courseId: selectedCourseId });
             setIsModalOpen(true);
           }}
-          className="bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-bold py-3.5 px-6 rounded-2xl shadow-[0_6px_20px_rgba(41,120,56,0.3)] transition-all flex items-center gap-2.5 w-max text-xs lg:text-sm group"
+          className="bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-bold py-3.5 px-6 rounded-2xl shadow-[0_6px_20px_rgba(41,120,56,0.3)] transition-all flex items-center gap-2.5 w-max text-xs lg:text-sm group"
         >
           <FaPlus size={12} className="group-hover:rotate-90 transition-transform" />
           <span>Upload Material</span>
@@ -145,13 +145,13 @@ const MaterialManagement = () => {
       </div>
 
       {/* Course Selector Filter Card */}
-      <div className="bg-white/70 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 p-5 lg:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-[#0B0F19]/70 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 p-5 lg:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-blue-600/10 text-blue-600 flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center font-bold">
             <FaBook />
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Select Course Curricula</label>
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Select Course Curricula</label>
             <span className="text-xs text-gray-500 font-medium">Filter materials by registered program</span>
           </div>
         </div>
@@ -159,7 +159,7 @@ const MaterialManagement = () => {
         <select 
           value={selectedCourseId} 
           onChange={(e) => setSelectedCourseId(e.target.value)}
-          className="w-full md:w-80 p-3.5 bg-white/90 border border-slate-200/80 rounded-2xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-[#D4AF37]/20 transition-all font-bold text-slate-800 shadow-xs text-sm"
+          className="w-full md:w-80 p-3.5 bg-[#0B0F19]/90 border border-slate-200/80 rounded-2xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-[#D4AF37]/20 transition-all font-bold text-white shadow-xs text-sm"
         >
           {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
         </select>
@@ -172,7 +172,7 @@ const MaterialManagement = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
           {materials.map(mat => (
-            <div key={mat._id} className="bg-white/75 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 p-6 flex flex-col justify-between hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
+            <div key={mat._id} className="bg-[#131722]/80 border-gray-800 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 p-6 flex flex-col justify-between hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
               <div>
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-2">
@@ -181,7 +181,7 @@ const MaterialManagement = () => {
                         <FaVideo size={12} /> Recording
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 rounded-xl text-xs font-bold">
+                      <span className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-[#D4AF37] border border-blue-100 rounded-xl text-xs font-bold">
                         <FaFilePdf size={12} /> Document
                       </span>
                     )}
@@ -190,19 +190,19 @@ const MaterialManagement = () => {
                     {new Date(mat.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </span>
                 </div>
-                <h3 className="text-base font-extrabold text-slate-800 group-hover:text-blue-600 transition-colors leading-snug">{mat.topicsCovered}</h3>
+                <h3 className="text-base font-extrabold text-white group-hover:text-[#D4AF37] transition-colors leading-snug">{mat.topicsCovered}</h3>
               </div>
 
               <div className="flex items-center gap-2.5 pt-5 border-t border-slate-100 mt-6">
                 <button 
                   onClick={() => setPreviewMaterial(mat)} 
-                  className="flex-1 bg-blue-600/10 hover:bg-blue-600 hover:text-slate-800 text-blue-600-dark font-bold py-2.5 rounded-xl text-center transition-all flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider"
+                  className="flex-1 bg-[#D4AF37]/10 hover:bg-blue-600 hover:text-white text-[#D4AF37]-dark font-bold py-2.5 rounded-xl text-center transition-all flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider"
                 >
                   <FaEye size={12} /> Preview
                 </button>
                 <button 
                   onClick={() => handleDeleteMaterial(mat._id)}
-                  className="w-10 h-10 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-slate-800 flex items-center justify-center transition-all shadow-xs"
+                  className="w-10 h-10 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all shadow-xs"
                   title="Delete Material"
                 >
                   <FaTrash size={12} />
@@ -211,7 +211,7 @@ const MaterialManagement = () => {
             </div>
           ))}
           {materials.length === 0 && (
-            <div className="col-span-full py-16 text-center text-slate-500 bg-white/40 backdrop-blur-md rounded-3xl border border-dashed border-slate-300">
+            <div className="col-span-full py-16 text-center text-gray-400 bg-[#0B0F19]/40 backdrop-blur-md rounded-3xl border border-dashed border-slate-300">
               No materials or recordings uploaded yet for this course.
             </div>
           )}
@@ -223,17 +223,17 @@ const MaterialManagement = () => {
         {previewMaterial && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setPreviewMaterial(null)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col relative z-10 overflow-hidden">
-              <div className="bg-white px-6 py-5 border-b border-slate-100 flex justify-between items-center shrink-0">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-[#0B0F19] rounded-3xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col relative z-10 overflow-hidden">
+              <div className="bg-[#0B0F19] px-6 py-5 border-b border-slate-100 flex justify-between items-center shrink-0">
                 <div>
-                  <h3 className="font-bold text-lg text-slate-800">{previewMaterial.topicsCovered}</h3>
+                  <h3 className="font-bold text-lg text-white">{previewMaterial.topicsCovered}</h3>
                   <p className="text-sm font-medium text-gray-500">{previewMaterial.materialType} • {new Date(previewMaterial.date).toLocaleDateString()}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <a href={previewMaterial.driveLink} target="_blank" rel="noreferrer" className="text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
+                  <a href={previewMaterial.driveLink} target="_blank" rel="noreferrer" className="text-xs font-bold text-[#D4AF37] bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
                     Open in Drive
                   </a>
-                  <button onClick={() => setPreviewMaterial(null)} className="p-2.5 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-all">
+                  <button onClick={() => setPreviewMaterial(null)} className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all">
                     <FaTimes size={18}/>
                   </button>
                 </div>
@@ -262,47 +262,47 @@ const MaterialManagement = () => {
             />
             <motion.div 
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="bg-white/40 backdrop-blur-3xl border-l border-white/60 shadow-[-20px_0_40px_rgba(0,0,0,0.08)] w-full max-w-md h-full overflow-y-auto relative z-10 p-6 flex flex-col"
+              className="bg-[#0B0F19]/40 backdrop-blur-3xl border-l border-white/60 shadow-[-20px_0_40px_rgba(0,0,0,0.08)] w-full max-w-md h-full overflow-y-auto relative z-10 p-6 flex flex-col"
             >
               <button 
                 onClick={() => !submitting && setIsModalOpen(false)}
-                className="absolute top-6 right-6 text-gray-500 hover:text-blue-600 bg-white/60 backdrop-blur-md p-2.5 rounded-full border border-white/50 shadow-sm transition-all z-20"
+                className="absolute top-6 right-6 text-gray-500 hover:text-[#D4AF37] bg-[#131722]/80 border-gray-800 backdrop-blur-md p-2.5 rounded-full border border-white/50 shadow-sm transition-all z-20"
               >
                 <FaTimes />
               </button>
               
-              <h2 className="text-xl font-bold text-slate-700 mb-6 flex items-center gap-2"><FaBook className="text-blue-600"/> Add Material</h2>
+              <h2 className="text-xl font-bold text-slate-700 mb-6 flex items-center gap-2"><FaBook className="text-[#D4AF37]"/> Add Material</h2>
               
               <form onSubmit={handleSubmit} className="space-y-5 flex-1">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-600 mb-1.5">Course</label>
-                  <select required value={formData.courseId} onChange={e => setFormData({...formData, courseId: e.target.value})} className="w-full p-3 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all">
+                  <label className="block text-sm font-semibold text-gray-300 mb-1.5">Course</label>
+                  <select required value={formData.courseId} onChange={e => setFormData({...formData, courseId: e.target.value})} className="w-full p-3 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all">
                     <option value="">Select a course...</option>
                     {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-600 mb-1.5">Date of Class</label>
-                  <input type="date" required value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full p-3 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all" />
+                  <label className="block text-sm font-semibold text-gray-300 mb-1.5">Date of Class</label>
+                  <input type="date" required value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full p-3 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-600 mb-1.5">Topics Covered</label>
-                  <input type="text" required placeholder="e.g. Advanced Poses" value={formData.topicsCovered} onChange={e => setFormData({...formData, topicsCovered: e.target.value})} className="w-full p-3 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all" />
+                  <label className="block text-sm font-semibold text-gray-300 mb-1.5">Topics Covered</label>
+                  <input type="text" required placeholder="e.g. Advanced Poses" value={formData.topicsCovered} onChange={e => setFormData({...formData, topicsCovered: e.target.value})} className="w-full p-3 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-600 mb-1.5">Material Type</label>
-                  <select required value={formData.materialType} onChange={e => setFormData({...formData, materialType: e.target.value})} className="w-full p-3 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all">
+                  <label className="block text-sm font-semibold text-gray-300 mb-1.5">Material Type</label>
+                  <select required value={formData.materialType} onChange={e => setFormData({...formData, materialType: e.target.value})} className="w-full p-3 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all">
                     <option value="Recording">Recording</option>
                     <option value="PDF">PDF</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-600 mb-1.5">Drive Link (URL)</label>
-                  <input type="url" required placeholder="https://drive.google.com/..." value={formData.driveLink} onChange={e => setFormData({...formData, driveLink: e.target.value})} className="w-full p-3 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all" />
+                  <label className="block text-sm font-semibold text-gray-300 mb-1.5">Drive Link (URL)</label>
+                  <input type="url" required placeholder="https://drive.google.com/..." value={formData.driveLink} onChange={e => setFormData({...formData, driveLink: e.target.value})} className="w-full p-3 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:border-blue-600 transition-all" />
                 </div>
                 <div className="pt-6">
-                  <button type="submit" disabled={submitting} className="w-full bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-bold py-3.5 rounded-xl transition-all disabled:opacity-70 flex justify-center items-center gap-2">
+                  <button type="submit" disabled={submitting} className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-70 flex justify-center items-center gap-2">
                     {submitting ? 'Adding...' : 'Add Material'}
                   </button>
                 </div>

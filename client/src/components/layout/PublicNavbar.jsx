@@ -32,7 +32,6 @@ const PublicNavbar = () => {
     { name: 'Services', path: '/services' },
     { name: 'Certificates', path: '/certificates' },
     { name: 'E-Books', path: '/ebooks' },
-    { name: 'Tools', path: '/tools' },
     { name: 'Blog', path: '/blog' },
     { name: 'About Us', path: '/about' },
     { name: 'Contact', path: '/contact' },
@@ -48,7 +47,6 @@ const PublicNavbar = () => {
   const moreNavLinks = [
     { name: 'Certificates', path: '/certificates' },
     { name: 'E-Books', path: '/ebooks' },
-    { name: 'Tools', path: '/tools' },
     { name: 'Blog', path: '/blog' },
     { name: 'Contact', path: '/contact' },
   ];

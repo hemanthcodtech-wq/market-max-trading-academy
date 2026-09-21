@@ -21,7 +21,7 @@ const CourseContent = ({ course, handleEnroll, isEnrolled, isWishlisted, handleT
   const learnItems = learnTranslated ? learnTranslated.split(' || ').filter(Boolean) : [];
 
   return (
-    <div className="min-h-screen bg-bg-cream relative overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-[#080B12] text-white relative overflow-x-hidden font-sans">
       <SEO 
         title={course.title}
         description={course.description ? course.description.slice(0, 160) : 'Live instructional trading masterclass from MarketMax Trading Academy.'}
@@ -34,10 +34,10 @@ const CourseContent = ({ course, handleEnroll, isEnrolled, isWishlisted, handleT
       {/* =========================================
           MOBILE VIEW (visible on small screens)
           ========================================= */}
-      <div className="md:hidden pb-24">
+      <div className="md:hidden pb-24 bg-[radial-gradient(circle_at_top_right,_rgba(212,175,55,0.14),_transparent_42%),linear-gradient(180deg,#0B0F19_0%,#080B12_72%)]">
 
         {/* Image Section with Wishlist Button */}
-        <div className="w-full h-[280px] bg-gray-200 relative">
+        <div className="w-full h-[280px] bg-[#111722] relative">
           {course.thumbnailUrl ? (
             <img src={course.thumbnailUrl} alt={course.title} className="w-full h-full object-cover" />
           ) : (
@@ -93,7 +93,7 @@ const CourseContent = ({ course, handleEnroll, isEnrolled, isWishlisted, handleT
               <ul className="space-y-3">
                 {learnItems.map((item, idx) => (
                   <li key={idx} className="flex items-start gap-3">
-                    <FaCheck className="text-[#D4AF37]-dark mt-0.5 shrink-0 text-sm" />
+                    <FaCheck className="text-[#D4AF37] mt-0.5 shrink-0 text-sm" />
                     <span className="text-sm text-gray-300 font-semibold">{item}</span>
                   </li>
                 ))}
@@ -103,7 +103,7 @@ const CourseContent = ({ course, handleEnroll, isEnrolled, isWishlisted, handleT
         </div>
 
         {/* Sticky Bottom Action */}
-        <div className="fixed bottom-16 left-0 w-full bg-bg-cream/95 backdrop-blur-md px-5 py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] border-t border-gray-800">
+        <div className="fixed bottom-16 left-0 w-full bg-[#0B0F19]/95 backdrop-blur-md px-5 py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.45)] border-t border-white/10">
           <button 
             onClick={handleEnroll}
             className={`w-full font-bold py-4 rounded-[20px] transition-all text-[15px] shadow-lg ${
@@ -132,11 +132,11 @@ const CourseContent = ({ course, handleEnroll, isEnrolled, isWishlisted, handleT
             
             {/* Left Content */}
             <div className="flex-1 space-y-6">
-              <div className="flex items-center gap-3">
-                <span className="bg-[#1E293B]/60 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-[#D4AF37] shadow-sm border border-white/50">
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="bg-[#D4AF37]/10 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-[#F3D36A] shadow-sm border border-[#D4AF37]/25">
                   {course.category}
                 </span>
-                <span className="bg-[#D4AF37]/10 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-[#D4AF37]-dark">
+                <span className="bg-white/5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-gray-300 border border-white/10">
                   {course.level}
                 </span>
                 {isEnrolled && (
@@ -178,7 +178,7 @@ const CourseContent = ({ course, handleEnroll, isEnrolled, isWishlisted, handleT
             <div className="flex-1 space-y-10">
               
               {/* About Block */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#1E293B]/40 backdrop-blur-3xl rounded-3xl p-8 lg:p-10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-white/60">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/[0.045] backdrop-blur-3xl rounded-3xl p-8 lg:p-10 shadow-[0_18px_45px_rgba(0,0,0,0.24)] border border-white/10">
                 <h2 className="text-4xl font-bold font-playfair text-white mb-5">{t('course_about')}</h2>
                 <div className="w-16 h-1 bg-[#D4AF37] mb-6 rounded-full"></div>
                 <p className="text-gray-300 font-inter leading-relaxed text-lg">{descTe}</p>
@@ -186,14 +186,14 @@ const CourseContent = ({ course, handleEnroll, isEnrolled, isWishlisted, handleT
 
               {/* What You Will Learn Block */}
               {learnItems.length > 0 && (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#1E293B]/40 backdrop-blur-3xl rounded-3xl p-8 lg:p-10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-white/60">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white/[0.045] backdrop-blur-3xl rounded-3xl p-8 lg:p-10 shadow-[0_18px_45px_rgba(0,0,0,0.24)] border border-white/10">
                   <h2 className="text-4xl font-bold font-playfair text-white mb-6">{t('course_learn')}</h2>
                   <div className="w-16 h-1 bg-[#D4AF37] mb-8 rounded-full"></div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {learnItems.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-4 bg-[#1E293B]/50 p-4 rounded-2xl border border-white/50 shadow-sm transition-transform hover:-translate-y-1">
+                        <div key={idx} className="flex items-start gap-4 bg-black/15 p-4 rounded-2xl border border-white/10 shadow-sm transition-transform hover:-translate-y-1">
                         <div className="w-8 h-8 rounded-full bg-[#D4AF37]/20 flex items-center justify-center shrink-0">
-                          <FaCheck className="text-[#D4AF37]-dark text-[14px]" />
+                          <FaCheck className="text-[#D4AF37] text-[14px]" />
                         </div>
                         <span className="text-gray-100 font-bold text-[16px] mt-1">{item}</span>
                       </div>
@@ -205,7 +205,7 @@ const CourseContent = ({ course, handleEnroll, isEnrolled, isWishlisted, handleT
 
             {/* Sticky Sidebar Action */}
             <div className="w-full lg:w-96">
-              <div className="sticky top-36 bg-[#1E293B]/40 backdrop-blur-3xl rounded-[2.5rem] p-8 shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-white/80">
+              <div className="sticky top-36 bg-white/[0.055] backdrop-blur-3xl rounded-[2.5rem] p-8 shadow-[0_30px_60px_rgba(0,0,0,0.3)] border border-white/10">
                 <h3 className="text-2xl font-black text-white text-center mb-6">{isEnrolled ? 'Already Enrolled' : t('course_ready')}</h3>
                 
                 {isEnrolled && (
@@ -346,7 +346,7 @@ const CourseDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-bg-cream">
+      <div className="flex justify-center items-center min-h-screen bg-[#080B12]">
         <div className="w-12 h-12 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -354,7 +354,7 @@ const CourseDetails = () => {
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-bg-cream flex items-center justify-center">
+      <div className="min-h-screen bg-[#080B12] flex items-center justify-center">
         <p className="text-gray-500 font-medium">Class not found.</p>
       </div>
     );

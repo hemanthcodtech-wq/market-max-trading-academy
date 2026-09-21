@@ -3,15 +3,14 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaPlus, FaEdit, FaTrash, FaTimes, FaCloudUploadAlt, 
-  FaImage, FaChalkboardTeacher, FaShieldAlt, FaClock, 
+  FaImage, FaShieldAlt, FaClock,
   FaCheckCircle, FaUserCheck, FaCalendarAlt, FaHistory,
-  FaPlayCircle, FaExternalLinkAlt, FaSyncAlt, FaWhatsapp
+  FaPlayCircle, FaExternalLinkAlt, FaSyncAlt, FaWhatsapp, FaTelegramPlane,
+  FaChevronLeft, FaChevronRight
 } from 'react-icons/fa';
 
 const CourseManagement = () => {
   const [courses, setCourses] = useState([]);
-  const [instructors, setInstructors] = useState([]);
-  const [moderators, setModerators] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
@@ -19,7 +18,7 @@ const CourseManagement = () => {
   const [formData, setFormData] = useState({
     title: '', 
     description: '', 
-    category: 'Trading', 
+    category: 'Technical Analysis', 
     price: '', 
     duration: '', 
     durationMonths: 1, 
@@ -33,8 +32,6 @@ const CourseManagement = () => {
     language: 'English', 
     accessValidity: '2 Months', 
     whatYouWillLearn: '',
-    instructorId: '',
-    moderatorId: '',
     whatsappGroupLink: ''
   });
 
@@ -71,28 +68,8 @@ const CourseManagement = () => {
 
   useEffect(() => {
     fetchCourses();
-    fetchStaffList();
     fetchHolidays(new Date().getFullYear());
   }, []);
-
-  const fetchStaffList = async () => {
-    try {
-      const headers = { Authorization: `Bearer ${localStorage.getItem('adminToken')}` };
-      const [instRes, modRes] = await Promise.allSettled([
-        axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/instructors`, { headers }),
-        axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/moderators`, { headers })
-      ]);
-
-      if (instRes.status === 'fulfilled' && instRes.value.data?.success) {
-        setInstructors(instRes.value.data.data.filter(i => i.status !== 'inactive'));
-      }
-      if (modRes.status === 'fulfilled' && modRes.value.data?.success) {
-        setModerators(modRes.value.data.data.filter(m => m.status !== 'inactive'));
-      }
-    } catch (err) {
-      console.error('Error fetching staff list for assignments:', err);
-    }
-  };
 
   const fetchHolidays = async (year) => {
     try {
@@ -131,13 +108,10 @@ const CourseManagement = () => {
   const handleOpenModal = (course = null) => {
     if (course) {
       setEditingCourse(course);
-      const instId = course.instructorId?._id || course.instructorId || '';
-      const modId = course.moderatorId?._id || course.moderatorId || '';
-
       setFormData({
         title: course.title || '',
         description: course.description || '',
-        category: course.category || 'Trading',
+        category: course.category || 'Technical Analysis',
         price: course.price !== undefined ? course.price : 0,
         duration: course.duration || '',
         durationMonths: course.durationMonths || 1,
@@ -151,8 +125,6 @@ const CourseManagement = () => {
         language: course.language || 'English',
         accessValidity: course.accessValidity || '2 Months',
         whatYouWillLearn: course.whatYouWillLearn ? course.whatYouWillLearn.join('\n') : '',
-        instructorId: instId,
-        moderatorId: modId,
         whatsappGroupLink: course.whatsappGroupLink || ''
       });
     } else {
@@ -160,7 +132,7 @@ const CourseManagement = () => {
       setFormData({ 
         title: '', 
         description: '', 
-        category: 'Trading', 
+        category: 'Technical Analysis', 
         price: '', 
         duration: '', 
         durationMonths: 1, 
@@ -174,8 +146,6 @@ const CourseManagement = () => {
         language: 'English', 
         accessValidity: '2 Months', 
         whatYouWillLearn: '',
-        instructorId: instructors.length > 0 ? instructors[0]._id : '',
-        moderatorId: moderators.length > 0 ? moderators[0]._id : '',
         whatsappGroupLink: ''
       });
     }
@@ -351,20 +321,20 @@ const CourseManagement = () => {
     <div className="space-y-8 pb-24 md:pb-8 font-inter">
       
       {/* Top Banner Header */}
-      <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-[#131722]/80 border-gray-800 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 text-blue-600-dark text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 text-[#D4AF37]-dark text-xs font-bold uppercase tracking-wider mb-2">
             Curriculum & Programs
           </div>
-          <h1 className="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight">Course Management</h1>
+          <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tight">Course Management</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Configure programs, assign lead instructors & moderators, manage daily class timetables, and reschedule sessions with Zoom.
+            Configure trading programs, manage daily class timetables, and reschedule sessions with Zoom.
           </p>
         </div>
         
         <button
           onClick={() => handleOpenModal()}
-          className="bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-bold py-3.5 px-6 rounded-2xl shadow-[0_6px_20px_rgba(41,120,56,0.3)] transition-all flex items-center gap-2.5 w-max text-xs lg:text-sm group cursor-pointer"
+          className="bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-bold py-3.5 px-6 rounded-2xl shadow-[0_6px_20px_rgba(41,120,56,0.3)] transition-all flex items-center gap-2.5 w-max text-xs lg:text-sm group cursor-pointer"
         >
           <FaPlus size={12} className="group-hover:rotate-90 transition-transform" />
           <span>Create New Course</span>
@@ -378,8 +348,6 @@ const CourseManagement = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
           {courses.map(course => {
-            const assignedInstructorName = course.instructorId?.name || course.instructor;
-            const assignedInstructorSpeciality = course.instructorId?.speciality;
             const assignedModeratorName = course.moderatorId?.name || course.moderator;
 
             return (
@@ -387,7 +355,7 @@ const CourseManagement = () => {
                 key={course._id}
                 initial={{ opacity: 0, scale: 0.96 }} 
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-white/75 backdrop-blur-2xl rounded-[2.25rem] border border-white/80 flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden group"
+                className="bg-[#131722]/80 border-gray-800 backdrop-blur-2xl rounded-[2.25rem] border border-white/80 flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden group"
               >
                 {/* Image Section */}
                 <div className="relative h-48 w-full bg-gray-800/80 overflow-hidden p-3 pb-0">
@@ -395,15 +363,15 @@ const CourseManagement = () => {
                     {course.thumbnailUrl ? (
                       <img src={course.thumbnailUrl} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-600 bg-gray-800"><FaImage size={32} /></div>
+                      <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-800"><FaImage size={32} /></div>
                     )}
-                    <div className="absolute top-2.5 right-2.5 bg-white/95 backdrop-blur-md px-3 py-1 rounded-xl text-[10px] font-extrabold text-blue-600 shadow-xs uppercase tracking-wider">
+                    <div className="absolute top-2.5 right-2.5 bg-[#0B0F19] border-gray-700 backdrop-blur-md px-3 py-1 rounded-xl text-[10px] font-extrabold text-[#D4AF37] shadow-xs uppercase tracking-wider">
                       {course.category}
                     </div>
 
                     {/* Batch Timing Tag */}
                     {(course.timings || course.startTime) && (
-                      <div className="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-md px-3 py-1 rounded-xl text-[11px] font-bold text-slate-800 shadow-xs flex items-center gap-1.5">
+                      <div className="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-md px-3 py-1 rounded-xl text-[11px] font-bold text-white shadow-xs flex items-center gap-1.5">
                         <FaClock size={10} className="text-emerald-400" />
                         <span>{course.timings || `${course.startTime} - ${course.endTime}`}</span>
                       </div>
@@ -414,37 +382,17 @@ const CourseManagement = () => {
                 {/* Structured Content Section */}
                 <div className="p-6 flex-1 flex flex-col">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-base lg:text-lg font-black text-slate-800 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-base lg:text-lg font-black text-white leading-snug line-clamp-2 group-hover:text-[#D4AF37] transition-colors">
                       {course.title}
                     </h3>
                   </div>
 
-                  {/* Assigned Faculty and Moderator Badges */}
-                  <div className="space-y-2 mb-4">
-                    <div className="p-2.5 rounded-xl bg-blue-600/10/90 border border-blue-600/30/80 flex items-center justify-between gap-2 text-xs">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <FaChalkboardTeacher className="text-blue-600 shrink-0" size={13} />
-                        <div className="min-w-0">
-                          <span className="font-bold text-emerald-950 truncate block">
-                            {assignedInstructorName ? `Guru: ${assignedInstructorName}` : 'Instructor: Not Assigned'}
-                          </span>
-                          {assignedInstructorSpeciality && (
-                            <span className="text-[10px] text-blue-600 truncate block">
-                              {assignedInstructorSpeciality}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-200/60 text-emerald-900 shrink-0">
-                        Faculty
-                      </span>
-                    </div>
-
-                    {assignedModeratorName && (
-                      <div className="p-2 rounded-xl bg-teal-50/80 border border-teal-200/60 flex items-center justify-between gap-2 text-xs">
+                  {/* Assigned moderator */}
+                  {assignedModeratorName && (
+                      <div className="p-2 rounded-xl bg-teal-500/10 border border-teal-400/20 flex items-center justify-between gap-2 text-xs">
                         <div className="flex items-center gap-2 min-w-0">
                           <FaShieldAlt className="text-teal-700 shrink-0" size={12} />
-                          <span className="font-bold text-teal-950 truncate">
+                          <span className="font-bold text-gray-200 truncate">
                             Moderator: {assignedModeratorName}
                           </span>
                         </div>
@@ -453,24 +401,23 @@ const CourseManagement = () => {
                         </span>
                       </div>
                     )}
-                  </div>
                   
-                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-500 mb-6 bg-[#F8FAFC] p-3.5 rounded-2xl border border-slate-200/50">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-400 mb-6 bg-white/[0.045] p-3.5 rounded-2xl border border-white/10">
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-slate-500 block">Fee</span>
-                      <span className="font-black text-blue-600-dark text-sm">₹{course.price || 0}</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block">Fee</span>
+                      <span className="font-black text-[#F3D36A] text-sm">₹{course.price || 0}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-slate-500 block">Level</span>
-                      <span className="font-bold text-slate-700">{course.level || 'All Levels'}</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block">Level</span>
+                      <span className="font-bold text-gray-200">{course.level || 'All Levels'}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-slate-500 block">Language</span>
-                      <span className="font-bold text-slate-700 truncate block">{course.language || 'English'}</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block">Language</span>
+                      <span className="font-bold text-gray-200 truncate block">{course.language || 'English'}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-slate-500 block">Sessions</span>
-                      <span className="font-bold text-blue-600-dark">
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block">Sessions</span>
+                      <span className="font-bold text-[#F3D36A]">
                         {course.sessionDates?.length || 0} Live Classes
                       </span>
                     </div>
@@ -481,13 +428,13 @@ const CourseManagement = () => {
                     <div className="flex items-center gap-1.5">
                       <button 
                         onClick={() => handleViewEnrollments(course)} 
-                        className="px-3 py-1.5 bg-blue-600/10 text-blue-600 hover:bg-blue-600 hover:text-slate-800 transition-all rounded-xl text-xs font-bold cursor-pointer"
+                        className="px-3 py-1.5 bg-[#D4AF37]/10 text-[#D4AF37] hover:bg-blue-600 hover:text-white transition-all rounded-xl text-xs font-bold cursor-pointer"
                       >
                         Students
                       </button>
                       <button 
                         onClick={() => handleOpenTimetable(course)} 
-                        className="px-3 py-1.5 bg-blue-600/20/80 text-emerald-950 hover:bg-emerald-700 hover:text-slate-800 transition-all rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer border border-emerald-300/60"
+                        className="px-3 py-1.5 bg-blue-600/20/80 text-emerald-950 hover:bg-emerald-700 hover:text-white transition-all rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer border border-emerald-300/60"
                         title="Manage Sessions & Reschedule Classes"
                       >
                         <FaCalendarAlt size={10} />
@@ -498,14 +445,14 @@ const CourseManagement = () => {
                     <div className="flex items-center gap-1.5">
                       <button 
                         onClick={() => handleOpenModal(course)} 
-                        className="w-8 h-8 flex items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 hover:bg-blue-600 hover:text-slate-800 transition-all shadow-xs cursor-pointer" 
+                        className="w-8 h-8 flex items-center justify-center rounded-xl bg-[#D4AF37]/10 text-[#D4AF37] hover:bg-blue-600 hover:text-white transition-all shadow-xs cursor-pointer" 
                         title="Edit Course"
                       >
                         <FaEdit size={12} />
                       </button>
                       <button 
                         onClick={() => handleDelete(course._id)} 
-                        className="w-8 h-8 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-slate-800 transition-all shadow-xs cursor-pointer" 
+                        className="w-8 h-8 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-xs cursor-pointer" 
                         title="Delete Course"
                       >
                         <FaTrash size={12} />
@@ -517,7 +464,7 @@ const CourseManagement = () => {
             );
           })}
           {courses.length === 0 && (
-            <div className="col-span-full py-16 text-center text-slate-500 bg-white/40 backdrop-blur-md rounded-3xl border border-dashed border-slate-300">
+            <div className="col-span-full py-16 text-center text-gray-400 bg-[#0B0F19]/40 backdrop-blur-md rounded-3xl border border-dashed border-slate-300">
               No courses found. Click "Create New Course" to add your first program.
             </div>
           )}
@@ -535,33 +482,33 @@ const CourseManagement = () => {
             />
             <motion.div 
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="bg-white/40 backdrop-blur-3xl border-l border-white/60 shadow-[-20px_0_40px_rgba(0,0,0,0.08)] w-full max-w-md h-full overflow-y-auto relative z-10 p-6 flex flex-col"
+              className="bg-[#0B0F19] backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_40px_rgba(0,0,0,0.45)] w-full max-w-md h-full overflow-y-auto relative z-10 p-6 flex flex-col"
             >
               <button 
                 onClick={() => setIsEnrolledModalOpen(false)}
-                className="absolute top-6 right-6 text-gray-500 hover:text-blue-600 bg-white/60 backdrop-blur-md p-2.5 rounded-full border border-white/50 shadow-sm transition-all z-20 cursor-pointer"
+                className="absolute top-6 right-6 text-gray-500 hover:text-[#D4AF37] bg-[#131722]/80 border-gray-800 backdrop-blur-md p-2.5 rounded-full border border-white/50 shadow-sm transition-all z-20 cursor-pointer"
               >
                 <FaTimes />
               </button>
               
-              <h2 className="text-xl font-bold text-slate-700 mb-2 mt-2">Enrolled Students</h2>
-              <p className="text-blue-600 font-semibold text-sm mb-6 line-clamp-1">{enrolledCourse?.title}</p>
+              <h2 className="text-xl font-bold text-white mb-2 mt-2">Enrolled Students</h2>
+              <p className="text-[#D4AF37] font-semibold text-sm mb-6 line-clamp-1">{enrolledCourse?.title}</p>
               
               <div className="flex-1 overflow-y-auto pr-2">
                 {loadingEnrollments ? (
                   <div className="flex justify-center p-8"><div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div></div>
                 ) : enrolledUsers.length === 0 ? (
-                  <div className="text-center text-gray-500 py-8 bg-white/50 rounded-xl border border-dashed border-slate-300 text-sm">
+                  <div className="text-center text-gray-500 py-8 bg-[#0B0F19]/50 rounded-xl border border-dashed border-slate-300 text-sm">
                     No students are currently enrolled in this course.
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {enrolledUsers.map(enrollment => (
-                      <div key={enrollment._id} className="bg-white/80 p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col gap-1">
-                        <span className="font-bold text-slate-700 text-sm">{enrollment.studentEmail}</span>
+                      <div key={enrollment._id} className="bg-white/[0.045] p-4 rounded-xl border border-white/10 shadow-sm flex flex-col gap-1">
+                        <span className="font-bold text-gray-200 text-sm">{enrollment.studentEmail}</span>
                         <div className="flex justify-between items-center mt-1">
-                          <span className="text-xs text-gray-500">Paid: <span className="font-semibold text-blue-600">₹{enrollment.amountPaid}</span></span>
-                          <span className="text-[10px] uppercase font-bold text-slate-500 bg-gray-800 px-2 py-0.5 rounded-md">Progress: {enrollment.progress}%</span>
+                          <span className="text-xs text-gray-500">Paid: <span className="font-semibold text-[#D4AF37]">₹{enrollment.amountPaid}</span></span>
+                          <span className="text-[10px] uppercase font-bold text-gray-400 bg-gray-800 px-2 py-0.5 rounded-md">Progress: {enrollment.progress}%</span>
                         </div>
                       </div>
                     ))}
@@ -584,21 +531,21 @@ const CourseManagement = () => {
             />
             <motion.div 
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="bg-white/50 backdrop-blur-3xl border-l border-white/60 shadow-[-20px_0_40px_rgba(0,0,0,0.08)] w-full max-w-2xl h-full overflow-y-auto relative z-10 p-6 md:p-8 flex flex-col"
+              className="bg-[#0B0F19]/50 backdrop-blur-3xl border-l border-white/60 shadow-[-20px_0_40px_rgba(0,0,0,0.08)] w-full max-w-2xl h-full overflow-y-auto relative z-10 p-6 md:p-8 flex flex-col"
             >
               <button 
                 onClick={() => setIsTimetableOpen(false)}
-                className="absolute top-6 right-6 text-gray-500 hover:text-blue-600 bg-white/60 backdrop-blur-md p-2.5 rounded-full border border-white/50 shadow-sm transition-all z-20 cursor-pointer"
+                className="absolute top-6 right-6 text-gray-500 hover:text-[#D4AF37] bg-[#131722]/80 border-gray-800 backdrop-blur-md p-2.5 rounded-full border border-white/50 shadow-sm transition-all z-20 cursor-pointer"
               >
                 <FaTimes />
               </button>
 
               <div className="mb-6">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600/10 text-blue-600-dark text-[11px] font-bold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4AF37]/10 text-[#D4AF37]-dark text-[11px] font-bold uppercase tracking-wider mb-2">
                   <FaCalendarAlt size={10} /> Live Sessions Schedule
                 </div>
-                <h2 className="text-xl md:text-2xl font-black text-slate-800 leading-tight">Class Timetable & Sessions</h2>
-                <p className="text-blue-600 font-bold text-sm mt-0.5 line-clamp-1">{timetableCourse?.title}</p>
+                <h2 className="text-xl md:text-2xl font-black text-white leading-tight">Class Timetable & Sessions</h2>
+                <p className="text-[#D4AF37] font-bold text-sm mt-0.5 line-clamp-1">{timetableCourse?.title}</p>
                 <p className="text-xs text-gray-500 mt-1">
                   Reschedule any individual class session to a new date/time. A new Zoom meeting link will be automatically generated.
                 </p>
@@ -608,7 +555,7 @@ const CourseManagement = () => {
                 {loadingTimetable ? (
                   <div className="flex justify-center p-12"><div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div></div>
                 ) : timetableClasses.length === 0 ? (
-                  <div className="text-center text-gray-500 py-12 bg-white/60 rounded-2xl border border-dashed border-slate-300 text-sm">
+                  <div className="text-center text-gray-500 py-12 bg-[#131722]/80 border-gray-800 rounded-2xl border border-dashed border-slate-300 text-sm">
                     No individual class sessions found for this course.
                   </div>
                 ) : (
@@ -619,22 +566,22 @@ const CourseManagement = () => {
                     return (
                       <div 
                         key={cls._id}
-                        className="bg-white/80 backdrop-blur-md p-4 md:p-5 rounded-2xl border border-white/90 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        className="bg-[#0B0F19]/80 backdrop-blur-md p-4 md:p-5 rounded-2xl border border-white/90 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                       >
                         <div className="space-y-1.5 flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-blue-600/20 text-emerald-900">
+                            <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-blue-600/20 text-emerald-300">
                               Session {idx + 1}
                             </span>
                             <span className="text-xs text-gray-500 font-semibold">
                               {formattedDate} • {cls.time || '06:00 AM'}
                             </span>
                           </div>
-                          <h4 className="font-extrabold text-sm text-slate-800 leading-tight line-clamp-2">
+                          <h4 className="font-extrabold text-sm text-white leading-tight line-clamp-2">
                             {cls.title}
                           </h4>
                           {cls.zoomMeetingId && (
-                            <span className="text-[11px] text-slate-500 block font-mono">
+                            <span className="text-[11px] text-gray-400 block font-mono">
                               Zoom ID: {cls.zoomMeetingId}
                             </span>
                           )}
@@ -646,7 +593,7 @@ const CourseManagement = () => {
                               href={cls.zoomLink}
                               target="_blank"
                               rel="noreferrer"
-                              className="p-2.5 bg-gray-800 hover:bg-gray-200 text-slate-600 rounded-xl text-xs font-bold transition-all"
+                              className="p-2.5 bg-gray-800 hover:bg-gray-200 text-gray-300 rounded-xl text-xs font-bold transition-all"
                               title="Preview Zoom Link"
                             >
                               <FaExternalLinkAlt size={12} />
@@ -654,7 +601,7 @@ const CourseManagement = () => {
                           )}
                           <button
                             onClick={() => handleOpenRescheduleModal(cls)}
-                            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-extrabold text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                            className="px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-extrabold text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
                           >
                             <FaSyncAlt size={11} />
                             <span>Reschedule</span>
@@ -683,14 +630,14 @@ const CourseManagement = () => {
               initial={{ opacity: 0, scale: 0.95, y: 15 }} 
               animate={{ opacity: 1, scale: 1, y: 0 }} 
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="relative bg-white w-full max-w-lg rounded-[2.25rem] p-6 md:p-8 shadow-2xl z-10"
+              className="relative bg-[#0B0F19] w-full max-w-lg rounded-[2.25rem] p-6 md:p-8 shadow-2xl z-10"
             >
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
                 <div>
-                  <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                    <FaClock className="text-blue-600" /> Reschedule Class Session
+                  <h2 className="text-xl font-black text-white flex items-center gap-2">
+                    <FaClock className="text-[#D4AF37]" /> Reschedule Class Session
                   </h2>
-                  <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{selectedClassToReschedule?.title}</p>
+                  <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{selectedClassToReschedule?.title}</p>
                 </div>
                 <button 
                   onClick={() => !rescheduling && setIsRescheduleOpen(false)}
@@ -701,7 +648,7 @@ const CourseManagement = () => {
               </div>
 
               {rescheduleMsg && (
-                <div className={`mb-4 p-3.5 rounded-2xl text-xs font-bold ${rescheduleMsg.includes('successfully') ? 'bg-blue-600/10 text-blue-600 border border-blue-600/30' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                <div className={`mb-4 p-3.5 rounded-2xl text-xs font-bold ${rescheduleMsg.includes('successfully') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30' : 'bg-red-50 text-red-700 border border-red-200'}`}>
                   {rescheduleMsg}
                 </div>
               )}
@@ -709,7 +656,7 @@ const CourseManagement = () => {
               <form onSubmit={handleRescheduleSubmit} className="space-y-4">
                 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold text-slate-600 uppercase tracking-wider">
+                  <label className="block text-xs font-extrabold text-gray-300 uppercase tracking-wider">
                     Session Title / Topic
                   </label>
                   <input 
@@ -717,13 +664,13 @@ const CourseManagement = () => {
                     required
                     value={rescheduleForm.newTitle} 
                     onChange={e => setRescheduleForm({ ...rescheduleForm, newTitle: e.target.value })}
-                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/20 outline-none"
+                    className="w-full px-4 py-3 bg-[#0B0F19] border border-slate-200 rounded-2xl text-sm font-medium focus:bg-[#0B0F19] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-extrabold text-slate-600 uppercase tracking-wider">
+                    <label className="block text-xs font-extrabold text-gray-300 uppercase tracking-wider">
                       New Date *
                     </label>
                     <input 
@@ -731,12 +678,13 @@ const CourseManagement = () => {
                       required
                       value={rescheduleForm.newDate} 
                       onChange={e => setRescheduleForm({ ...rescheduleForm, newDate: e.target.value })}
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/20 outline-none"
+                      style={{ colorScheme: 'dark' }}
+                      className="course-date-input w-full px-4 py-3 bg-[#0B0F19] border border-slate-200 rounded-2xl text-sm font-medium focus:bg-[#0B0F19] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-extrabold text-slate-600 uppercase tracking-wider">
+                    <label className="block text-xs font-extrabold text-gray-300 uppercase tracking-wider">
                       New Start Time *
                     </label>
                     <input 
@@ -744,19 +692,19 @@ const CourseManagement = () => {
                       required
                       value={rescheduleForm.newTime} 
                       onChange={e => setRescheduleForm({ ...rescheduleForm, newTime: e.target.value })}
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/20 outline-none"
+                      className="w-full px-4 py-3 bg-[#0B0F19] border border-slate-200 rounded-2xl text-sm font-medium focus:bg-[#0B0F19] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold text-slate-600 uppercase tracking-wider">
+                  <label className="block text-xs font-extrabold text-gray-300 uppercase tracking-wider">
                     Duration (Minutes)
                   </label>
                   <select 
                     value={rescheduleForm.durationMinutes}
                     onChange={e => setRescheduleForm({ ...rescheduleForm, durationMinutes: parseInt(e.target.value, 10) })}
-                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/20 outline-none"
+                    className="w-full px-4 py-3 bg-[#0B0F19] border border-slate-200 rounded-2xl text-sm font-medium focus:bg-[#0B0F19] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none"
                   >
                     <option value={45}>45 Minutes</option>
                     <option value={60}>60 Minutes (1 Hour)</option>
@@ -766,7 +714,7 @@ const CourseManagement = () => {
                   </select>
                 </div>
 
-                <div className="p-3 bg-blue-600/10 rounded-xl border border-blue-600/30 text-blue-600 text-[11px] leading-relaxed">
+                <div className="p-3 bg-[#D4AF37]/10 rounded-xl border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] leading-relaxed">
                   ⚡ <strong>Automated Zoom Meeting:</strong> Rescheduling will automatically replace the old session's Zoom meeting with a new live room and notify enrolled students.
                 </div>
 
@@ -775,14 +723,14 @@ const CourseManagement = () => {
                     type="button"
                     disabled={rescheduling}
                     onClick={() => setIsRescheduleOpen(false)}
-                    className="px-5 py-3 rounded-2xl bg-gray-800 hover:bg-gray-200 text-slate-600 font-bold text-xs cursor-pointer"
+                    className="px-5 py-3 rounded-2xl bg-gray-800 hover:bg-gray-200 text-gray-300 font-bold text-xs cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit"
                     disabled={rescheduling}
-                    className="px-7 py-3 rounded-2xl bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-extrabold text-xs shadow-md disabled:opacity-60 flex items-center gap-2 cursor-pointer"
+                    className="px-7 py-3 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-extrabold text-xs shadow-md disabled:opacity-60 flex items-center gap-2 cursor-pointer"
                   >
                     {rescheduling ? (
                       <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Generating New Zoom Meeting...</>
@@ -807,7 +755,7 @@ const CourseManagement = () => {
             />
             <motion.div 
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="bg-white/40 backdrop-blur-3xl border-l border-white/60 shadow-[-20px_0_40px_rgba(0,0,0,0.08)] w-full max-w-2xl h-full overflow-y-auto relative z-10 p-6 md:p-10 flex flex-col overflow-x-hidden"
+              className="bg-[#0B0F19]/40 backdrop-blur-3xl border-l border-white/60 shadow-[-20px_0_40px_rgba(0,0,0,0.08)] w-full max-w-2xl h-full overflow-y-auto relative z-10 p-6 md:p-10 flex flex-col overflow-x-hidden"
             >
               {/* Glassmorphism background refraction blobs */}
               <div className="absolute top-[-5%] right-[-10%] w-72 h-72 bg-blue-600/30 rounded-full blur-[90px] pointer-events-none"></div>
@@ -815,7 +763,7 @@ const CourseManagement = () => {
 
               <button 
                 onClick={() => !uploading && setIsModalOpen(false)}
-                className="absolute top-6 right-6 text-gray-500 hover:text-blue-600 bg-white/60 backdrop-blur-md p-2.5 rounded-full border border-white/50 shadow-sm transition-all z-20 cursor-pointer"
+                className="absolute top-6 right-6 text-gray-500 hover:text-[#D4AF37] bg-[#131722]/80 border-gray-800 backdrop-blur-md p-2.5 rounded-full border border-white/50 shadow-sm transition-all z-20 cursor-pointer"
               >
                 <FaTimes />
               </button>
@@ -827,94 +775,64 @@ const CourseManagement = () => {
                   
                   {/* Course Title */}
                   <div className="col-span-full">
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">Course Title *</label>
-                    <input type="text" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-white/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all font-medium" placeholder="e.g. Master Class in Asana & Technical Analysis" />
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">Course Title *</label>
+                    <input type="text" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-[#0B0F19]/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all font-medium" placeholder="e.g. Master Class in Asana & Technical Analysis" />
                   </div>
 
-                  {/* ASSIGN INSTRUCTOR SELECTOR */}
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5 flex items-center gap-1.5">
-                      <FaChalkboardTeacher className="text-blue-600" /> Assign Lead Instructor *
-                    </label>
-                    <select 
-                      value={formData.instructorId} 
-                      onChange={e => setFormData({...formData, instructorId: e.target.value})} 
-                      className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-white/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium"
-                    >
-                      <option value="">-- Select Registered Guru / Instructor --</option>
-                      {instructors.map(inst => (
-                        <option key={inst._id} value={inst._id}>
-                          {inst.name} ({inst.speciality || 'Trading Guru'})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* ASSIGN MODERATOR SELECTOR */}
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5 flex items-center gap-1.5">
-                      <FaShieldAlt className="text-blue-600" /> Assign Platform Moderator
-                    </label>
-                    <select 
-                      value={formData.moderatorId} 
-                      onChange={e => setFormData({...formData, moderatorId: e.target.value})} 
-                      className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-white/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium"
-                    >
-                      <option value="">-- Optional: Assign Platform Moderator --</option>
-                      {moderators.map(mod => (
-                        <option key={mod._id} value={mod._id}>
-                          {mod.name} ({mod.emailOrPhone})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* WHATSAPP BATCH GROUP LINK */}
+                  {/* COMMUNITY LINK */}
                   <div className="col-span-full">
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5 flex items-center gap-1.5">
-                      <FaWhatsapp className="text-[#25D366]" size={16} /> Official Batch WhatsApp Group Link
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5 flex items-center gap-1.5">
+                      <FaWhatsapp className="text-[#25D366]" size={16} /> WhatsApp / Telegram Community Link
+                      <FaTelegramPlane className="text-[#229ED9]" size={15} />
                     </label>
                     <div className="relative">
                       <input 
                         type="url" 
                         value={formData.whatsappGroupLink} 
                         onChange={e => setFormData({...formData, whatsappGroupLink: e.target.value})} 
-                        className="w-full p-3.5 pl-10 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-white/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all font-medium text-sm" 
-                        placeholder="https://chat.whatsapp.com/..." 
+                        className="w-full p-3.5 pl-10 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-[#0B0F19]/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all font-medium text-sm" 
+                        placeholder="https://chat.whatsapp.com/... or https://t.me/..." 
                       />
                       <FaWhatsapp className="absolute left-3.5 top-4 text-[#25D366]" size={16} />
                     </div>
                     <p className="text-[11px] text-gray-500 mt-1">
-                      Enrolled students will see this WhatsApp link in their learning portal & confirmation email to join the batch community.
+                      Enrolled students will see this link in their learning portal and confirmation email to join the batch community.
                     </p>
                   </div>
 
                   {/* Fee */}
                   <div>
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">Course Fee (₹ INR) *</label>
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">Course Fee (₹ INR) *</label>
                     <input 
                       type="number" 
                       min="0"
                       required 
                       value={formData.price} 
                       onChange={e => setFormData({...formData, price: e.target.value})} 
-                      className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-white/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all font-semibold" 
+                      className="w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-[#0B0F19]/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all font-semibold" 
                       placeholder="e.g. 999" 
                     />
                   </div>
                   
                   {/* Category */}
                   <div>
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">Category *</label>
-                    <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-white/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium">
-                      <option>Trading</option><option>Meditation</option><option>Nutrition</option><option>Options Trading</option><option>Other</option>
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">Category *</label>
+                    <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-[#0B0F19]/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium">
+                      <option>Technical Analysis</option>
+                      <option>Price Action</option>
+                      <option>Options Trading</option>
+                      <option>Futures & Derivatives</option>
+                      <option>Intraday Trading</option>
+                      <option>Swing Trading</option>
+                      <option>Risk Management</option>
+                      <option>Trading Psychology</option>
                     </select>
                   </div>
 
                   {/* Language */}
                   <div>
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">Instruction Language</label>
-                    <select value={formData.language} onChange={e => setFormData({...formData, language: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-white/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium">
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">Instruction Language</label>
+                    <select value={formData.language} onChange={e => setFormData({...formData, language: e.target.value})} className="w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-[#0B0F19]/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium">
                       <option value="English">English</option>
                       <option value="Telugu">Telugu</option>
                       <option value="English & Telugu">English & Telugu</option>
@@ -925,8 +843,8 @@ const CourseManagement = () => {
 
                   {/* Access Validity */}
                   <div>
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">Access Validity After Completion</label>
-                    <select value={formData.accessValidity} onChange={e => setFormData({...formData, accessValidity: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-white/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium">
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">Access Validity After Completion</label>
+                    <select value={formData.accessValidity} onChange={e => setFormData({...formData, accessValidity: e.target.value})} className="w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-[#0B0F19]/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium">
                       <option value="1 Month">1 Month Access</option>
                       <option value="2 Months">2 Months Access</option>
                       <option value="3 Months">3 Months Access</option>
@@ -938,31 +856,31 @@ const CourseManagement = () => {
 
                   {/* Level */}
                   <div>
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">Proficiency Level</label>
-                    <select value={formData.level} onChange={e => setFormData({...formData, level: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-white/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium">
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">Proficiency Level</label>
+                    <select value={formData.level} onChange={e => setFormData({...formData, level: e.target.value})} className="w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-[#0B0F19]/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium">
                       <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
                     </select>
                   </div>
 
                   {/* Dates */}
                   <div>
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">Start Date</label>
-                    <input type="date" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-white/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium" />
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">Start Date</label>
+                    <input type="date" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} className="course-date-input w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-[#0B0F19]/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">End Date</label>
-                    <input type="date" value={formData.endDate} onChange={e => setFormData({...formData, endDate: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-white/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium" />
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">End Date</label>
+                    <input type="date" value={formData.endDate} onChange={e => setFormData({...formData, endDate: e.target.value})} className="course-date-input w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl outline-none focus:bg-[#0B0F19]/70 focus:border-blue-600 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] font-medium" />
                   </div>
 
                   {/* Session Timings */}
                   <div className="col-span-full">
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">Daily Session Timings</label>
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">Daily Session Timings</label>
                     <div className="flex flex-col sm:flex-row gap-3">
                       
                       {/* Start Time Picker */}
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-gray-500 w-12">Start:</span>
-                        <div className="flex items-center gap-1 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                        <div className="flex items-center gap-1 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
                           <select 
                             value={formData.startTime ? (parseInt(formData.startTime.split(':')[0]) % 12 || 12).toString().padStart(2, '0') : '06'} 
                             onChange={e => {
@@ -999,7 +917,7 @@ const CourseManagement = () => {
                               if (!isPM && h >= 12) h -= 12;
                               setFormData({...formData, startTime: `${h.toString().padStart(2, '0')}:${min}`});
                             }}
-                            className="p-2 bg-transparent outline-none appearance-none cursor-pointer font-bold text-blue-600"
+                            className="p-2 bg-transparent outline-none appearance-none cursor-pointer font-bold text-[#D4AF37]"
                           >
                             <option value="AM">AM</option><option value="PM">PM</option>
                           </select>
@@ -1009,7 +927,7 @@ const CourseManagement = () => {
                       {/* End Time Picker */}
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-gray-500 w-12">End:</span>
-                        <div className="flex items-center gap-1 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                        <div className="flex items-center gap-1 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
                           <select 
                             value={formData.endTime ? (parseInt(formData.endTime.split(':')[0]) % 12 || 12).toString().padStart(2, '0') : '07'} 
                             onChange={e => {
@@ -1046,7 +964,7 @@ const CourseManagement = () => {
                               if (!isPM && h >= 12) h -= 12;
                               setFormData({...formData, endTime: `${h.toString().padStart(2, '0')}:${min}`});
                             }}
-                            className="p-2 bg-transparent outline-none appearance-none cursor-pointer font-bold text-blue-600"
+                            className="p-2 bg-transparent outline-none appearance-none cursor-pointer font-bold text-[#D4AF37]"
                           >
                             <option value="AM">AM</option><option value="PM">PM</option>
                           </select>
@@ -1057,17 +975,20 @@ const CourseManagement = () => {
                   </div>
 
                   {/* Custom Calendar for Session Dates */}
-                  <div className="col-span-full bg-white/50 backdrop-blur-md border border-white/60 p-5 rounded-2xl shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
-                    <label className="block text-sm font-semibold text-slate-600 mb-4 flex items-center gap-2">
-                      <FaCalendarAlt className="text-blue-600" /> Select Session Dates (Generates Classroom Schedule)
+                  <div className="col-span-full rounded-2xl border border-[#D4AF37]/35 bg-[#111722] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                    <label className="mb-4 flex items-center gap-2 text-sm font-bold text-white">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#D4AF37]/15 text-[#F3D675]">
+                        <FaCalendarAlt size={15} />
+                      </span>
+                      <span>Select Session Dates <span className="font-medium text-gray-400">(Generates Classroom Schedule)</span></span>
                     </label>
                     {(!formData.startDate || !formData.endDate) ? (
-                      <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200">
+                      <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 p-3 text-sm text-amber-200">
                         Please select a <strong>Start Date</strong> and <strong>End Date</strong> first to enable the calendar.
                       </div>
                     ) : (
                       <div className="flex flex-col md:flex-row gap-6">
-                        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 w-full md:w-[320px] shrink-0">
+                        <div className="w-full shrink-0 rounded-xl border border-gray-700 bg-[#0B0F19] p-4 shadow-sm md:w-[320px]">
                           {(() => {
                             const start = new Date(formData.startDate);
                             const end = new Date(formData.endDate);
@@ -1087,19 +1008,23 @@ const CourseManagement = () => {
 
                             return (
                               <div>
-                                <div className="flex justify-between items-center mb-4">
-                                  <button type="button" onClick={prevMonth} className="text-slate-500 hover:text-blue-600 p-1 cursor-pointer">&larr;</button>
-                                  <span className="font-bold text-slate-700">{monthNames[displayMonth.getMonth()]} {displayMonth.getFullYear()}</span>
-                                  <button type="button" onClick={nextMonth} className="text-slate-500 hover:text-blue-600 p-1 cursor-pointer">&rarr;</button>
+                                <div className="mb-4 flex items-center justify-between">
+                                  <button type="button" onClick={prevMonth} aria-label="Previous month" className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-gray-700 bg-[#131722] text-gray-300 transition-colors hover:border-[#D4AF37] hover:bg-[#D4AF37]/10 hover:text-[#F3D675]"><FaChevronLeft size={12} /></button>
+                                  <span className="text-sm font-bold text-white">{monthNames[displayMonth.getMonth()]} {displayMonth.getFullYear()}</span>
+                                  <button type="button" onClick={nextMonth} aria-label="Next month" className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-gray-700 bg-[#131722] text-gray-300 transition-colors hover:border-[#D4AF37] hover:bg-[#D4AF37]/10 hover:text-[#F3D675]"><FaChevronRight size={12} /></button>
                                 </div>
                                 <div className="grid grid-cols-7 gap-1 text-center mb-2">
-                                  {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d, i) => <div key={d} className={`text-xs font-bold ${i === 0 ? 'text-red-400' : 'text-slate-500'}`}>{d}</div>)}
+                                  {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d, i) => <div key={d} className={`text-[11px] font-bold ${i === 0 ? 'text-red-400' : 'text-gray-500'}`}>{d}</div>)}
                                 </div>
                                 <div className="grid grid-cols-7 gap-1 text-center">
                                   {days.map((day, idx) => {
                                     if (!day) return <div key={`empty-${idx}`} className="p-2"></div>;
                                     
-                                    const dateStr = day.toISOString().split('T')[0];
+                                    const dateStr = [
+                                      day.getFullYear(),
+                                      String(day.getMonth() + 1).padStart(2, '0'),
+                                      String(day.getDate()).padStart(2, '0')
+                                    ].join('-');
                                     const isSelected = formData.selectedSessionDates.includes(dateStr);
                                     
                                     day.setHours(0,0,0,0);
@@ -1124,16 +1049,16 @@ const CourseManagement = () => {
                                             }
                                           }}
                                           className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium transition-colors cursor-pointer ${
-                                            isDisabled ? 'text-slate-600 cursor-not-allowed' :
-                                            isSelected ? 'bg-blue-600 text-slate-800 shadow-md' : 
-                                            isSpecialDay ? 'text-red-500 bg-red-50 hover:bg-red-100' :
-                                            'text-slate-600 hover:bg-gray-800'
+                                            isDisabled ? 'cursor-not-allowed text-gray-700' :
+                                            isSelected ? 'bg-[#D4AF37] text-[#0B0F19] shadow-md shadow-[#D4AF37]/20' : 
+                                            isSpecialDay ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' :
+                                            'text-gray-300 hover:bg-gray-800 hover:text-white'
                                           }`}
                                         >
                                           {day.getDate()}
                                         </button>
                                         {isHoliday && !isDisabled && (
-                                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-slate-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
                                             {isHoliday}
                                           </div>
                                         )}
@@ -1148,20 +1073,20 @@ const CourseManagement = () => {
                         
                         {/* Selected Dates List */}
                         <div className="flex-1 flex flex-col">
-                          <h4 className="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wider">Selected Sessions ({formData.selectedSessionDates.length})</h4>
+                          <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-300">Selected Sessions <span className="text-[#D4AF37]">({formData.selectedSessionDates.length})</span></h4>
                           <div className="flex flex-wrap gap-2 max-h-[250px] overflow-y-auto content-start">
                             {formData.selectedSessionDates.length === 0 ? (
-                              <p className="text-sm text-slate-500 italic">Click dates on the calendar to select sessions.</p>
+                              <p className="text-sm text-gray-400 italic">Click dates on the calendar to select sessions.</p>
                             ) : (
                               formData.selectedSessionDates.map((date) => {
                                 const d = new Date(date);
                                 const dateFmt = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                                 const dayName = d.toLocaleDateString('en-GB', { weekday: 'short' });
                                 return (
-                                  <div key={date} className="flex items-center gap-2 bg-white text-slate-600 pl-3 pr-2 py-1.5 rounded-lg text-sm font-medium border border-blue-600/20 shadow-sm">
-                                    <span className="text-blue-600 font-bold text-xs">{dayName}</span>
+                                  <div key={date} className="flex items-center gap-2 bg-[#0B0F19] text-gray-300 pl-3 pr-2 py-1.5 rounded-lg text-sm font-medium border border-blue-600/20 shadow-sm">
+                                    <span className="text-[#D4AF37] font-bold text-xs">{dayName}</span>
                                     <span>{dateFmt}</span>
-                                    <button type="button" onClick={() => handleRemoveSessionDate(date)} className="text-slate-600 hover:text-red-500 ml-1 p-0.5 rounded transition-colors cursor-pointer"><FaTimes size={12}/></button>
+                                    <button type="button" onClick={() => handleRemoveSessionDate(date)} className="text-gray-300 hover:text-red-500 ml-1 p-0.5 rounded transition-colors cursor-pointer"><FaTimes size={12}/></button>
                                   </div>
                                 )
                               })
@@ -1173,30 +1098,30 @@ const CourseManagement = () => {
                   </div>
 
                   <div className="col-span-full">
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">About This Course</label>
-                    <textarea required rows="3" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-white/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all resize-none font-medium" placeholder="This course helps you relax your mind..."></textarea>
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">About This Course</label>
+                    <textarea required rows="3" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-[#0B0F19]/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all resize-none font-medium" placeholder="Describe the trading skills, strategies, and outcomes students will gain..."></textarea>
                   </div>
                   
                   <div className="col-span-full">
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">Topics Covered (One per line)</label>
-                    <textarea required rows="3" value={formData.topics} onChange={e => setFormData({...formData, topics: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-white/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all resize-none font-medium" placeholder={`Introduction to Asana\nTechnical Analysis Breathing\nFinancial Meditation`}></textarea>
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">Topics Covered (One per line)</label>
+                    <textarea required rows="3" value={formData.topics} onChange={e => setFormData({...formData, topics: e.target.value})} className="w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-[#0B0F19]/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all resize-none font-medium" placeholder={`Market structure and trend analysis\nSupport, resistance, and liquidity\nEntry, stop-loss, and target rules`}></textarea>
                   </div>
                   
                   <div className="col-span-full">
-                    <label className="block text-sm font-semibold text-slate-600 mb-1.5">What You Will Learn (One per line)</label>
-                    <textarea required rows="3" value={formData.whatYouWillLearn} onChange={e => setFormData({...formData, whatYouWillLearn: e.target.value})} className="w-full p-3.5 bg-white/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-white/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all resize-none font-medium" placeholder={`Stress relief techniques\nBreathing exercises\nHolistic Market practices`}></textarea>
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5">What You Will Learn (One per line)</label>
+                    <textarea required rows="3" value={formData.whatYouWillLearn} onChange={e => setFormData({...formData, whatYouWillLearn: e.target.value})} className="w-full p-3.5 bg-[#0B0F19]/50 backdrop-blur-md border border-white/60 rounded-xl focus:border-blue-600 focus:bg-[#0B0F19]/70 focus:ring-2 focus:ring-[#D4AF37]/20 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all resize-none font-medium" placeholder={`Build a repeatable trading plan\nIdentify high-probability entries\nManage risk with clear stop-loss and targets`}></textarea>
                   </div>
 
                   {/* Media Uploads */}
                   <div className="col-span-full pt-4 mt-2 border-t border-white/40">
-                    <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2"><FaCloudUploadAlt className="text-blue-600" /> Media Uploads</h3>
+                    <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2"><FaCloudUploadAlt className="text-[#D4AF37]" /> Media Uploads</h3>
                     <div className="grid grid-cols-1 gap-4">
-                      <div className="border border-white/60 bg-white/40 backdrop-blur-md rounded-2xl p-5 text-center hover:bg-white/60 transition-colors shadow-sm cursor-pointer group">
+                      <div className="border border-white/60 bg-[#0B0F19]/40 backdrop-blur-md rounded-2xl p-5 text-center hover:bg-[#131722]/80 border-gray-800 transition-colors shadow-sm cursor-pointer group">
                         <label className="cursor-pointer block">
-                          <div className="w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-white group-hover:scale-110 transition-transform">
-                            <FaImage className="text-blue-600/70 text-xl" />
+                          <div className="w-12 h-12 bg-[#0B0F19]/80 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-white group-hover:scale-110 transition-transform">
+                            <FaImage className="text-[#D4AF37]/70 text-xl" />
                           </div>
-                          <span className="text-sm font-semibold text-slate-600">Upload Thumbnail Image</span>
+                          <span className="text-sm font-semibold text-gray-300">Upload Thumbnail Image</span>
                           <p className="text-xs text-gray-500 mt-1.5">{thumbnailFile ? thumbnailFile.name : (editingCourse?.thumbnailUrl ? 'Current image saved' : 'JPG, PNG formats')}</p>
                           <input type="file" className="hidden" accept="image/*" onChange={e => setThumbnailFile(e.target.files[0])} />
                         </label>
@@ -1206,7 +1131,7 @@ const CourseManagement = () => {
                 </div>
 
                 <div className="pt-8 pb-24 md:pb-4 mt-auto">
-                  <button type="submit" disabled={uploading} className="w-full bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgba(41,120,56,0.39)] transition-all disabled:opacity-70 flex justify-center items-center gap-2 text-lg cursor-pointer">
+                  <button type="submit" disabled={uploading} className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgba(41,120,56,0.39)] transition-all disabled:opacity-70 flex justify-center items-center gap-2 text-lg cursor-pointer">
                     {uploading ? (
                       <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Uploading...</>
                     ) : 'Save & Publish Course'}

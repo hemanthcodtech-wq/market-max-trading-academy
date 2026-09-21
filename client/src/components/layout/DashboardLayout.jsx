@@ -5,7 +5,7 @@ import BottomNav from './BottomNav';
 
 const DashboardLayout = () => {
   return (
-    <div className="min-h-screen bg-bg-cream font-inter">
+    <div className="min-h-screen bg-[#0B0F19] text-gray-300 font-inter">
       <TopNav />
       
       {/* Main Content Area */}

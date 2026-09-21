@@ -13,6 +13,29 @@ const router = express.Router();
 
 router.use('/courses', courseRoutes);
 
+// Staff lists used by the admin course assignment form.
+router.get('/instructors', protect, admin, async (req, res) => {
+  try {
+    const instructors = await User.find({ role: 'student', status: { $ne: 'inactive' } })
+      .select('name speciality experience status')
+      .sort('name');
+    res.json({ success: true, data: instructors });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching instructors' });
+  }
+});
+
+router.get('/moderators', protect, admin, async (req, res) => {
+  try {
+    const moderators = await User.find({ role: 'student', status: { $ne: 'inactive' } })
+      .select('name speciality experience status')
+      .sort('name');
+    res.json({ success: true, data: moderators });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching moderators' });
+  }
+});
+
 // Get Dashboard Analytics
 router.get('/analytics', protect, admin, async (req, res) => {
   try {
@@ -372,14 +395,17 @@ router.post('/certificate/custom-generate-and-send', protect, admin, async (req,
     let emailSent = false;
     if (sendEmail && studentEmail) {
       try {
-        await sendCertificateEmail(
-          studentEmail.trim(),
-          studentName.trim(),
-          courseTitle.trim(),
-          certPdfBuffer,
-          finalCertId
-        );
-        emailSent = true;
+        const emailResult = await sendCourseCompletionEmail({
+          to: studentEmail.trim(),
+          studentName: studentName.trim(),
+          course: { title: courseTitle.trim() },
+          certId: finalCertId,
+          certificatePdfBuffer: certPdfBuffer
+        });
+        emailSent = emailResult.success === true;
+        if (!emailSent) {
+          console.error('Failed to send certificate email:', emailResult.error);
+        }
       } catch (emailErr) {
         console.error('Failed to send certificate email:', emailErr.message);
       }

@@ -26,7 +26,7 @@ const attendanceSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['student', 'instructor', 'moderator', 'admin'],
+    enum: ['student', 'admin'],
     default: 'student'
   },
   joinTime: {

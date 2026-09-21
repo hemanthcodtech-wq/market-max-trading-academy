@@ -1,9 +1,8 @@
 import React from 'react';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import { 
-  FaTachometerAlt, FaBook, FaUsers, FaCalendarAlt, FaSignOutAlt, 
-  FaFolderOpen, FaExternalLinkAlt, FaShieldAlt, FaAward, 
-  FaChalkboardTeacher, FaUserShield 
+  FaTachometerAlt, FaBook, FaBookOpen, FaUsers, FaCalendarAlt, FaSignOutAlt, 
+  FaFolderOpen, FaExternalLinkAlt, FaShieldAlt, FaAward
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
@@ -19,9 +18,10 @@ const AdminLayout = () => {
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: FaTachometerAlt },
     { name: 'Courses', path: '/admin/courses', icon: FaBook },
-    { name: 'Instructors', path: '/admin/instructors', icon: FaChalkboardTeacher },
-    { name: 'Moderators', path: '/admin/moderators', icon: FaUserShield },
     { name: 'Materials', path: '/admin/materials', icon: FaFolderOpen },
+    { name: 'Blogs', path: '/admin/blogs', icon: FaBookOpen },
+    { name: 'E-Books', path: '/admin/ebooks', icon: FaBook },
+    { name: 'Services', path: '/admin/services', icon: FaShieldAlt },
     { name: 'Certificates & Invoices', path: '/admin/records', icon: FaAward },
     { name: 'Learners', path: '/admin/users', icon: FaUsers },
   ];

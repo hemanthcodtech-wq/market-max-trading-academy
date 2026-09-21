@@ -22,9 +22,9 @@ import Contact from '../pages/public/Contact';
 import LiveMarket from '../pages/public/LiveMarket';
 import Services from '../pages/public/Services';
 import PublicCertificates from '../pages/public/Certificates';
-import Tools from '../pages/public/Tools';
 import Ebooks from '../pages/public/Ebooks';
 import Blog from '../pages/public/Blog';
+import BlogDetails from '../pages/public/BlogDetails';
 import TermsAndConditions from '../pages/public/TermsAndConditions';
 import PrivacyPolicy from '../pages/public/PrivacyPolicy';
 import RefundPolicy from '../pages/public/RefundPolicy';
@@ -35,23 +35,25 @@ import AdminLayout from '../components/admin/AdminLayout';
 import AdminProtectedRoute from '../components/admin/AdminProtectedRoute';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import CourseManagement from '../pages/admin/CourseManagement';
-import InstructorManagement from '../pages/admin/InstructorManagement';
-import ModeratorManagement from '../pages/admin/ModeratorManagement';
+
 import UserManagement from '../pages/admin/UserManagement';
 import MaterialManagement from '../pages/admin/MaterialManagement';
 import AdminRecords from '../pages/admin/AdminRecords';
 
+import AdminBlogs from '../pages/admin/AdminBlogs';
+import AdminEbooks from '../pages/admin/AdminEbooks';
+import AdminServices from '../pages/admin/AdminServices';
 // Instructor
-import InstructorLogin from '../pages/instructor/InstructorLogin';
+
 import InstructorProtectedRoute from '../components/instructor/InstructorProtectedRoute';
 import InstructorLayout from '../components/instructor/InstructorLayout';
-import InstructorDashboard from '../pages/instructor/InstructorDashboard';
+
 
 // Moderator
-import ModeratorLogin from '../pages/moderator/ModeratorLogin';
+
 import ModeratorProtectedRoute from '../components/moderator/ModeratorProtectedRoute';
 import ModeratorLayout from '../components/moderator/ModeratorLayout';
-import ModeratorDashboard from '../pages/moderator/ModeratorDashboard';
+
 
 // Dashboard / Course
 import DashboardHome from '../pages/dashboard/Home';
@@ -82,9 +84,9 @@ const AppRoutes = () => {
           <Route path="/courses/:slug" element={<CourseDetails />} />
           <Route path="/services" element={<Services />} />
           <Route path="/certificates" element={<PublicCertificates />} />
-          <Route path="/tools" element={<Tools />} />
           <Route path="/ebooks" element={<Ebooks />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogDetails />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
@@ -106,31 +108,15 @@ const AppRoutes = () => {
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="courses" element={<CourseManagement />} />
-            <Route path="instructors" element={<InstructorManagement />} />
-            <Route path="moderators" element={<ModeratorManagement />} />
+            <Route path="blogs" element={<AdminBlogs />} />
+            <Route path="ebooks" element={<AdminEbooks />} />
+            <Route path="services" element={<AdminServices />} />
             <Route path="materials" element={<MaterialManagement />} />
             <Route path="records" element={<AdminRecords />} />
             <Route path="users" element={<UserManagement />} />
           </Route>
         </Route>
 
-        {/* Instructor Login & Protected Workspace */}
-        <Route path="/instructor/login" element={<InstructorLogin />} />
-        <Route element={<InstructorProtectedRoute />}>
-          <Route path="/instructor" element={<InstructorLayout />}>
-            <Route index element={<Navigate to="/instructor/dashboard" replace />} />
-            <Route path="dashboard" element={<InstructorDashboard />} />
-          </Route>
-        </Route>
-
-        {/* Moderator Login & Protected Workspace */}
-        <Route path="/moderator/login" element={<ModeratorLogin />} />
-        <Route element={<ModeratorProtectedRoute />}>
-          <Route path="/moderator" element={<ModeratorLayout />}>
-            <Route index element={<Navigate to="/moderator/dashboard" replace />} />
-            <Route path="dashboard" element={<ModeratorDashboard />} />
-          </Route>
-        </Route>
 
         {/* Protected User Dashboard Routes */}
         <Route element={<ProtectedRoute />}>

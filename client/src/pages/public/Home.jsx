@@ -520,7 +520,7 @@ const Home = () => {
     : TRADING_SETUPS.filter(s => s.badge.toLowerCase().includes(activeSetupTab.toLowerCase()));
 
   return (
-    <div className="bg-[#0B0F19] overflow-hidden text-gray-300 font-inter relative">
+    <div className="bg-[#0B0F19] overflow-x-hidden text-gray-300 font-inter relative">
       <SEO
         title="MarketMax Trading Academy | Master the Markets with Live Institutional Mentorship"
         description="Learn professional Indian stock market trading, live F&O strategies, price action, SMC order blocks, and risk management with MarketMax Trading Academy."
@@ -535,7 +535,7 @@ const Home = () => {
       />
 
       {/* ── LIVE TICKER TAPE (Using symbols that render 100% cleanly with zero TradingView restrictions) ── */}
-      <div className="w-full pt-16 md:pt-20 border-b border-gray-800/80 bg-[#0B0F19]">
+      <div className="sticky top-18 md:top-20 z-40 w-full border-b border-gray-800/80 bg-[#0B0F19]">
         <TradingViewWidget
           type="ticker"
           theme="dark"

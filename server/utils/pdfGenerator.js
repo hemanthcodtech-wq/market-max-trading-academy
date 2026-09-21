@@ -1,6 +1,7 @@
 const PDFDocument = require('pdfkit');
 const path = require('path');
 const fs = require('fs');
+const CERTIFICATE_SIGNATORY_NAME = 'KOVURU RAHAMATHULLA';
 
 /**
  * Helper to convert number to words for Indian Rupees
@@ -45,7 +46,8 @@ const generateInvoicePDF = (data) => {
       ];
       let logoPath = logoCandidates.find(p => fs.existsSync(p));
 
-      // 1. Top Header Bar (Subtle Accent)
+      // 1. Website-aligned black and gold header
+      doc.rect(40, 40, 515, 110).fill('#0B0F19');
       doc.rect(40, 40, 515, 4).fill('#D4AF37');
 
       // 2. Organization Branding (Left)
@@ -59,18 +61,18 @@ const generateInvoicePDF = (data) => {
         }
       }
 
-      doc.fillColor('#D4AF37')
+      doc.fillColor('#F3D36A')
          .fontSize(16)
          .font('Helvetica-Bold')
          .text('MarketMax Trading Academy', headerTextX, 52);
 
-      doc.fillColor('#4B5563')
+      doc.fillColor('#CBD5E1')
          .fontSize(8.5)
          .font('Helvetica')
          .text('Academy of Trading, Technical Analysis & Financial Market Sciences', headerTextX, 70)
-         .text('Registered Public Educational & Charitable Trust', headerTextX, 81)
-         .text('Hitec City, Hyderabad, Telangana - 500081, India', headerTextX, 92)
-         .text('Email: support@marketmaxtrading.com • Web: marketmaxtrading.com', headerTextX, 103);
+         .text('Professional market education, live classes, and structured learning.', headerTextX, 81)
+         .text('Hyderabad, Telangana - 500081, India', headerTextX, 92)
+         .text('support@marketmaxtrading.com  |  marketmaxtrading.com', headerTextX, 103);
 
       // 3. Invoice Badge & Meta Box (Right)
       const rightColX = 370;
@@ -232,14 +234,14 @@ const generateInvoicePDF = (data) => {
          .fontSize(9)
          .font('Helvetica-Bold')
          .text('TOTAL PAID:', calcX, sumTop + 54)
-         .fontSize(14)
+           .fontSize(18)
          .text(`Rs. ${data.amountPaid || 0}.00`, valX - 10, sumTop + 62, { width: 80, align: 'right' });
 
       // 7. Live Program Access Notes
       const notesTop = sumTop + 96;
       doc.rect(40, notesTop, 515, 52).fill('#FDFBF7').strokeColor('#E5E7EB').stroke();
       
-      doc.fillColor('#92400E')
+      doc.fillColor('#7A5B08')
          .fontSize(8)
          .font('Helvetica-Bold')
          .text('IMPORTANT LEARNER NOTES & LIVE CLASS ACCESS:', 48, notesTop + 6);
@@ -288,8 +290,8 @@ const generateInvoicePDF = (data) => {
       doc.fillColor('#9CA3AF')
          .fontSize(7)
          .font('Helvetica')
-         .text('This is an authentic, system-generated computer Tax Invoice issued by MarketMax Trading Academy. No physical signature is required.', 40, 770, { width: 515, align: 'center' })
-         .text('support@marketmaxtrading.com • marketmaxtrading.com • All Rights Reserved © 2026', 40, 780, { width: 515, align: 'center' });
+         .text('This is a system-generated payment invoice issued by MarketMax Trading Academy. No physical signature is required.', 40, 770, { width: 515, align: 'center' })
+         .text('support@marketmaxtrading.com  |  marketmaxtrading.com  |  © 2026 MarketMax Trading Academy', 40, 780, { width: 515, align: 'center' });
 
       doc.end();
     } catch (err) {
@@ -322,6 +324,7 @@ const generateCertificatePDF = (data) => {
 
       // Certificate Template Background Candidates
       const templateCandidates = [
+        path.join(__dirname, '../../client/public/certificate_template.png'),
         path.join(__dirname, '../assets/certificate_template.jpg'),
         path.join(__dirname, '../../client/public/certificate_template.jpg')
       ];
@@ -351,116 +354,76 @@ const generateCertificatePDF = (data) => {
         }
       }
 
-      // 1. Left Sidebar Meta Information (Left-aligned with labels at x = 102 pt)
-      const metaX = 102;
-      const metaWidth = 100;
-
-      // Student ID (Under STUDENT ID label)
-      doc.fillColor('#111827')
-         .font('Helvetica-Bold')
-         .fontSize(8)
-         .text(data.studentId || 'MKTMAX250501', metaX, 237, { width: metaWidth, align: 'left' });
+      // 1. Overlay values onto the PNG template's three-column metadata band.
+      const metaWidth = 145;
 
       // Issue Date (Under ISSUE DATE label)
       const issueDate = data.completionDate || new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
-      doc.fillColor('#111827')
+      doc.fillColor('#F3D36A')
          .font('Helvetica-Bold')
-         .fontSize(8)
-         .text(issueDate, metaX, 305, { width: metaWidth, align: 'left' });
+        .fontSize(6.5)
+        .text(issueDate, 380, 443, { width: metaWidth, align: 'left', lineBreak: false });
 
-      // Course Duration (Under COURSE DURATION label, seamless parchment cover over placeholder)
-      doc.rect(98, 363, 105, 18).fill('#FAF7F2');
-      
-      let line1 = '30 Days';
-      let line2 = '(20 Hours)';
+      let durationText = '30 Days (20 Hours)';
       if (data.duration) {
-        if (data.duration.includes('\n')) {
-          const parts = data.duration.split('\n');
-          line1 = parts[0].trim();
-          line2 = parts[1].trim();
-        } else if (data.duration.includes('(')) {
-          const idx = data.duration.indexOf('(');
-          line1 = data.duration.slice(0, idx).trim();
-          line2 = data.duration.slice(idx).trim();
-        } else {
-          line1 = data.duration;
-          line2 = '';
-        }
+        durationText = data.duration.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
       }
 
-      doc.fillColor('#111827')
+      doc.fillColor('#F3D36A')
          .font('Helvetica-Bold')
-         .fontSize(8)
-         .text(line1, metaX, 348, { width: metaWidth, align: 'left' });
-
-      if (line2) {
-        doc.text(line2, metaX, 368, { width: metaWidth, align: 'left' });
-      }
+        .fontSize(6.5)
+        .text(durationText, 620, 443, { width: metaWidth, align: 'left', lineBreak: false });
 
       // Certificate ID (Under CERTIFICATE ID label)
       const certId = data.certificateId || (data.studentId ? `MKTMAX${data.studentId}` : `MKTMAX${Date.now().toString().slice(-8)}`);
-      doc.fillColor('#111827')
+      doc.fillColor('#F3D36A')
          .font('Helvetica-Bold')
-         .fontSize(7.5)
-         .text(certId, metaX, 420, { width: metaWidth, align: 'left' });
+        .fontSize(6.5)
+        .text(certId, 170, 443, { width: metaWidth, align: 'left', lineBreak: false });
 
       // 2. Recipient Name (Center, perfectly balanced above green line)
       const studentName = data.studentName || 'Learner Name';
       const nameLen = studentName.length;
       const fontSize = nameLen > 30 ? 28 : (nameLen > 22 ? 32 : (nameLen > 15 ? 36 : 40));
 
-      doc.fillColor('#D4AF37')
-         .font(scriptFont)
-         .fontSize(fontSize)
-         .text(studentName, 170, 296, { width: 500, align: 'center' });
+      const recipientFontSize = studentName.length > 28 ? 28 : 32;
+      doc.fillColor('#F3D36A')
+        .font(scriptFont)
+        .fontSize(recipientFontSize)
+        .text(studentName, 170, 264, { width: 500, align: 'center' });
 
       // 3. Course Title (Center, below 'has successfully completed the')
       const defaultCourse = 'Trading for Market and Inner Balance';
       const courseTitle = data.courseTitle || defaultCourse;
 
-      if (courseTitle && courseTitle.trim().toLowerCase() !== defaultCourse.toLowerCase()) {
-        // Overlay dynamic course title cleanly
-        doc.rect(200, 366, 440, 22).fill('#FAF7F2');
-        doc.fillColor('#111827')
-           .font('Helvetica-Bold')
-           .fontSize(13.5)
-           .text(courseTitle, 200, 369, { width: 440, align: 'center' });
+      if (courseTitle) {
+        // Overlay the course title inside the template's outlined course box.
+          doc.fillColor('#F3D36A')
+            .font('Times-Bold')
+            .fontSize(14)
+            .text(courseTitle, 190, 340, { width: 460, align: 'center' });
       }
 
       // 4. Bottom Instructor Details & Director Details (Centered directly under the template diamond ornaments at x≈289.4pt and x≈536.9pt)
       // Left: Instructor Details
-      const instWidth = 160;
-      const instBoxX = 289.4 - (instWidth / 2); // 209.4 pt
+      const instWidth = 170;
+      const instBoxX = 105;
 
-      const instName = (data.instructorName || 'RISHI KRISHNA').toUpperCase();
-      const instTitle = data.instructorTitle || 'Trading Instructor';
-      const instSub = data.instructorSubtitle || 'Certified Trading Professional';
+      const instName = CERTIFICATE_SIGNATORY_NAME;
 
       doc.fillColor('#D4AF37')
-         .font('Helvetica-Bold')
-         .fontSize(9.5)
-         .text(instName, instBoxX, 516, { width: instWidth, align: 'center' });
-
-      doc.fillColor('#374151')
-         .font('Helvetica')
-         .fontSize(8)
-         .text(instTitle, instBoxX, 528, { width: instWidth, align: 'center' })
-         .text(instSub, instBoxX, 539, { width: instWidth, align: 'center' });
+        .font('Helvetica-Bold')
+        .fontSize(8.5)
+        .text(instName, instBoxX, 510, { width: instWidth, align: 'center' });
 
       // Right: Director Details
-      const dirWidth = 160;
-      const dirBoxX = 536.9 - (dirWidth / 2); // 456.9 pt
+      const dirWidth = 170;
+      const dirBoxX = 570;
 
       doc.fillColor('#D4AF37')
-         .font('Helvetica-Bold')
-         .fontSize(9.5)
-         .text('MARKETMAX', dirBoxX, 516, { width: dirWidth, align: 'center' });
-
-      doc.fillColor('#374151')
-         .font('Helvetica')
-         .fontSize(8)
-         .text(data.directorTitle || 'Founder & Director', dirBoxX, 528, { width: dirWidth, align: 'center' })
-         .text(data.directorSubtitle || 'MarketMax Trading Academy', dirBoxX, 539, { width: dirWidth, align: 'center' });
+        .font('Helvetica-Bold')
+        .fontSize(8.5)
+        .text(CERTIFICATE_SIGNATORY_NAME, dirBoxX, 510, { width: dirWidth, align: 'center' });
 
       doc.end();
     } catch (err) {

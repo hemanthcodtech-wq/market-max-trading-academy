@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaVideo, FaPlayCircle, FaCheckCircle, FaTimes, FaExpand, 
   FaCompress, FaExternalLinkAlt, FaUsers, FaClock, FaCalendarAlt,
-  FaMicrophone, FaChalkboardTeacher, FaShieldAlt, FaOm
+  FaMicrophone, FaChalkboardTeacher, FaShieldAlt
 } from 'react-icons/fa';
 
 const ZoomLiveClassroom = ({ isOpen, onClose, liveClass, course, userRole = 'student' }) => {
@@ -178,8 +178,8 @@ const ZoomLiveClassroom = ({ isOpen, onClose, liveClass, course, userRole = 'stu
                 
                 {/* Visual Audio/Video Portal Orb */}
                 <div className="relative">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-brand-green to-emerald-400 flex items-center justify-center text-white shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-pulse">
-                    <FaOm size={44} />
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-black via-[#111111] to-[#262626] flex items-center justify-center text-white shadow-[0_0_50px_rgba(0,0,0,0.65)] ring-1 ring-white/10 animate-pulse">
+                    <img src="/logo.png" alt="MarketMax Trading Academy" className="w-20 h-20 sm:w-24 sm:h-24 object-contain brightness-110 drop-shadow-lg" />
                   </div>
                   {checkedIn && (
                     <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white p-1.5 rounded-full shadow-md">

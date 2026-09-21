@@ -4,6 +4,7 @@ import {
   FaChartLine, FaChartBar, FaCoins, FaBolt, FaFire, FaGlobe,
   FaChartPie, FaNewspaper, FaCalendarAlt, FaClock, FaShieldAlt
 } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
 import TradingViewWidget from '../../components/common/TradingViewWidget';
 import TradingViewScreener from '../../components/common/TradingViewScreener';
@@ -63,6 +64,8 @@ const LiveMarket = () => {
   const [foInterval, setFoInterval] = useState('15');
   const [cryptoSymbol, setCryptoSymbol] = useState('BINANCE:BTCUSDT');
   const [cryptoInterval, setCryptoInterval] = useState('15');
+  const [analyticsSymbol, setAnalyticsSymbol] = useState('INFY');
+  const [analyticsSearch, setAnalyticsSearch] = useState('INFY');
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -72,6 +75,12 @@ const LiveMarket = () => {
 
   const formatTime = (d) =>
     d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+  const applyAnalyticsSearch = (event) => {
+    event.preventDefault();
+    const nextSymbol = analyticsSearch.trim().toUpperCase().replace(/[^A-Z0-9&-]/g, '');
+    if (nextSymbol) setAnalyticsSymbol(nextSymbol);
+  };
 
   const isMarketOpen = () => {
     try {
@@ -305,17 +314,36 @@ const LiveMarket = () => {
                   Advanced Analytics & Insights
                 </h2>
                 <div className="bg-white rounded-3xl p-6 shadow-2xl">
+                  <form onSubmit={applyAnalyticsSearch} className="mb-6 flex flex-col sm:flex-row gap-3 rounded-2xl bg-[#0B0F19] p-4 border border-gray-800">
+                    <div className="flex-1 relative">
+                      <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs" />
+                      <input
+                        value={analyticsSearch}
+                        onChange={(event) => setAnalyticsSearch(event.target.value)}
+                        placeholder="Search stock symbol e.g. INFY, TCS, RELIANCE"
+                        aria-label="Search analytics stock symbol"
+                        className="w-full rounded-xl border border-gray-700 bg-[#131722] py-3 pl-9 pr-3 text-sm font-semibold text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+                    <button type="submit" className="rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#0B0F19] transition-colors hover:bg-[#F3D36A]">
+                      Search Stock
+                    </button>
+                  </form>
+                  <p className="mb-5 text-xs text-gray-500">
+                    Showing company analytics for <strong className="text-[#D4AF37]">{analyticsSymbol}</strong>. The IPO widget below remains a market-wide feed.
+                  </p>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                      <TrendlyneWidget url="https://trendlyne.com/web-widget/technical-widget/Poppins/INFY/?posCol=00A25B&primaryCol=006AFF&negCol=EB3B00&neuCol=F7941E" theme="light" />
+                      <TrendlyneWidget url={`https://trendlyne.com/web-widget/technical-widget/Poppins/${analyticsSymbol}/?posCol=00A25B&primaryCol=006AFF&negCol=EB3B00&neuCol=F7941E`} theme="light" />
                     </div>
                     <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                      <TrendlyneWidget url="https://trendlyne.com/web-widget/swot-widget/Poppins/INFY/?posCol=00A25B&primaryCol=006AFF&negCol=EB3B00&neuCol=F7941E" theme="light" />
+                      <TrendlyneWidget url={`https://trendlyne.com/web-widget/swot-widget/Poppins/${analyticsSymbol}/?posCol=00A25B&primaryCol=006AFF&negCol=EB3B00&neuCol=F7941E`} theme="light" />
                     </div>
                     <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                      <TrendlyneWidget url="https://trendlyne.com/web-widget/checklist-widget/Poppins/INFY/?posCol=00A25B&primaryCol=006AFF&negCol=EB3B00&neuCol=F7941E" theme="light" />
+                      <TrendlyneWidget url={`https://trendlyne.com/web-widget/checklist-widget/Poppins/${analyticsSymbol}/?posCol=00A25B&primaryCol=006AFF&negCol=EB3B00&neuCol=F7941E`} theme="light" />
                     </div>
                     <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                      <div className="border-b border-gray-200 px-4 py-3 text-sm font-bold text-gray-800">Market IPO Calendar</div>
                       <TrendlyneWidget url="https://trendlyne.com/web-widget/ipo-widget/Poppins/?activeCol=006AFF&linksCol=006CFF&primary=202020&secondary=666666&positive=00a25b&negative=ff4e54" theme="light" />
                     </div>
                   </div>

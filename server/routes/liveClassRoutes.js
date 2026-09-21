@@ -8,7 +8,7 @@ const Attendance = require('../models/Attendance');
 const User = require('../models/User');
 const { generateMeetingSdkToken } = require('../services/zoomService');
 
-// Middleware to extract user from Authorization header (Student, Instructor, Moderator, or Admin)
+// Middleware to extract user from Authorization header (Student or Admin)
 const authenticateUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -49,17 +49,15 @@ router.get('/:classId/sdk-token', authenticateUser, async (req, res) => {
 
     // Verify Access Permissions
     let role = 0; // 0 = Attendee (student)
-    const isInstructor = user.role === 'instructor' && (course?.instructorId?.toString() === user._id.toString() || user.assignedCourses?.includes(course?._id));
-    const isModerator = user.role === 'moderator' && (course?.moderatorId?.toString() === user._id.toString() || user.assignedCourses?.includes(course?._id));
     const isAdmin = user.role === 'admin' || user.role === 'superadmin';
 
-    if (isInstructor || isAdmin) {
+    if (isAdmin) {
       role = 1; // 1 = Host / Teacher
-    } else if (!isModerator) {
+    } else {
       // Check student enrollment
       const enrollment = await Enrollment.findOne({
         studentEmail: user.emailOrPhone,
-        courseId: course?._id
+        course: course?._id
       });
       if (!enrollment && user.role !== 'admin') {
         return res.status(403).json({ success: false, message: 'You are not enrolled in this course batch' });

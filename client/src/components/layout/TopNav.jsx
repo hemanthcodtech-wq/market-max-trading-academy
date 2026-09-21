@@ -26,11 +26,13 @@ const TopNav = () => {
     { name: t('dash_nav_home'), path: '/dashboard', icon: FaHome },
     { name: t('dash_nav_courses'), path: '/courses', icon: FaGraduationCap },
     { name: t('dash_nav_learning'), path: '/dashboard/learning', icon: FaBookOpen },
+    { name: 'Blogs', path: '/blog', icon: FaBookOpen },
+    { name: 'E-Books', path: '/ebooks', icon: FaBookOpen },
   ];
 
   return (
     <header
-      className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 xl:px-24 h-18 md:h-20 bg-[#0F172A] border-b border-gray-800 shadow-sm"
+      className="fixed top-0 left-0 w-full z-50 flex items-center gap-4 md:gap-6 px-4 md:px-8 xl:px-24 h-18 md:h-20 bg-[#0B0F19]/90 backdrop-blur-xl border-b border-gray-800 shadow-sm"
     >
       {/* Far Left on Mobile (Back button if available, or left-align on desktop) */}
       <div className="flex items-center gap-2">
@@ -47,14 +49,14 @@ const TopNav = () => {
       </div>
 
       {/* Desktop Nav Links */}
-      <nav className="hidden md:flex items-center gap-8">
+      <nav className="hidden md:flex h-full flex-1 items-stretch gap-7 ml-2">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             end={item.path === '/dashboard'}
             className={({ isActive }) =>
-              `relative font-medium text-[15px] transition-colors hover:text-[#D4AF37] ${
+              `relative flex h-full items-center font-medium text-[15px] transition-colors hover:text-[#D4AF37] ${
                 isActive ? 'text-[#D4AF37]' : 'text-gray-400'
               }`
             }
@@ -68,7 +70,7 @@ const TopNav = () => {
                 {isActive && (
                   <motion.div
                     layoutId="topNavIndicator"
-                    className="absolute -bottom-7 left-0 w-full h-1 bg-[#D4AF37] rounded-t-md shadow-[0_-2px_8px_rgba(212,175,55,0.5)]"
+                    className="absolute bottom-0 left-0 w-full h-1 bg-[#D4AF37] rounded-t-md shadow-[0_-2px_8px_rgba(212,175,55,0.5)]"
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   />
                 )}
@@ -78,7 +80,7 @@ const TopNav = () => {
         ))}
       </nav>
 
-      <div className="flex items-center gap-2 md:gap-4 relative z-10 ml-auto">
+      <div className="flex items-center gap-2 md:gap-4 relative z-10 ml-auto shrink-0">
         {/* Language Select Dropdown */}
         <div className="flex items-center gap-1 px-2 py-1.5 md:px-3 md:py-2 rounded-full border border-gray-700 bg-[#1E293B] hover:bg-[#334155] transition-colors shadow-sm">
           <FaGlobe className="text-[#D4AF37] text-[10px] md:text-xs" />

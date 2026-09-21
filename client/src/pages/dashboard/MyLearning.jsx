@@ -75,27 +75,27 @@ const MyLearning = () => {
 
   const getCategoryColor = (category) => {
     const colors = {
-      'Trading': 'bg-[#f4efe6] text-amber-800',
-      'Meditation': 'bg-[#e9f1e8] text-green-800',
-      'General': 'bg-[#e8ebf4] text-blue-800'
+      'Trading': 'bg-[#D4AF37]/10 text-[#D4AF37]',
+      'Meditation': 'bg-emerald-500/20 text-emerald-300',
+      'General': 'bg-blue-500/20 text-blue-300'
     };
     return colors[category] || colors['General'];
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F7F5] pb-24 md:pb-8 pt-20 md:pt-8">
+    <div className="min-h-screen bg-[#0B0F19] pb-24 md:pb-8 pt-20 md:pt-8">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-6">
         
         {loading ? (
-           <div className="flex justify-center p-10"><div className="w-8 h-8 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div></div>
+           <div className="flex justify-center p-10"><div className="w-8 h-8 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div></div>
         ) : error ? (
            <div className="text-center text-red-500 p-4">{error}</div>
         ) : (
           <div className="space-y-6">
             
             {/* Upcoming Class Card */}
-            <div className="bg-[#f5f4ef] rounded-2xl p-6 md:p-8 border border-[#e6e2d3] flex flex-col md:flex-row items-center justify-between shadow-sm relative overflow-hidden max-w-4xl mx-auto w-full gap-6">
-              <div className="absolute top-0 left-0 w-full md:w-2 md:h-full h-1 md:bg-gradient-to-b bg-gradient-to-r from-yellow-300 to-yellow-500"></div>
+            <div className="bg-[#131722]/80 backdrop-blur-xl rounded-2xl p-6 md:p-8 border border-gray-800 flex flex-col md:flex-row items-center justify-between shadow-sm relative overflow-hidden max-w-4xl mx-auto w-full gap-6">
+              <div className="absolute top-0 left-0 w-full md:w-2 md:h-full h-1 md:bg-gradient-to-b bg-gradient-to-r from-[#D4AF37] to-[#C99C29]"></div>
               
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <h2 className="text-sm font-bold text-gray-500 mb-2 uppercase tracking-widest">Upcoming Class</h2>
@@ -103,7 +103,7 @@ const MyLearning = () => {
                   <>
                     <h3 className="text-xl md:text-2xl font-black text-gray-100 line-clamp-1">{upcomingClass.title || upcomingClass.courseId?.title}</h3>
                     <div className="flex items-center justify-center md:justify-start gap-2 mt-2 text-sm font-medium text-gray-400">
-                      <FaVideo className="text-yellow-500"/>
+                      <FaVideo className="text-[#D4AF37]"/>
                       <span>{new Date(`${upcomingClass.date.split('T')[0]}T${upcomingClass.time}:00`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                       <span className="w-px h-3 bg-gray-300 mx-1"></span>
                       <span>{new Date(upcomingClass.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
@@ -118,7 +118,7 @@ const MyLearning = () => {
                 <a 
                   href={upcomingClass.zoomLink || '#'} 
                   target={upcomingClass.zoomLink ? "_blank" : "_self"}
-                  className={`bg-[#fcd536] hover:bg-[#f6cd24] text-white font-bold px-8 py-3.5 rounded-full text-lg shadow-[0_4px_15px_rgba(252,213,54,0.3)] transition-all hover:scale-105 flex items-center gap-2 whitespace-nowrap ${!upcomingClass.zoomLink && 'opacity-70 cursor-not-allowed'}`}
+                  className={`bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-bold px-8 py-3.5 rounded-full text-lg shadow-[0_4px_15px_rgba(212,175,55,0.3)] transition-all hover:scale-105 flex items-center gap-2 whitespace-nowrap ${!upcomingClass.zoomLink && 'opacity-70 cursor-not-allowed'}`}
                 >
                   Join Now
                 </a>
@@ -126,7 +126,7 @@ const MyLearning = () => {
             </div>
 
             <div className="pt-4">
-              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><FaGraduationCap className="text-yellow-500" /> My Enrolled Courses</h2>
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><FaGraduationCap className="text-[#D4AF37]" /> My Enrolled Courses</h2>
               {/* Course Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {courses.map((course, index) => {
@@ -135,7 +135,7 @@ const MyLearning = () => {
                     <motion.div 
                       initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}
                       key={course.id}
-                      className="bg-[#1E293B] rounded-[20px] border border-gray-700 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col relative group"
+                      className="bg-[#131722]/80 backdrop-blur-xl rounded-[20px] border border-gray-800 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col relative group"
                     >
                       {/* Top colored banner */}
                       <div className={`${colors} px-5 py-3 flex justify-between items-center border-b border-white/50`}>
@@ -162,13 +162,13 @@ const MyLearning = () => {
                             <div className="text-sm font-bold text-gray-300">{course.progress}%</div>
                           </div>
                           <div className="w-full bg-gray-800 rounded-full h-1.5 mb-6">
-                            <div className="bg-[#fcd536] h-1.5 rounded-full" style={{ width: `${course.progress}%` }}></div>
+                            <div className="bg-[#D4AF37] h-1.5 rounded-full" style={{ width: `${course.progress}%` }}></div>
                           </div>
 
                           <div className="flex gap-2">
                             <button 
                               onClick={() => navigate(`/dashboard/learning/${course.courseId}`)}
-                              className="flex-1 bg-[#fcd536] hover:bg-[#f6cd24] text-white font-bold px-3 py-3 rounded-xl text-xs sm:text-sm shadow-sm transition-transform active:scale-95 flex justify-center items-center gap-1.5 cursor-pointer"
+                              className="flex-1 bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-bold px-3 py-3 rounded-xl text-xs sm:text-sm shadow-sm transition-transform active:scale-95 flex justify-center items-center gap-1.5 cursor-pointer"
                             >
                               <span>View Classes</span> <FaChevronRight className="text-[10px]" />
                             </button>
@@ -179,7 +179,7 @@ const MyLearning = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="px-3.5 py-3 bg-[#25D366] hover:bg-[#1ebc59] text-white rounded-xl shadow-xs transition-transform active:scale-95 flex items-center justify-center cursor-pointer"
-                                title="Join Batch WhatsApp Group"
+                                title="Join Batch Community"
                               >
                                 <FaWhatsapp size={17} />
                               </a>

@@ -146,11 +146,11 @@ const StudentClasses = () => {
   todayMidnight.setHours(0, 0, 0, 0);
 
   return (
-    <div className="min-h-screen bg-[#F9F7F5] pb-24 md:pb-12 pt-20 md:pt-10">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_rgba(212,175,55,0.1),_transparent_34%),linear-gradient(180deg,#0B0F19_0%,#080B12_72%)] text-white pb-24 md:pb-12 pt-20 md:pt-10">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         
         {/* Back Button */}
-        <button onClick={() => navigate(-1)} className="text-[#C08552] flex items-center gap-2 font-semibold mb-6 hover:text-[#a06b3e] transition-colors">
+        <button onClick={() => navigate(-1)} className="text-[#F3D36A] flex items-center gap-2 font-semibold mb-6 hover:text-white transition-colors">
           <FaArrowLeft size={14} /> Back to Learning
         </button>
 
@@ -166,7 +166,7 @@ const StudentClasses = () => {
               <div className="lg:sticky lg:top-28 space-y-4">
                 
                 {/* Top Dark Card */}
-                <div className="bg-[#2D2D2D] rounded-2xl p-6 md:p-8 flex flex-col justify-center text-white shadow-xl relative overflow-hidden">
+                <div className="bg-white/[0.055] backdrop-blur-xl rounded-2xl p-6 md:p-8 flex flex-col justify-center text-white shadow-[0_20px_45px_rgba(0,0,0,0.25)] border border-white/10 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[#1E293B]/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
                   
                   <div className="flex items-center gap-4 mb-8">
@@ -181,7 +181,7 @@ const StudentClasses = () => {
                     </div>
                   </div>
                   
-                  <div className="bg-[#1E293B]/5 rounded-xl p-4 border border-white/10">
+                  <div className="bg-black/15 rounded-xl p-4 border border-white/10">
                     <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider block mb-1">Next Class on</span>
                     <span className="text-base font-bold text-yellow-400">{nextDate}</span>
                   </div>
@@ -220,14 +220,14 @@ const StudentClasses = () => {
 
                   <button 
                     onClick={() => setActiveTab('classes')}
-                    className={`rounded-xl py-4 px-5 flex items-center justify-between shadow-sm border transition-all duration-300 ${activeTab === 'classes' ? 'bg-[#C08552] border-[#C08552] text-white shadow-[#C08552]/20' : 'bg-[#1E293B] border-gray-700 hover:bg-[#0F172A] text-gray-300'}`}
+                    className={`rounded-xl py-4 px-5 flex items-center justify-between shadow-sm border transition-all duration-300 ${activeTab === 'classes' ? 'bg-[#D4AF37] border-[#D4AF37] text-[#080B12] shadow-[#D4AF37]/20' : 'bg-white/[0.045] border-white/10 hover:bg-white/[0.08] text-gray-300'}`}
                   >
                     <span className={`text-[13px] font-bold ${activeTab === 'classes' ? 'text-white' : 'text-gray-300'}`}>All Classes</span>
                     <FaChevronRight className={`${activeTab === 'classes' ? 'text-white' : 'text-gray-400'} text-[12px]`} />
                   </button>
                   <button 
                     onClick={() => setActiveTab('materials')}
-                    className={`rounded-xl py-4 px-5 flex items-center justify-between shadow-sm border transition-all duration-300 ${activeTab === 'materials' ? 'bg-[#C08552] border-[#C08552] text-white shadow-[#C08552]/20' : 'bg-[#1E293B] border-gray-700 hover:bg-[#0F172A] text-gray-300'}`}
+                    className={`rounded-xl py-4 px-5 flex items-center justify-between shadow-sm border transition-all duration-300 ${activeTab === 'materials' ? 'bg-[#D4AF37] border-[#D4AF37] text-[#080B12] shadow-[#D4AF37]/20' : 'bg-white/[0.045] border-white/10 hover:bg-white/[0.08] text-gray-300'}`}
                   >
                     <span className={`text-[13px] font-bold ${activeTab === 'materials' ? 'text-white' : 'text-gray-300'}`}>Course Materials ({materials.length})</span>
                     <FaChevronRight className={`${activeTab === 'materials' ? 'text-white' : 'text-gray-400'} text-[12px]`} />
@@ -265,7 +265,7 @@ const StudentClasses = () => {
                           <motion.div 
                             initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}
                             key={cls._id} 
-                            className={`bg-[#1E293B] rounded-[20px] p-5 flex flex-col justify-between border shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-lg transition-all duration-300 group ${isToday ? 'border-[#D4AF37] ring-2 ring-[#D4AF37]/20' : 'border-gray-700'}`}
+                            className={`bg-white/[0.045] backdrop-blur-xl rounded-[20px] p-5 flex flex-col justify-between border shadow-[0_12px_30px_rgba(0,0,0,0.16)] hover:shadow-lg transition-all duration-300 group ${isToday ? 'border-[#D4AF37] ring-2 ring-[#D4AF37]/20' : 'border-white/10'}`}
                           >
                             <div className="flex items-start gap-4 mb-5">
                               <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shrink-0 group-hover:scale-110 transition-transform ${isToday ? 'bg-[#D4AF37]/10 border-[#D4AF37]/30 text-[#D4AF37]' : isPast ? 'bg-[#0F172A] border-gray-800 text-gray-400' : 'bg-amber-50 border-amber-100 text-[#C08552]'}`}>

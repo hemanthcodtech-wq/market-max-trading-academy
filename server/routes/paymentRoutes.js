@@ -63,6 +63,15 @@ router.get('/invoice/:enrollmentId/download', protect, async (req, res) => {
 router.post('/create-order', protect, async (req, res) => {
   try {
     const { courseId } = req.body;
+    const keyId = process.env.RAZORPAY_KEY_ID?.trim();
+    const keySecret = process.env.RAZORPAY_KEY_SECRET?.trim();
+
+    if (!keyId || !keySecret) {
+      return res.status(503).json({
+        success: false,
+        message: 'Payment gateway is not configured. Add Razorpay key credentials on the server.'
+      });
+    }
     
     const course = await Course.findById(courseId);
     if (!course) {
@@ -70,8 +79,8 @@ router.post('/create-order', protect, async (req, res) => {
     }
 
     const instance = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
+      key_id: keyId,
+      key_secret: keySecret,
     });
 
     const price = course.price !== undefined ? course.price : 0;
@@ -90,7 +99,15 @@ router.post('/create-order', protect, async (req, res) => {
     });
   } catch (error) {
     console.error("Order creation error", error);
-    res.status(500).json({ success: false, message: 'Error creating order', error: error.message });
+    const razorpayMessage = error.error?.description || error.message;
+    const isAuthError = error.statusCode === 401 || error.error?.code === 'BAD_REQUEST_ERROR' && /auth/i.test(razorpayMessage || '');
+    res.status(isAuthError ? 503 : 500).json({
+      success: false,
+      message: isAuthError
+        ? 'Razorpay authentication failed. Check that RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET belong to the same account and mode.'
+        : 'Error creating order',
+      error: razorpayMessage
+    });
   }
 });
 

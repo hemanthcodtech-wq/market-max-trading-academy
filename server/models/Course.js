@@ -28,20 +28,7 @@ const courseSchema = new mongoose.Schema({
     trim: true,
     default: 'Technical Analysis'
   },
-  instructorId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  instructor: {
-    type: String
-  },
-  moderatorId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  moderator: {
-    type: String
-  },
+
   durationMonths: {
     type: Number,
     required: true,
@@ -73,6 +60,14 @@ const courseSchema = new mongoose.Schema({
     type: String,
     trim: true,
     default: ''
+  },
+  instructorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  moderatorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   topics: {
     type: [String],

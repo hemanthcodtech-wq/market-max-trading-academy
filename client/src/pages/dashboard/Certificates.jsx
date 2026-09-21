@@ -159,10 +159,7 @@ const Certificates = () => {
   const activeCert = completedEnrollments[selectedCertIndex] || null;
   const currentPrintedName = activeCert?.studentName || studentName;
   const certCourse = activeCert?.course || {};
-  const instructorName = certCourse.instructorId?.name || certCourse.instructor || 'Lead Trading Guru';
-  const categoryName = certCourse.category || 'Financial Trading';
-  const levelName = certCourse.level || 'All Levels';
-  const durationName = certCourse.duration || `${certCourse.sessionDates?.length || 30} Live Sessions`;
+  const durationName = (certCourse.duration || `${certCourse.sessionDates?.length || 30} Live Sessions`).replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
   const issueDateFormatted = activeCert?.completionDate 
     ? new Date(activeCert.completionDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })
     : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
@@ -272,7 +269,7 @@ const Certificates = () => {
                   >
                     {/* Official Certificate Template Background Image */}
                     <img 
-                      src="/certificate_template.jpg" 
+                      src="/certificate_template.png"
                       alt="Certificate Background" 
                       className="absolute inset-0 w-full h-full object-fill pointer-events-none"
                     />
@@ -280,60 +277,44 @@ const Certificates = () => {
                     {/* Certificate Foreground Overlays */}
                     <div className="relative z-10 w-full h-full flex flex-col justify-between p-4 md:p-6 text-left">
                       
-                      {/* Left Sidebar Meta Information Overlay */}
-                      <div className="absolute left-[12%] top-[39.5%] text-[7.5px] md:text-[9.5px] font-bold text-white text-left w-[12%] pl-1">
-                        {activeCert.studentId || `SDWFY${activeCert._id.slice(-6).toUpperCase()}`}
+                      {/* Template metadata values */}
+                      <div className="absolute left-[20.5%] top-[74.4%] text-[6px] md:text-[8px] font-bold text-[#F3D36A] text-left whitespace-nowrap">
+                        {activeCert.certificateId || `MarketMax-CERT-${activeCert._id.slice(-8).toUpperCase()}`}
                       </div>
-                      <div className="absolute left-[12%] top-[51%] text-[7.5px] md:text-[9.5px] font-bold text-white text-left w-[12%] pl-1">
+                      <div className="absolute left-[45.1%] top-[74.4%] text-[6px] md:text-[8px] font-bold text-[#F3D36A] text-left whitespace-nowrap">
                         {issueDateFormatted}
                       </div>
-                      <div className="absolute left-[12%] top-[58.5%] text-[7px] md:text-[9px] font-bold text-white text-left w-[12%] bg-[#0B0F19] py-0.5 pl-1 rounded">
-                        <div>{durationName?.includes('(') ? durationName.split('(')[0] : (durationName || '30 Days')}</div>
-                        <div className="text-[6.5px] md:text-[8px] text-gray-100">{durationName?.includes('(') ? `(${durationName.split('(')[1]}` : '(20 Hours)'}</div>
-                      </div>
-                      <div className="absolute left-[12%] top-[70.5%] text-[7px] md:text-[9px] font-bold text-white text-left w-[12%] pl-1">
-                        {activeCert.certificateId || `SDWFY${activeCert._id.slice(-8).toUpperCase()}`}
+                      <div className="absolute left-[73.5%] top-[74.4%] text-[5.5px] md:text-[7px] font-bold text-[#F3D36A] text-left whitespace-nowrap">
+                        {durationName}
                       </div>
 
                       {/* Recipient Student Name (Center, above green line) */}
-                      <div className="absolute left-[20%] right-[20%] top-[48.5%] text-center">
-                        <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-serif italic font-black text-[#D4AF37] truncate tracking-wide px-2">
+                      <div className="absolute left-[20%] right-[20%] top-[43.8%] text-center">
+                        <h1 className="text-base sm:text-xl md:text-2xl font-serif italic font-bold text-[#F3D36A] truncate tracking-wide px-2">
                           {currentPrintedName}
                         </h1>
                       </div>
 
                       {/* Dynamic Course Title (Center, below 'has successfully completed the') */}
-                      {(certCourse.title && certCourse.title !== 'Trading for Market and Inner Balance') && (
-                        <div className="absolute left-[24%] right-[20%] top-[61.5%] text-center bg-[#0B0F19] py-0.5 rounded px-2">
-                          <h4 className="text-xs sm:text-sm md:text-base font-extrabold text-white truncate">
+                      {certCourse.title && (
+                        <div className="absolute left-[23%] right-[23%] top-[56.4%] text-center px-2">
+                          <h4 className="font-serif text-xs sm:text-sm md:text-base font-bold text-[#F3D36A] truncate">
                             {certCourse.title}
                           </h4>
                         </div>
                       )}
 
                       {/* Bottom Instructor Details (Left, Centered under left diamond ornament) */}
-                      <div className="absolute left-[24.5%] -translate-x-1/2 bottom-[9%] text-center w-[22%]">
-                        <p className="font-extrabold text-[8px] md:text-[10px] text-[#D4AF37] uppercase tracking-tight">
-                          {instructorName || 'RISHI KRISHNA'}
-                        </p>
-                        <p className="text-[6.5px] md:text-[8px] text-gray-400 font-medium">
-                          Trading Instructor
-                        </p>
-                        <p className="text-[6px] md:text-[7px] text-gray-500">
-                          Certified Trading Professional
+                      <div className="absolute left-[14%] top-[88.3%] text-center w-[22%]">
+                        <p className="font-bold text-[5px] md:text-[7px] text-[#D4AF37] uppercase tracking-wide truncate">
+                          KOVURU RAHAMATHULLA
                         </p>
                       </div>
 
                       {/* Bottom Director Details (Right, Centered under right diamond ornament) */}
-                      <div className="absolute left-[64%] -translate-x-1/2 bottom-[9%] text-center w-[22%]">
-                        <p className="font-extrabold text-[8px] md:text-[10px] text-[#D4AF37] uppercase tracking-tight">
-                          MarketMax
-                        </p>
-                        <p className="text-[6.5px] md:text-[8px] text-gray-400 font-medium">
-                          Founder & Director
-                        </p>
-                        <p className="text-[6px] md:text-[7px] text-gray-500">
-                          MarketMax Trading Academy
+                      <div className="absolute left-[67%] top-[88.3%] text-center w-[21%]">
+                        <p className="font-bold text-[5px] md:text-[7px] text-[#D4AF37] uppercase tracking-wide truncate">
+                          KOVURU RAHAMATHULLA
                         </p>
                       </div>
 

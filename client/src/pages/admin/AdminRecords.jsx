@@ -6,7 +6,7 @@ import {
   FaDownload, FaExternalLinkAlt, FaTimes, FaShieldAlt, FaSyncAlt, 
   FaRupeeSign, FaEnvelope, FaTrashAlt, FaFileCsv, FaEye, FaUserGraduate,
   FaEdit, FaPlus, FaPaperPlane, FaMagic, FaCalendarAlt, FaUser, FaBook,
-  FaIdCard, FaChalkboardTeacher
+  FaIdCard
 } from 'react-icons/fa';
 
 const AdminRecords = () => {
@@ -40,9 +40,6 @@ const AdminRecords = () => {
     certificateId: '',
     studentId: '',
     duration: '30 Days (20 Hours)',
-    instructorName: 'RISHI KRISHNA',
-    instructorTitle: 'Trading Instructor',
-    instructorSubtitle: 'Certified Trading Professional',
     sendEmail: true,
     updateEnrollment: true
   });
@@ -97,14 +94,10 @@ const AdminRecords = () => {
   const handleSelectCourse = (selectedTitle) => {
     const course = coursesList.find(c => c.title === selectedTitle || c._id === selectedTitle);
     if (course) {
-      const instName = course.instructorId?.name || course.instructor || 'Lead Trading Guru';
-      const instTitle = course.instructorId?.speciality || 'Trading Instructor';
       setCustomForm(prev => ({
         ...prev,
         courseTitle: course.title,
-        duration: course.duration || prev.duration,
-        instructorName: instName,
-        instructorTitle: instTitle
+        duration: course.duration || prev.duration
       }));
     } else {
       setCustomForm(prev => ({ ...prev, courseTitle: selectedTitle }));
@@ -115,8 +108,6 @@ const AdminRecords = () => {
   const handleOpenCreateModal = () => {
     setCustomModalMode('create');
     const firstCourse = coursesList.length > 0 ? coursesList[0] : null;
-    const instName = firstCourse?.instructorId?.name || firstCourse?.instructor || 'Lead Trading Guru';
-    const instTitle = firstCourse?.instructorId?.speciality || 'Trading Instructor';
     const courseDuration = firstCourse?.duration || '30 Days (20 Hours)';
 
     setCustomForm({
@@ -128,9 +119,6 @@ const AdminRecords = () => {
       certificateId: generateNewCertId(),
       studentId: `SDWFY${Date.now().toString().slice(-6)}`,
       duration: courseDuration,
-      instructorName: instName,
-      instructorTitle: instTitle,
-      instructorSubtitle: 'Certified Trading Professional',
       sendEmail: true,
       updateEnrollment: false
     });
@@ -151,8 +139,6 @@ const AdminRecords = () => {
 
     const course = record.course || {};
     const fullCourse = coursesList.find(c => c._id === course._id || c.title === course.title) || course;
-    const instName = fullCourse.instructorId?.name || fullCourse.instructor || record.instructorName || 'Lead Trading Guru';
-    const instTitle = fullCourse.instructorId?.speciality || record.instructorTitle || 'Trading Instructor';
     const courseDuration = fullCourse.duration || '30 Days (20 Hours)';
 
     setCustomForm({
@@ -164,9 +150,6 @@ const AdminRecords = () => {
       certificateId: record.certificateId || generateNewCertId(),
       studentId: record.studentEmail ? `SDWFY${record.studentEmail.replace(/[^a-zA-Z0-9]/g, '').slice(0, 6).toUpperCase()}` : 'SDWFY250501',
       duration: courseDuration,
-      instructorName: instName,
-      instructorTitle: instTitle,
-      instructorSubtitle: 'Certified Trading Professional',
       sendEmail: true,
       updateEnrollment: true
     });
@@ -195,9 +178,6 @@ const AdminRecords = () => {
           certificateId: customForm.certificateId,
           studentId: customForm.studentId,
           duration: customForm.duration,
-          instructorName: customForm.instructorName,
-          instructorTitle: customForm.instructorTitle,
-          instructorSubtitle: customForm.instructorSubtitle
         },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` },
@@ -370,7 +350,7 @@ const AdminRecords = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-24 right-8 z-50 bg-blue-600 text-slate-800 px-6 py-3.5 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-2 border border-blue-600-dark"
+            className="fixed top-24 right-8 z-50 bg-blue-600 text-white px-6 py-3.5 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-2 border border-blue-600-dark"
           >
             <FaCheckCircle className="text-yellow-300" /> {toastMessage}
           </motion.div>
@@ -378,12 +358,12 @@ const AdminRecords = () => {
       </AnimatePresence>
 
       {/* Top Banner Header */}
-      <div className="bg-white/70 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-white/90 shadow-[0_8px_32px_rgba(0,0,0,0.04)] flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-[#0B0F19]/70 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-white/90 shadow-[0_8px_32px_rgba(0,0,0,0.04)] flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 text-blue-600-dark text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 text-[#D4AF37]-dark text-xs font-bold uppercase tracking-wider mb-2">
             <FaShieldAlt /> Accreditation & Financial Records
           </div>
-          <h1 className="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight">Certificates & Invoices Hub</h1>
+          <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tight">Certificates & Invoices Hub</h1>
           <p className="text-gray-500 text-sm mt-1">
             Search, modify, create custom certificates, download official PDFs, and email credentials to learners.
           </p>
@@ -395,7 +375,7 @@ const AdminRecords = () => {
           {/* New Custom Certificate Button */}
           <button
             onClick={handleOpenCreateModal}
-            className="px-5 py-3 bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-extrabold rounded-2xl text-xs lg:text-sm shadow-md shadow-brand-green/25 transition-all flex items-center gap-2 transform active:scale-95"
+            className="px-5 py-3 bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-extrabold rounded-2xl text-xs lg:text-sm shadow-md shadow-brand-green/25 transition-all flex items-center gap-2 transform active:scale-95"
           >
             <FaPlus size={12} className="text-yellow-300" />
             <span>Create / Issue Certificate</span>
@@ -404,7 +384,7 @@ const AdminRecords = () => {
           {/* Verify by ID */}
           <button
             onClick={() => { setVerifyModalOpen(true); setVerifyResult(null); setVerifyError(''); }}
-            className="px-4 py-3 bg-white hover:bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl text-xs lg:text-sm shadow-xs transition-all flex items-center gap-2"
+            className="px-4 py-3 bg-[#0B0F19] hover:bg-[#0B0F19] border border-slate-200 text-slate-700 font-bold rounded-2xl text-xs lg:text-sm shadow-xs transition-all flex items-center gap-2"
           >
             <FaSearch size={13} className="text-gray-500" />
             <span>Verify ID</span>
@@ -413,7 +393,7 @@ const AdminRecords = () => {
           {/* Export CSV */}
           <button
             onClick={handleExportCSV}
-            className="px-4 py-3 bg-white hover:bg-white border border-slate-200 text-slate-600 font-bold rounded-2xl text-xs lg:text-sm shadow-xs transition-all flex items-center gap-2"
+            className="px-4 py-3 bg-[#0B0F19] hover:bg-[#0B0F19] border border-slate-200 text-gray-300 font-bold rounded-2xl text-xs lg:text-sm shadow-xs transition-all flex items-center gap-2"
           >
             <FaFileCsv size={15} className="text-green-700" />
             <span>Export CSV</span>
@@ -425,49 +405,49 @@ const AdminRecords = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
         {/* Total Certificates Awarded */}
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4">
+        <div className="bg-[#0B0F19]/80 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4">
           <div className="w-13 h-13 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center text-2xl shrink-0">
             <FaAward />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Certificates Issued</span>
-            <span className="text-2xl font-black text-slate-800">{totalCertificates}</span>
-            <span className="text-[11px] text-blue-600 font-semibold block mt-0.5">Verified Accreditations</span>
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Certificates Issued</span>
+            <span className="text-2xl font-black text-white">{totalCertificates}</span>
+            <span className="text-[11px] text-[#D4AF37] font-semibold block mt-0.5">Verified Accreditations</span>
           </div>
         </div>
 
         {/* Total Invoices & Revenue */}
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4">
-          <div className="w-13 h-13 rounded-2xl bg-blue-600/10 text-blue-600 border border-blue-600/30 flex items-center justify-center text-2xl shrink-0">
+        <div className="bg-[#0B0F19]/80 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4">
+          <div className="w-13 h-13 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 flex items-center justify-center text-2xl shrink-0">
             <FaRupeeSign />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Revenue Collected</span>
-            <span className="text-2xl font-black text-slate-800">₹{totalRevenue.toLocaleString('en-IN')}</span>
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Revenue Collected</span>
+            <span className="text-2xl font-black text-white">₹{totalRevenue.toLocaleString('en-IN')}</span>
             <span className="text-[11px] text-gray-500 font-semibold block mt-0.5">{records.length} Tax Invoices</span>
           </div>
         </div>
 
         {/* In-Progress Learners */}
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4">
-          <div className="w-13 h-13 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center text-2xl shrink-0">
+        <div className="bg-[#0B0F19]/80 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4">
+          <div className="w-13 h-13 rounded-2xl bg-blue-50 text-[#D4AF37] border border-blue-200 flex items-center justify-center text-2xl shrink-0">
             <FaUserGraduate />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">In-Progress Students</span>
-            <span className="text-2xl font-black text-slate-800">{inProgressCount}</span>
-            <span className="text-[11px] text-blue-600 font-semibold block mt-0.5">Active Class Batches</span>
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">In-Progress Students</span>
+            <span className="text-2xl font-black text-white">{inProgressCount}</span>
+            <span className="text-[11px] text-[#D4AF37] font-semibold block mt-0.5">Active Class Batches</span>
           </div>
         </div>
 
         {/* Completion Rate */}
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4">
+        <div className="bg-[#0B0F19]/80 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4">
           <div className="w-13 h-13 rounded-2xl bg-purple-50 text-purple-600 border border-purple-200 flex items-center justify-center text-2xl shrink-0">
             <FaCheckCircle />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Completion Rate</span>
-            <span className="text-2xl font-black text-slate-800">{completionRate}%</span>
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Completion Rate</span>
+            <span className="text-2xl font-black text-white">{completionRate}%</span>
             <span className="text-[11px] text-purple-600 font-semibold block mt-0.5">Certification Success</span>
           </div>
         </div>
@@ -475,17 +455,17 @@ const AdminRecords = () => {
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="bg-white/75 backdrop-blur-xl rounded-3xl p-4 md:p-5 border border-white/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-[#131722]/80 border-gray-800 backdrop-blur-xl rounded-3xl p-4 md:p-5 border border-white/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         
         {/* Search input */}
         <div className="relative flex-1 max-w-lg">
-          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm" />
+          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
           <input
             type="text"
             placeholder="Search by Certificate ID, Invoice No, Student Name, Email, Course..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-white/90 border border-slate-200/80 rounded-2xl text-xs lg:text-sm font-medium text-slate-700 placeholder-gray-400 shadow-xs focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none transition-all"
+            className="w-full pl-11 pr-4 py-3 bg-[#0B0F19]/90 border border-slate-200/80 rounded-2xl text-xs lg:text-sm font-medium text-slate-700 placeholder-gray-400 shadow-xs focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none transition-all"
           />
         </div>
 
@@ -494,7 +474,7 @@ const AdminRecords = () => {
           <button
             onClick={() => setStatusFilter('all')}
             className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
-              statusFilter === 'all' ? 'bg-white text-slate-800 shadow-xs' : 'text-gray-500 hover:text-slate-700'
+              statusFilter === 'all' ? 'bg-[#0B0F19] text-white shadow-xs' : 'text-gray-500 hover:text-slate-700'
             }`}
           >
             All Records ({records.length})
@@ -502,7 +482,7 @@ const AdminRecords = () => {
           <button
             onClick={() => setStatusFilter('certified')}
             className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 ${
-              statusFilter === 'certified' ? 'bg-blue-600 text-slate-800 shadow-xs' : 'text-gray-500 hover:text-slate-700'
+              statusFilter === 'certified' ? 'bg-blue-600 text-white shadow-xs' : 'text-gray-500 hover:text-slate-700'
             }`}
           >
             <FaAward size={11} /> Certified ({totalCertificates})
@@ -510,7 +490,7 @@ const AdminRecords = () => {
           <button
             onClick={() => setStatusFilter('in-progress')}
             className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 ${
-              statusFilter === 'in-progress' ? 'bg-white text-amber-700 shadow-xs' : 'text-gray-500 hover:text-slate-700'
+              statusFilter === 'in-progress' ? 'bg-[#0B0F19] text-amber-700 shadow-xs' : 'text-gray-500 hover:text-slate-700'
             }`}
           >
             <FaClock size={11} /> In Progress ({inProgressCount})
@@ -525,11 +505,11 @@ const AdminRecords = () => {
           <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="bg-white/75 backdrop-blur-2xl rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 overflow-hidden">
+        <div className="bg-[#131722]/80 border-gray-800 backdrop-blur-2xl rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[1050px]">
               <thead>
-                <tr className="bg-white/80 border-b border-slate-100 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                <tr className="bg-[#0B0F19]/80 border-b border-slate-100 text-gray-500 text-xs font-bold uppercase tracking-wider">
                   <th className="p-5 pl-8">Learner</th>
                   <th className="p-5">Course / Program</th>
                   <th className="p-5">Tax Invoice</th>
@@ -540,17 +520,17 @@ const AdminRecords = () => {
               </thead>
               <tbody className="divide-y divide-gray-100/80 text-sm">
                 {filteredRecords.map((r) => (
-                  <tr key={r._id} className="hover:bg-white/90 transition-colors">
+                  <tr key={r._id} className="hover:bg-[#0B0F19]/90 transition-colors">
                     
                     {/* Learner */}
                     <td className="p-5 pl-8">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-blue-600/10 text-blue-600 flex items-center justify-center font-bold text-sm border border-blue-600/20 shrink-0">
+                        <div className="w-10 h-10 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center font-bold text-sm border border-blue-600/20 shrink-0">
                           {r.studentName ? r.studentName.charAt(0).toUpperCase() : 'S'}
                         </div>
                         <div>
-                          <div className="font-extrabold text-slate-800">{r.studentName}</div>
-                          <div className="text-xs text-slate-500 font-medium">{r.studentEmail}</div>
+                          <div className="font-extrabold text-white">{r.studentName}</div>
+                          <div className="text-xs text-gray-400 font-medium">{r.studentEmail}</div>
                         </div>
                       </div>
                     </td>
@@ -574,7 +554,7 @@ const AdminRecords = () => {
                             href={r.invoiceUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:underline"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#D4AF37] hover:underline"
                           >
                             <FaExternalLinkAlt size={9} /> Cloudinary PDF
                           </a>
@@ -583,7 +563,7 @@ const AdminRecords = () => {
                             href={`${import.meta.env.VITE_API_BASE_URL}/payments/invoice/${r._id}/download`}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-blue-600"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-400 hover:text-[#D4AF37]"
                           >
                             <FaDownload size={9} /> Download Invoice
                           </a>
@@ -604,7 +584,7 @@ const AdminRecords = () => {
                                 href={r.certificateUrl}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:underline"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#D4AF37] hover:underline"
                               >
                                 <FaExternalLinkAlt size={9} /> Cloudinary Cert
                               </a>
@@ -613,14 +593,14 @@ const AdminRecords = () => {
                                 href={`${import.meta.env.VITE_API_BASE_URL}/courses/certificate/${r._id}/download`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-blue-600"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-400 hover:text-[#D4AF37]"
                               >
                                 <FaDownload size={9} /> Download PDF
                               </a>
                             )}
                             <button
                               onClick={() => setPreviewRecord(r)}
-                              className="text-[11px] font-bold text-gray-500 hover:text-slate-800 inline-flex items-center gap-1"
+                              className="text-[11px] font-bold text-gray-500 hover:text-white inline-flex items-center gap-1"
                             >
                               <FaEye size={10} /> Preview
                             </button>
@@ -634,7 +614,7 @@ const AdminRecords = () => {
                     </td>
 
                     {/* Amount */}
-                    <td className="p-5 font-black text-slate-800">
+                    <td className="p-5 font-black text-white">
                       ₹{r.amountPaid || 0}
                     </td>
 
@@ -645,7 +625,7 @@ const AdminRecords = () => {
                         {/* ✏️ Edit & Send Certificate Action */}
                         <button
                           onClick={() => handleOpenEditModal(r)}
-                          className="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500 hover:text-slate-800 text-amber-800 text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5 border border-amber-300"
+                          className="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500 hover:text-white text-amber-800 text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5 border border-amber-300"
                           title="Modify details and send certificate to learner"
                         >
                           <FaEdit size={12} />
@@ -657,7 +637,7 @@ const AdminRecords = () => {
                           href={r.invoiceUrl || `${import.meta.env.VITE_API_BASE_URL}/payments/invoice/${r._id}/download`}
                           target="_blank"
                           rel="noreferrer"
-                          className="px-3.5 py-2 bg-white hover:bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5"
+                          className="px-3.5 py-2 bg-[#0B0F19] hover:bg-[#0B0F19] border border-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5"
                           title="Open Tax Invoice PDF in new tab"
                         >
                           <FaEye size={12} className="text-gray-500" />
@@ -670,7 +650,7 @@ const AdminRecords = () => {
                             href={r.certificateUrl || `${import.meta.env.VITE_API_BASE_URL}/courses/certificate/${r._id}/download`}
                             target="_blank"
                             rel="noreferrer"
-                            className="px-3.5 py-2 bg-blue-600/10 hover:bg-blue-600 hover:text-slate-800 text-blue-600-dark text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5"
+                            className="px-3.5 py-2 bg-[#D4AF37]/10 hover:bg-blue-600 hover:text-white text-[#D4AF37]-dark text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5"
                             title="Open Certificate PDF in new tab"
                           >
                             <FaAward size={12} />
@@ -697,7 +677,7 @@ const AdminRecords = () => {
 
                 {filteredRecords.length === 0 && (
                   <tr>
-                    <td colSpan="6" className="p-16 text-center text-slate-500 font-medium">
+                    <td colSpan="6" className="p-16 text-center text-gray-400 font-medium">
                       No accreditation or invoice records match your search query.
                     </td>
                   </tr>
@@ -716,16 +696,16 @@ const AdminRecords = () => {
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-white rounded-[2rem] max-w-5xl w-full p-6 md:p-8 shadow-2xl border border-white/80 my-8 space-y-6 max-h-[90vh] overflow-y-auto"
+              className="bg-[#0B0F19] rounded-[2rem] max-w-5xl w-full p-6 md:p-8 shadow-2xl border border-white/80 my-8 space-y-6 max-h-[90vh] overflow-y-auto"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-600/10 text-blue-600 flex items-center justify-center text-xl">
+                  <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center text-xl">
                     <FaAward />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                    <h3 className="text-xl font-black text-white flex items-center gap-2">
                       {customModalMode === 'edit' ? 'Modify & Re-Issue Certificate' : 'Create Custom Certificate'}
                       <span className="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                         Official MarketMax Studio
@@ -752,8 +732,8 @@ const AdminRecords = () => {
                   
                   {/* Recipient Full Name */}
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-                      <FaUser className="text-blue-600" /> Learner / Student Full Name *
+                    <label className="text-xs font-bold text-gray-300 flex items-center gap-1.5">
+                      <FaUser className="text-[#D4AF37]" /> Learner / Student Full Name *
                     </label>
                     <input
                       type="text"
@@ -761,30 +741,30 @@ const AdminRecords = () => {
                       placeholder="e.g. Ananya Sharma"
                       value={customForm.studentName}
                       onChange={(e) => handleFormChange('studentName', e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
+                      className="w-full px-4 py-2.5 bg-[#0B0F19] border border-slate-200 rounded-xl text-sm font-semibold text-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
                     />
                   </div>
 
                   {/* Recipient Email */}
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-                      <FaEnvelope className="text-blue-600" /> Learner Email Address
+                    <label className="text-xs font-bold text-gray-300 flex items-center gap-1.5">
+                      <FaEnvelope className="text-[#D4AF37]" /> Learner Email Address
                     </label>
                     <input
                       type="email"
                       placeholder="e.g. learner@example.com"
                       value={customForm.studentEmail}
                       onChange={(e) => handleFormChange('studentEmail', e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
+                      className="w-full px-4 py-2.5 bg-[#0B0F19] border border-slate-200 rounded-xl text-sm text-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
                     />
                   </div>
 
                   {/* Course Title (Pick from dropdown or custom type) */}
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5"><FaBook className="text-blue-600" /> Course / Program Title *</span>
+                    <label className="text-xs font-bold text-gray-300 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5"><FaBook className="text-[#D4AF37]" /> Course / Program Title *</span>
                       {coursesList.length > 0 && (
-                        <span className="text-[11px] text-blue-600 font-normal">Or select existing course</span>
+                        <span className="text-[11px] text-[#D4AF37] font-normal">Or select existing course</span>
                       )}
                     </label>
                     <div className="space-y-2">
@@ -794,13 +774,13 @@ const AdminRecords = () => {
                         placeholder="e.g. Master Trading Technical Analysis & Financial Market"
                         value={customForm.courseTitle}
                         onChange={(e) => handleFormChange('courseTitle', e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
+                        className="w-full px-4 py-2.5 bg-[#0B0F19] border border-slate-200 rounded-xl text-sm font-semibold text-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
                       />
                       {coursesList.length > 0 ? (
                         <select
                           value={coursesList.some(c => c.title === customForm.courseTitle) ? customForm.courseTitle : ''}
                           onChange={(e) => e.target.value && handleSelectCourse(e.target.value)}
-                          className="w-full px-3 py-2.5 bg-blue-600/5 border border-blue-600/30 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20"
+                          className="w-full px-3 py-2.5 bg-blue-600/5 border border-[#D4AF37]/30 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20"
                         >
                           <option value="">-- Select from {coursesList.length} Database Courses --</option>
                           {coursesList.map(c => (
@@ -810,7 +790,7 @@ const AdminRecords = () => {
                           ))}
                         </select>
                       ) : (
-                        <p className="text-xs text-slate-500 italic">No courses found in database.</p>
+                        <p className="text-xs text-gray-400 italic">No courses found in database.</p>
                       )}
                     </div>
                   </div>
@@ -818,12 +798,12 @@ const AdminRecords = () => {
                   {/* Certificate ID & Auto Generate */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 flex items-center justify-between">
-                        <span className="flex items-center gap-1.5"><FaIdCard className="text-blue-600" /> Certificate ID</span>
+                      <label className="text-xs font-bold text-gray-300 flex items-center justify-between">
+                        <span className="flex items-center gap-1.5"><FaIdCard className="text-[#D4AF37]" /> Certificate ID</span>
                         <button
                           type="button"
                           onClick={() => handleFormChange('certificateId', generateNewCertId())}
-                          className="text-[11px] text-blue-600 hover:underline flex items-center gap-1 font-bold"
+                          className="text-[11px] text-[#D4AF37] hover:underline flex items-center gap-1 font-bold"
                         >
                           <FaMagic size={10} /> Auto-Generate
                         </button>
@@ -833,20 +813,20 @@ const AdminRecords = () => {
                         placeholder="e.g. MarketMax-CERT-260823"
                         value={customForm.certificateId}
                         onChange={(e) => handleFormChange('certificateId', e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-800 focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
+                        className="w-full px-4 py-2.5 bg-[#0B0F19] border border-slate-200 rounded-xl text-xs font-mono font-bold text-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
                       />
                     </div>
 
                     {/* Completion / Issue Date */}
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-                        <FaCalendarAlt className="text-blue-600" /> Issue / Completion Date
+                      <label className="text-xs font-bold text-gray-300 flex items-center gap-1.5">
+                        <FaCalendarAlt className="text-[#D4AF37]" /> Issue / Completion Date
                       </label>
                       <input
                         type="date"
                         value={customForm.completionDate}
                         onChange={(e) => handleFormChange('completionDate', e.target.value)}
-                        className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
+                        className="w-full px-4 py-2 bg-[#0B0F19] border border-slate-200 rounded-xl text-xs font-semibold text-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
                       />
                     </div>
                   </div>
@@ -854,28 +834,16 @@ const AdminRecords = () => {
                   {/* Course Duration & Instructor Details */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600">Course Duration</label>
+                      <label className="text-xs font-bold text-gray-300">Course Duration</label>
                       <input
                         type="text"
                         placeholder="e.g. 30 Days (20 Hours)"
                         value={customForm.duration}
                         onChange={(e) => handleFormChange('duration', e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
+                        className="w-full px-4 py-2.5 bg-[#0B0F19] border border-slate-200 rounded-xl text-xs font-medium text-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-                        <FaChalkboardTeacher className="text-blue-600" /> Instructor Name (Assigned Guru)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Assigned Course Guru"
-                        value={customForm.instructorName}
-                        onChange={(e) => handleFormChange('instructorName', e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none uppercase"
-                      />
-                    </div>
                   </div>
 
                   {/* Email & DB Update Checkboxes */}
@@ -885,7 +853,7 @@ const AdminRecords = () => {
                         type="checkbox"
                         checked={customForm.sendEmail}
                         onChange={(e) => handleFormChange('sendEmail', e.target.checked)}
-                        className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-[#D4AF37]"
+                        className="w-4 h-4 text-[#D4AF37] rounded border-slate-300 focus:ring-[#D4AF37]"
                       />
                       <span>Email the official certificate PDF directly to the learner</span>
                     </label>
@@ -896,7 +864,7 @@ const AdminRecords = () => {
                           type="checkbox"
                           checked={customForm.updateEnrollment}
                           onChange={(e) => handleFormChange('updateEnrollment', e.target.checked)}
-                          className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-[#D4AF37]"
+                          className="w-4 h-4 text-[#D4AF37] rounded border-slate-300 focus:ring-[#D4AF37]"
                         />
                         <span>Update student database enrollment status to 100% Completed</span>
                       </label>
@@ -920,88 +888,73 @@ const AdminRecords = () => {
                     {/* Official Template Canvas Image with Positioned Overlays */}
                     <div className="relative w-full aspect-[842/595] rounded-2xl overflow-hidden shadow-xl border-2 border-blue-600 select-none bg-[#FCFAF6]">
                       <img
-                        src="/certificate_template.jpg"
+                        src="/certificate_template.png"
                         alt="Official Certificate Template"
                         className="w-full h-full object-cover pointer-events-none"
                       />
 
                       {/* 1. Left Sidebar Meta Information */}
-                      {/* Student ID */}
+                      {/* Certificate ID */}
                       <div 
-                        style={{ top: '39.8%', left: '12.1%' }}
-                        className="absolute text-[7px] sm:text-[9px] font-bold text-slate-800 tracking-tight"
+                        style={{ top: '74.4%', left: '20.5%' }}
+                        className="absolute text-[5.5px] sm:text-[7px] font-bold text-[#F3D36A] tracking-tight whitespace-nowrap"
                       >
-                        {customForm.studentId || 'SDWFY250501'}
+                        {customForm.certificateId || 'MarketMax-CERT-SAMPLE'}
                       </div>
 
                       {/* Issue Date */}
                       <div 
-                        style={{ top: '51.2%', left: '12.1%' }}
-                        className="absolute text-[7px] sm:text-[9px] font-bold text-slate-800 tracking-tight whitespace-nowrap"
+                        style={{ top: '74.4%', left: '45.1%' }}
+                        className="absolute text-[5.5px] sm:text-[7px] font-bold text-[#F3D36A] tracking-tight whitespace-nowrap"
                       >
                         {customForm.completionDate ? new Date(customForm.completionDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : '23 August 2026'}
                       </div>
 
                       {/* Course Duration */}
                       <div 
-                        style={{ top: '58.5%', left: '12.1%' }}
-                        className="absolute text-[6.5px] sm:text-[8.5px] font-bold text-slate-800 tracking-tight leading-tight max-w-[20%]"
+                        style={{ top: '74.4%', left: '73.5%' }}
+                        className="absolute text-[5px] sm:text-[6.5px] font-bold text-[#F3D36A] tracking-tight whitespace-nowrap"
                       >
                         {customForm.duration || '30 Days (20 Hours)'}
                       </div>
 
-                      {/* Certificate ID */}
-                      <div 
-                        style={{ top: '70.5%', left: '12.1%' }}
-                        className="absolute text-[6.5px] sm:text-[8.5px] font-mono font-bold text-slate-800 tracking-tight"
-                      >
-                        {customForm.certificateId || 'MarketMax-CERT-SAMPLE'}
-                      </div>
-
                       {/* 2. Recipient Name (Calligraphy Center at top ~47.5%) */}
                       <div 
-                        style={{ top: '47.5%', left: '20%', right: '20%' }}
+                        style={{ top: '46.8%', left: '20%', right: '20%' }}
                         className="absolute flex items-center justify-center text-center pointer-events-none"
                       >
-                        <span className="font-serif italic font-extrabold text-blue-600 text-[12px] sm:text-[16px] md:text-[18px] tracking-wide drop-shadow-xs line-clamp-1">
+                        <span className="font-serif italic font-bold text-[#F3D36A] text-[13px] sm:text-[17px] md:text-[20px] tracking-wide line-clamp-1">
                           {customForm.studentName || 'Learner Full Name'}
                         </span>
                       </div>
 
                       {/* 3. Dynamic Course Title (Center at top ~61.5%) */}
                       <div 
-                        style={{ top: '61.5%', left: '24%', right: '24%' }}
+                        style={{ top: '55.8%', left: '23%', right: '23%' }}
                         className="absolute flex items-center justify-center text-center pointer-events-none"
                       >
-                        <span className="font-bold text-slate-800 text-[8px] sm:text-[10px] md:text-[11px] bg-[#F8FAFC]/90 px-2 py-0.5 rounded shadow-xs line-clamp-1">
+                        <span className="font-serif font-bold text-[#F3D36A] text-[9px] sm:text-[12px] md:text-[14px] px-2 py-0.5 line-clamp-1">
                           {customForm.courseTitle || 'Trading for Market and Inner Balance'}
                         </span>
                       </div>
 
-                      {/* 4. Bottom Signatures: Instructor Name (left) & Director (right) */}
-                      {/* Instructor Name (Center ~34.4%, Top ~86.7%) */}
+                      {/* 4. Bottom Signatures */}
                       <div 
-                        style={{ top: '86.7%', left: '24%', width: '21%' }}
+                        style={{ top: '88.3%', left: '14%', width: '22%' }}
                         className="absolute text-center leading-tight pointer-events-none"
                       >
-                        <p className="text-[6.5px] sm:text-[8.5px] font-bold text-blue-600 uppercase tracking-wider truncate">
-                          {customForm.instructorName || 'Lead Trading Guru'}
-                        </p>
-                        <p className="text-[5px] sm:text-[6.5px] text-slate-500 truncate">
-                          {customForm.instructorTitle || 'Trading Instructor'}
+                        <p className="text-[5.5px] sm:text-[7px] font-bold text-[#D4AF37] uppercase tracking-wide truncate">
+                          KOVURU RAHAMATHULLA
                         </p>
                       </div>
 
                       {/* Director Name (Center ~63.8%, Top ~86.7%) */}
                       <div 
-                        style={{ top: '86.7%', left: '53.3%', width: '21%' }}
+                        style={{ top: '88.3%', left: '67%', width: '21%' }}
                         className="absolute text-center leading-tight pointer-events-none"
                       >
-                        <p className="text-[6.5px] sm:text-[8.5px] font-bold text-blue-600 uppercase tracking-wider truncate">
-                          MarketMax
-                        </p>
-                        <p className="text-[5px] sm:text-[6.5px] text-slate-500 truncate">
-                          Founder & Director
+                        <p className="text-[5.5px] sm:text-[7px] font-bold text-[#D4AF37] uppercase tracking-wide truncate">
+                          KOVURU RAHAMATHULLA
                         </p>
                       </div>
 
@@ -1015,7 +968,7 @@ const AdminRecords = () => {
                     <button
                       type="submit"
                       disabled={customSubmitting}
-                      className="w-full py-3.5 bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-extrabold rounded-2xl text-sm shadow-md shadow-brand-green/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-extrabold rounded-2xl text-sm shadow-md shadow-brand-green/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       {customSubmitting ? (
                         <>
@@ -1035,7 +988,7 @@ const AdminRecords = () => {
                       type="button"
                       onClick={handleDownloadPreviewPDF}
                       disabled={customPreviewing}
-                      className="w-full py-2.5 bg-gray-800 hover:bg-gray-200 text-slate-600 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5"
+                      className="w-full py-2.5 bg-gray-800 hover:bg-gray-200 text-gray-300 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5"
                     >
                       {customPreviewing ? (
                         <span>Rendering High-Res PDF...</span>
@@ -1066,21 +1019,21 @@ const AdminRecords = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-white/80 space-y-6"
+              className="bg-[#0B0F19] rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-white/10 space-y-6"
             >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-blue-600/10 text-blue-600 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center">
                     <FaShieldAlt size={18} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-slate-800">Certificate Verification Engine</h3>
-                    <p className="text-xs text-slate-500">Authenticate any MarketMax certificate credential</p>
+                    <h3 className="text-lg font-black text-white">Certificate Verification Engine</h3>
+                    <p className="text-xs text-gray-400">Authenticate any MarketMax certificate credential</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setVerifyModalOpen(false)}
-                  className="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition-all"
+                  className="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white flex items-center justify-center transition-all"
                 >
                   <FaTimes size={13} />
                 </button>
@@ -1088,19 +1041,19 @@ const AdminRecords = () => {
 
               <form onSubmit={handleVerifySearch} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 uppercase">Enter Certificate ID</label>
+                  <label className="text-xs font-bold text-gray-300 uppercase">Enter Certificate ID</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       placeholder="e.g. MarketMax-CERT-2026-9941"
                       value={verifyInput}
                       onChange={(e) => setVerifyInput(e.target.value)}
-                      className="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-mono font-bold text-slate-800 focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none"
+                      className="flex-1 px-4 py-3 bg-[#131722] border border-white/10 rounded-2xl text-sm font-mono font-bold text-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-[#D4AF37] outline-none"
                     />
                     <button
                       type="submit"
                       disabled={verifying || !verifyInput.trim()}
-                      className="px-6 py-3 bg-blue-600 hover:bg-blue-600-dark text-slate-800 font-extrabold rounded-2xl text-sm shadow-md transition-all disabled:opacity-50"
+                      className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] text-white font-extrabold rounded-2xl text-sm shadow-md transition-all disabled:opacity-50"
                     >
                       {verifying ? 'Checking...' : 'Verify'}
                     </button>
@@ -1110,22 +1063,22 @@ const AdminRecords = () => {
 
               {/* Verification Result Display */}
               {verifyResult && (
-                <div className="bg-[#F8FAFC] p-5 rounded-2xl border border-blue-600 space-y-3">
-                  <div className="flex items-center gap-2 text-blue-600 font-extrabold text-sm">
+                <div className="bg-emerald-500/10 p-5 rounded-2xl border border-emerald-400/30 space-y-3">
+                  <div className="flex items-center gap-2 text-emerald-300 font-extrabold text-sm">
                     <FaCheckCircle size={16} /> Authentic & Verified Credential
                   </div>
                   <div className="space-y-1 text-xs">
-                    <p><strong className="text-slate-500">Certificate ID:</strong> <span className="font-mono font-bold text-slate-800">{verifyResult.certificateId}</span></p>
-                    <p><strong className="text-slate-500">Recipient Student:</strong> <span className="font-bold text-slate-800">{verifyResult.studentName}</span></p>
-                    <p><strong className="text-slate-500">Accredited Course:</strong> <span className="font-bold text-blue-600">{verifyResult.courseTitle}</span></p>
-                    <p><strong className="text-slate-500">Date of Issue:</strong> <span className="text-slate-700">{new Date(verifyResult.issueDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}</span></p>
+                    <p><strong className="text-gray-400">Certificate ID:</strong> <span className="font-mono font-bold text-gray-100">{verifyResult.certificateId}</span></p>
+                    <p><strong className="text-gray-400">Recipient Student:</strong> <span className="font-bold text-gray-100">{verifyResult.studentName}</span></p>
+                    <p><strong className="text-gray-400">Accredited Course:</strong> <span className="font-bold text-[#D4AF37]">{verifyResult.courseTitle}</span></p>
+                    <p><strong className="text-gray-400">Date of Issue:</strong> <span className="text-gray-200">{new Date(verifyResult.issueDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}</span></p>
                   </div>
                   {verifyResult.certificateUrl && (
                     <a
                       href={verifyResult.certificateUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:underline pt-1"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D4AF37] hover:underline pt-1"
                     >
                       <FaExternalLinkAlt size={10} /> View Cloudinary Master Certificate PDF
                     </a>
@@ -1134,7 +1087,7 @@ const AdminRecords = () => {
               )}
 
               {verifyError && (
-                <div className="bg-red-50 text-red-700 p-4 rounded-2xl border border-red-200 text-xs font-bold flex items-center gap-2">
+                <div className="bg-red-500/10 text-red-300 p-4 rounded-2xl border border-red-400/20 text-xs font-bold flex items-center gap-2">
                   <FaTimes /> {verifyError}
                 </div>
               )}
@@ -1151,10 +1104,10 @@ const AdminRecords = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl border border-white/80 space-y-5"
+              className="bg-[#0B0F19] rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl border border-white/80 space-y-5"
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-black text-slate-800 text-base flex items-center gap-2">
+                <h3 className="font-black text-white text-base flex items-center gap-2">
                   <FaAward className="text-yellow-600" /> Certificate Live Digital Preview
                 </h3>
                 <button
@@ -1168,7 +1121,7 @@ const AdminRecords = () => {
               {/* Certificate Canvas Mockup with Official Template Image */}
               <div className="relative w-full aspect-[842/595] rounded-3xl overflow-hidden shadow-2xl border-4 border-blue-600 select-none bg-[#FCFAF6]">
                 <img
-                  src="/certificate_template.jpg"
+                  src="/certificate_template.png"
                   alt="Official Certificate Template"
                   className="w-full h-full object-cover pointer-events-none"
                 />
@@ -1176,80 +1129,65 @@ const AdminRecords = () => {
                 {/* 1. Left Sidebar Meta Information */}
                 {/* Student ID */}
                 <div 
-                  style={{ top: '39.8%', left: '12.1%' }}
-                  className="absolute text-[8px] sm:text-[11px] font-bold text-slate-800 tracking-tight"
+                  style={{ top: '74.4%', left: '20.5%' }}
+                  className="absolute text-[6px] sm:text-[8px] font-bold text-[#F3D36A] tracking-tight whitespace-nowrap"
                 >
-                  {previewRecord.studentEmail ? `SDWFY${previewRecord.studentEmail.replace(/[^a-zA-Z0-9]/g, '').slice(0, 6).toUpperCase()}` : 'SDWFY250501'}
+                  {previewRecord.certificateId || 'MarketMax-CERT-SAMPLE'}
                 </div>
 
                 {/* Issue Date */}
                 <div 
-                  style={{ top: '51.2%', left: '12.1%' }}
-                  className="absolute text-[8px] sm:text-[11px] font-bold text-slate-800 tracking-tight whitespace-nowrap"
+                  style={{ top: '74.4%', left: '45.1%' }}
+                  className="absolute text-[6px] sm:text-[8px] font-bold text-[#F3D36A] tracking-tight whitespace-nowrap"
                 >
                   {previewRecord.completionDate ? new Date(previewRecord.completionDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
                 </div>
 
                 {/* Course Duration */}
                 <div 
-                  style={{ top: '58.5%', left: '12.1%' }}
-                  className="absolute text-[7.5px] sm:text-[10px] font-bold text-slate-800 tracking-tight leading-tight max-w-[20%]"
+                  style={{ top: '74.4%', left: '73.5%' }}
+                  className="absolute text-[5.5px] sm:text-[7px] font-bold text-[#F3D36A] tracking-tight whitespace-nowrap"
                 >
                   {previewRecord.course?.duration || '30 Days (20 Hours)'}
                 </div>
 
-                {/* Certificate ID */}
-                <div 
-                  style={{ top: '70.5%', left: '12.1%' }}
-                  className="absolute text-[7.5px] sm:text-[10px] font-mono font-bold text-slate-800 tracking-tight"
-                >
-                  {previewRecord.certificateId || 'MarketMax-CERT-SAMPLE'}
-                </div>
-
                 {/* 2. Recipient Name (Calligraphy Center at top ~47.5%) */}
                 <div 
-                  style={{ top: '47.5%', left: '20%', right: '20%' }}
+                  style={{ top: '46.8%', left: '20%', right: '20%' }}
                   className="absolute flex items-center justify-center text-center pointer-events-none"
                 >
-                  <span className="font-serif italic font-extrabold text-blue-600 text-[16px] sm:text-[22px] md:text-[26px] tracking-wide drop-shadow-xs line-clamp-1">
+                  <span className="font-serif italic font-bold text-[#F3D36A] text-[18px] sm:text-[25px] md:text-[30px] tracking-wide line-clamp-1">
                     {previewRecord.studentName || 'Learner Full Name'}
                   </span>
                 </div>
 
                 {/* 3. Dynamic Course Title (Center at top ~61.5%) */}
                 <div 
-                  style={{ top: '61.5%', left: '24%', right: '24%' }}
+                  style={{ top: '55.8%', left: '23%', right: '23%' }}
                   className="absolute flex items-center justify-center text-center pointer-events-none"
                 >
-                  <span className="font-bold text-slate-800 text-[10px] sm:text-[13px] md:text-[15px] bg-[#F8FAFC]/90 px-3 py-0.5 rounded shadow-xs line-clamp-1">
+                  <span className="font-serif font-bold text-[#F3D36A] text-[14px] sm:text-[18px] md:text-[22px] px-3 py-0.5 line-clamp-1">
                     {previewRecord.course?.title || 'Trading for Market and Inner Balance'}
                   </span>
                 </div>
 
-                {/* 4. Bottom Signatures: Instructor Name (left) & Director (right) */}
-                {/* Instructor Name (Center ~34.4%, Top ~86.7%) */}
+                {/* 4. Bottom Signatures */}
                 <div 
-                  style={{ top: '86.7%', left: '24%', width: '21%' }}
+                  style={{ top: '88.3%', left: '14%', width: '22%' }}
                   className="absolute text-center leading-tight pointer-events-none"
                 >
-                  <p className="text-[8px] sm:text-[10.5px] font-bold text-blue-600 uppercase tracking-wider truncate">
-                    {previewRecord.course?.instructorId?.name || previewRecord.course?.instructor || 'Lead Trading Guru'}
-                  </p>
-                  <p className="text-[6px] sm:text-[8px] text-slate-500 truncate">
-                    {previewRecord.course?.instructorId?.speciality || 'Trading Instructor'}
+                  <p className="text-[6.5px] sm:text-[8px] font-bold text-[#D4AF37] uppercase tracking-wide truncate">
+                    KOVURU RAHAMATHULLA
                   </p>
                 </div>
 
                 {/* Director Name (Center ~63.8%, Top ~86.7%) */}
                 <div 
-                  style={{ top: '86.7%', left: '53.3%', width: '21%' }}
+                  style={{ top: '88.3%', left: '67%', width: '21%' }}
                   className="absolute text-center leading-tight pointer-events-none"
                 >
-                  <p className="text-[8px] sm:text-[10.5px] font-bold text-blue-600 uppercase tracking-wider truncate">
-                    MarketMax
-                  </p>
-                  <p className="text-[6px] sm:text-[8px] text-slate-500 truncate">
-                    Founder & Director
+                  <p className="text-[6.5px] sm:text-[8px] font-bold text-[#D4AF37] uppercase tracking-wide truncate">
+                    KOVURU RAHAMATHULLA
                   </p>
                 </div>
 
@@ -1261,14 +1199,14 @@ const AdminRecords = () => {
                     href={previewRecord.certificateUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-5 py-2.5 bg-blue-600 text-slate-800 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-xs"
+                    className="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-xs"
                   >
                     <FaExternalLinkAlt size={11} /> Open Cloudinary PDF
                   </a>
                 )}
                 <button
                   onClick={() => setPreviewRecord(null)}
-                  className="px-5 py-2.5 bg-gray-800 hover:bg-gray-200 text-slate-600 font-bold rounded-xl text-xs"
+                  className="px-5 py-2.5 bg-gray-800 hover:bg-gray-200 text-gray-300 font-bold rounded-xl text-xs"
                 >
                   Close
                 </button>

@@ -75,24 +75,24 @@ const UserManagement = () => {
     <div className="space-y-6 pb-24 md:pb-8 font-inter">
       
       {/* Top Banner Header */}
-      <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-[#131722]/80 border-gray-800 backdrop-blur-2xl rounded-[2.5rem] p-6 lg:p-8 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 text-blue-600-dark text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 text-[#D4AF37]-dark text-xs font-bold uppercase tracking-wider mb-2">
             Student Management
           </div>
-          <h1 className="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight">Registered Learners</h1>
+          <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tight">Registered Learners</h1>
           <p className="text-gray-500 text-sm mt-1">Directory of students, enrollment histories, and course access status.</p>
         </div>
 
         {/* Search Bar */}
         <div className="relative w-full md:w-80">
-          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm" />
+          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
           <input
             type="text"
             placeholder="Search by email, phone, name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-white/90 border border-slate-200/80 rounded-2xl text-xs lg:text-sm font-medium text-slate-700 placeholder-gray-400 shadow-xs focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none transition-all"
+            className="w-full pl-11 pr-4 py-3 bg-[#0B0F19]/90 border border-slate-200/80 rounded-2xl text-xs lg:text-sm font-medium text-slate-700 placeholder-gray-400 shadow-xs focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-blue-600 outline-none transition-all"
           />
         </div>
       </div>
@@ -102,11 +102,11 @@ const UserManagement = () => {
           <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="bg-white/75 backdrop-blur-2xl rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 overflow-hidden">
+        <div className="bg-[#131722]/80 border-gray-800 backdrop-blur-2xl rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white/80 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
-                <tr className="bg-white/80 border-b border-slate-100 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                <tr className="bg-[#0B0F19]/80 border-b border-slate-100 text-gray-500 text-xs font-bold uppercase tracking-wider">
                   <th className="p-5 pl-8">Student Contact / Name</th>
                   <th className="p-5">Role</th>
                   <th className="p-5">Registration Date</th>
@@ -115,32 +115,32 @@ const UserManagement = () => {
               </thead>
               <tbody className="divide-y divide-gray-100/80 text-sm">
                 {filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-white/90 transition-colors">
+                  <tr key={user._id} className="hover:bg-[#0B0F19]/90 transition-colors">
                     <td className="p-5 pl-8">
                       <div className="flex items-center gap-3.5">
-                        <div className="w-11 h-11 rounded-2xl bg-blue-600/10 text-blue-600 flex items-center justify-center font-bold text-sm border border-blue-600/20 shrink-0">
+                        <div className="w-11 h-11 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center font-bold text-sm border border-blue-600/20 shrink-0">
                           {user.name ? user.name.charAt(0).toUpperCase() : <FaUser />}
                         </div>
                         <div>
-                          <div className="font-bold text-slate-800">{user.name || user.emailOrPhone}</div>
-                          {user.name && <div className="text-xs text-slate-500 font-medium">{user.emailOrPhone}</div>}
+                          <div className="font-bold text-white">{user.name || user.emailOrPhone}</div>
+                          {user.name && <div className="text-xs text-gray-400 font-medium">{user.emailOrPhone}</div>}
                         </div>
                       </div>
                     </td>
                     <td className="p-5">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                        user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-600/10 text-blue-600 border border-blue-600/30/60'
+                        user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30/60'
                       }`}>
                         {user.role || 'Student'}
                       </span>
                     </td>
-                    <td className="p-5 text-slate-500 font-medium text-xs">
+                    <td className="p-5 text-gray-400 font-medium text-xs">
                       {new Date(user.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </td>
                     <td className="p-5 pr-8 text-right">
                       <button 
                         onClick={() => handleOpenUser(user)}
-                        className="px-4 py-2 bg-blue-600/10 hover:bg-blue-600 hover:text-slate-800 text-blue-600-dark font-bold text-xs rounded-xl transition-all shadow-xs"
+                        className="px-4 py-2 bg-[#D4AF37]/10 hover:bg-blue-600 hover:text-white text-[#D4AF37]-dark font-bold text-xs rounded-xl transition-all shadow-xs"
                       >
                         View Enrollments
                       </button>
@@ -149,7 +149,7 @@ const UserManagement = () => {
                 ))}
                 {filteredUsers.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="p-12 text-center text-slate-500 font-medium">No students match your search filter.</td>
+                    <td colSpan="4" className="p-12 text-center text-gray-400 font-medium">No students match your search filter.</td>
                   </tr>
                 )}
               </tbody>
@@ -174,25 +174,25 @@ const UserManagement = () => {
               animate={{ x: 0 }} 
               exit={{ x: '100%' }} 
               transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="bg-white/95 backdrop-blur-3xl border-l border-white/80 shadow-[-20px_0_50px_rgba(0,0,0,0.15)] w-full max-w-lg h-full overflow-y-auto relative z-10 flex flex-col font-inter"
+              className="bg-[#0B0F19] border-gray-700 backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_50px_rgba(0,0,0,0.45)] w-full max-w-lg h-full overflow-y-auto relative z-10 flex flex-col font-inter"
             >
-              <div className="p-6 md:p-8 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-xl z-20">
+              <div className="p-6 md:p-8 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[#0B0F19]/95 backdrop-blur-xl z-20">
                 <div>
-                  <h2 className="text-lg font-black text-slate-800">Student Profile & History</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Learner information and payment logs</p>
+                  <h2 className="text-lg font-black text-white">Student Profile & History</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">Learner information and payment logs</p>
                 </div>
-                <button onClick={handleCloseModal} className="text-slate-500 hover:text-slate-600 bg-gray-800 hover:bg-gray-200 w-9 h-9 rounded-full flex items-center justify-center transition-all">
+                <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-300 bg-gray-800 hover:bg-gray-200 w-9 h-9 rounded-full flex items-center justify-center transition-all">
                   <FaTimes size={14} />
                 </button>
               </div>
               
               <div className="p-6 md:p-8 flex-1 space-y-6">
-                <div className="flex items-center gap-4 p-5 bg-[#F8FAFC] rounded-3xl border border-slate-200/60">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-600 text-slate-800 flex items-center justify-center text-xl font-bold shadow-md">
+                <div className="flex items-center gap-4 p-5 bg-white/[0.045] rounded-3xl border border-white/10">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl font-bold shadow-md">
                     {selectedUser.name ? selectedUser.name.charAt(0).toUpperCase() : <FaUser />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-extrabold text-slate-800 truncate">{selectedUser.name || selectedUser.emailOrPhone}</h3>
+                    <h3 className="text-base font-extrabold text-white truncate">{selectedUser.name || selectedUser.emailOrPhone}</h3>
                     <p className="text-xs text-gray-500 truncate">{selectedUser.emailOrPhone}</p>
                     <span className="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800 uppercase">
                       Verified Student
@@ -201,8 +201,8 @@ const UserManagement = () => {
                 </div>
 
                 <div>
-                  <h3 className="font-extrabold text-sm text-slate-800 mb-3 flex items-center gap-2">
-                    <FaBook className="text-blue-600" /> Enrolled Course History
+                  <h3 className="font-extrabold text-sm text-white mb-3 flex items-center gap-2">
+                    <FaBook className="text-[#D4AF37]" /> Enrolled Course History
                   </h3>
                   
                   {loadingDetails ? (
@@ -212,37 +212,37 @@ const UserManagement = () => {
                   ) : userDetails?.enrollments?.length > 0 ? (
                     <div className="space-y-3.5">
                       {userDetails.enrollments.map(enrollment => (
-                        <div key={enrollment._id} className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs hover:shadow-md transition-shadow space-y-3">
+                        <div key={enrollment._id} className="bg-white/[0.045] border border-white/10 rounded-2xl p-5 shadow-xs hover:shadow-md transition-shadow space-y-3">
                           <div className="flex items-start justify-between">
                             <div>
-                              <h4 className="font-bold text-slate-800 text-sm mb-1">{enrollment.course?.title || 'Market Course'}</h4>
+                              <h4 className="font-bold text-white text-sm mb-1">{enrollment.course?.title || 'Market Course'}</h4>
                               <div className="flex items-center gap-3 text-xs font-semibold text-gray-500">
-                                <span className="bg-gray-800 text-slate-600 px-2.5 py-0.5 rounded-md">{enrollment.course?.category || 'Market'}</span>
+                                <span className="bg-gray-800 text-gray-300 px-2.5 py-0.5 rounded-md">{enrollment.course?.category || 'Market'}</span>
                                 <span className="flex items-center gap-1"><FaCalendarAlt size={10} /> {new Date(enrollment.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                               </div>
                             </div>
-                            <span className="bg-blue-600/10 text-blue-600 border border-blue-600/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 shrink-0">
+                            <span className="bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 shrink-0">
                               <FaCheckCircle size={10} /> {enrollment.paymentStatus || 'Completed'}
                             </span>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2 text-xs bg-white/80 p-3 rounded-xl border border-slate-100">
+                          <div className="grid grid-cols-2 gap-2 text-xs bg-black/20 p-3 rounded-xl border border-white/10">
                             <div>
-                              <span className="text-slate-500 block font-medium">Invoice:</span>
-                              <span className="font-mono font-bold text-slate-700">{enrollment.invoiceNumber || 'MarketMax-INV-Generated'}</span>
+                              <span className="text-gray-400 block font-medium">Invoice:</span>
+                              <span className="font-mono font-bold text-gray-200">{enrollment.invoiceNumber || 'MarketMax-INV-Generated'}</span>
                             </div>
                             <div>
-                              <span className="text-slate-500 block font-medium">Certificate:</span>
-                              <span className={`font-mono font-bold ${enrollment.completed ? 'text-blue-600' : 'text-amber-600'}`}>
+                              <span className="text-gray-400 block font-medium">Certificate:</span>
+                              <span className={`font-mono font-bold ${enrollment.completed ? 'text-[#D4AF37]' : 'text-amber-600'}`}>
                                 {enrollment.completed ? (enrollment.certificateId || 'MarketMax-CERT-Issued') : 'Pending Completion'}
                               </span>
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100 items-center justify-between">
+                          <div className="flex flex-wrap gap-2 pt-2 border-t border-white/10 items-center justify-between">
                             <div>
-                              <span className="text-[11px] text-slate-500 font-medium block">Amount Paid</span>
-                              <span className="text-base font-extrabold text-slate-800">₹{enrollment.amountPaid || 0}</span>
+                              <span className="text-[11px] text-gray-400 font-medium block">Amount Paid</span>
+                              <span className="text-base font-extrabold text-white">₹{enrollment.amountPaid || 0}</span>
                             </div>
 
                             <div className="flex items-center gap-2">
@@ -252,7 +252,7 @@ const UserManagement = () => {
                                   href={enrollment.invoiceUrl}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="px-3 py-1.5 bg-gray-800 hover:bg-gray-200 text-slate-600 text-xs font-bold rounded-lg transition-colors"
+                                  className="px-3 py-1.5 bg-gray-800 hover:bg-gray-200 text-gray-300 text-xs font-bold rounded-lg transition-colors"
                                 >
                                   View Invoice ↗
                                 </a>
@@ -261,7 +261,7 @@ const UserManagement = () => {
                                   href={`${import.meta.env.VITE_API_BASE_URL}/payments/invoice/${enrollment._id}/download`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="px-3 py-1.5 bg-gray-800 hover:bg-gray-200 text-slate-600 text-xs font-bold rounded-lg transition-colors"
+                                  className="px-3 py-1.5 bg-gray-800 hover:bg-gray-200 text-gray-300 text-xs font-bold rounded-lg transition-colors"
                                 >
                                   PDF Invoice ↗
                                 </a>
@@ -274,7 +274,7 @@ const UserManagement = () => {
                                     href={enrollment.certificateUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="px-3 py-1.5 bg-blue-600 text-slate-800 hover:bg-blue-600-dark text-xs font-bold rounded-lg transition-colors shadow-xs"
+                                    className="px-3 py-1.5 bg-blue-600 text-white hover:bg-blue-600-dark text-xs font-bold rounded-lg transition-colors shadow-xs"
                                   >
                                     View Certificate ↗
                                   </a>
@@ -283,7 +283,7 @@ const UserManagement = () => {
                                     href={`${import.meta.env.VITE_API_BASE_URL}/courses/certificate/${enrollment._id}/download`}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="px-3 py-1.5 bg-blue-600 text-slate-800 hover:bg-blue-600-dark text-xs font-bold rounded-lg transition-colors shadow-xs"
+                                    className="px-3 py-1.5 bg-blue-600 text-white hover:bg-blue-600-dark text-xs font-bold rounded-lg transition-colors shadow-xs"
                                   >
                                     PDF Certificate ↗
                                   </a>
@@ -299,8 +299,8 @@ const UserManagement = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-12 bg-white rounded-2xl border border-slate-200/60 border-dashed">
-                      <p className="text-slate-500 font-medium text-xs">No active course enrollments for this student.</p>
+                    <div className="text-center py-12 bg-[#0B0F19] rounded-2xl border border-slate-200/60 border-dashed">
+                      <p className="text-gray-400 font-medium text-xs">No active course enrollments for this student.</p>
                     </div>
                   )}
                 </div>

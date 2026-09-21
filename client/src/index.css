@@ -24,6 +24,16 @@ body {
   overflow-x: hidden;
 }
 
+.course-date-input {
+  color-scheme: dark;
+}
+
+.course-date-input::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  cursor: pointer;
+  filter: invert(1) brightness(1.35);
+}
+
 /* ─── Premium Glossy Black Glassmorphism ─── */
 .glossy-black {
   background: linear-gradient(135deg, rgba(20, 26, 40, 0.7) 0%, rgba(7, 10, 16, 0.92) 100%);

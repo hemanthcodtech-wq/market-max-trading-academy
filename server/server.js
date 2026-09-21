@@ -100,14 +100,16 @@ app.use('/api/classes', require('./routes/classRoutes'));
 const adminRoutes = require('./routes/adminRoutes');
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/users', require('./routes/userManagementRoutes'));
-app.use('/api/admin/instructors', require('./routes/instructorManagementRoutes'));
-app.use('/api/admin/moderators', require('./routes/moderatorManagementRoutes'));
-app.use('/api/instructor', require('./routes/instructorPortalRoutes'));
-app.use('/api/moderator', require('./routes/moderatorPortalRoutes'));
+
 app.use('/api/zoom', require('./routes/zoomWebhookRoutes'));
 app.use('/api/live-classes', require('./routes/liveClassRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 app.use('/api/market-data', require('./routes/marketDataRoutes'));
+
+// CMS Routes
+app.use('/api/blogs', require('./routes/blogRoutes'));
+app.use('/api/ebooks', require('./routes/ebookRoutes'));
+app.use('/api/services', require('./routes/serviceRoutes'));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
