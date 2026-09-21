@@ -741,48 +741,6 @@ const Home = () => {
             <LiveMarketCards filter="indices" compact={true} onSelectSymbol={(sym) => navigate('/live-market')} />
           </div>
 
-          {/* Market Intelligence Radar Strip */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-[#131722] p-4 rounded-2xl border border-gray-800">
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#0B0F19] border border-gray-800/80">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-lg">
-                <FaArrowUp />
-              </div>
-              <div>
-                <span className="text-[11px] text-gray-400 font-semibold block">Market Trend Bias</span>
-                <span className="text-sm font-black text-emerald-400">Bullish Momentum (68%)</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#0B0F19] border border-gray-800/80">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-lg">
-                <FaShieldAlt />
-              </div>
-              <div>
-                <span className="text-[11px] text-gray-400 font-semibold block">India VIX (Volatility)</span>
-                <span className="text-sm font-black text-blue-400">13.40 • Low Fear Zone</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#0B0F19] border border-gray-800/80">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-lg">
-                <FaExchangeAlt />
-              </div>
-              <div>
-                <span className="text-[11px] text-gray-400 font-semibold block">Options PCR (Nifty)</span>
-                <span className="text-sm font-black text-purple-400">1.14 • Put Support Solid</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#0B0F19] border border-gray-800/80">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-[#D4AF37] flex items-center justify-center font-bold text-lg">
-                <FaBolt />
-              </div>
-              <div>
-                <span className="text-[11px] text-gray-400 font-semibold block">Institutional FII Flow</span>
-                <span className="text-sm font-black text-[#D4AF37]">+₹1,420 Cr Inflow</span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
