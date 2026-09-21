@@ -16,6 +16,16 @@ const Settings = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const navigate = useNavigate();
 
+  const profileFields = (data) => {
+    const nameParts = (data.name || '').trim().split(/\s+/).filter(Boolean);
+    return {
+      ...data,
+      firstName: data.firstName || nameParts.shift() || '',
+      lastName: data.lastName || nameParts.join(' '),
+      password: ''
+    };
+  };
+
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -26,10 +36,7 @@ const Settings = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       if (res.data.success) {
-        setProfile({
-          ...res.data.data,
-          password: ''
-        });
+        setProfile(profileFields(res.data.data));
       }
     } catch (err) {
       console.error("Error fetching profile:", err);
@@ -55,7 +62,14 @@ const Settings = () => {
       if (res.data.success) {
         setMessage({ type: 'success', text: 'Profile updated successfully!' });
         localStorage.setItem('token', res.data.token);
-        setProfile({ ...profile, password: '' });
+        const updatedName = res.data.name || `${profile.firstName} ${profile.lastName}`.trim();
+        localStorage.setItem('user', JSON.stringify({
+          ...JSON.parse(localStorage.getItem('user') || '{}'),
+          name: updatedName,
+          emailOrPhone: profile.emailOrPhone,
+          role: res.data.role
+        }));
+        setProfile(profileFields({ ...profile, name: updatedName }));
       }
     } catch (err) {
       console.error("Error updating profile:", err);

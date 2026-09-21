@@ -13,6 +13,15 @@ const ProfileMenu = () => {
     emailOrPhone: 'anjali@example.com'
   });
 
+  const profileFields = (data) => {
+    const nameParts = (data.name || '').trim().split(/\s+/).filter(Boolean);
+    return {
+      ...data,
+      firstName: data.firstName || nameParts.shift() || '',
+      lastName: data.lastName || nameParts.join(' ')
+    };
+  };
+
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -23,7 +32,7 @@ const ProfileMenu = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       if (res.data.success) {
-        setProfile(res.data.data);
+        setProfile(profileFields(res.data.data));
       }
     } catch (err) {
       console.error("Error fetching profile:", err);
