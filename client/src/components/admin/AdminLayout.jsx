@@ -1,13 +1,14 @@
-import React from 'react';
+import { useState } from 'react';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import { 
-  FaTachometerAlt, FaBook, FaBookOpen, FaUsers, FaCalendarAlt, FaSignOutAlt, 
-  FaFolderOpen, FaExternalLinkAlt, FaShieldAlt, FaAward
+  FaTachometerAlt, FaBook, FaBookOpen, FaUsers, FaSignOutAlt, FaFolderOpen,
+  FaExternalLinkAlt, FaShieldAlt, FaAward, FaEllipsisH, FaTimes
 } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -25,6 +26,9 @@ const AdminLayout = () => {
     { name: 'Certificates & Invoices', path: '/admin/records', icon: FaAward },
     { name: 'Learners', path: '/admin/users', icon: FaUsers },
   ];
+
+  const mobileNavItems = navItems.slice(0, 4);
+  const moreNavItems = navItems.slice(4);
 
   return (
     <div className="flex h-screen bg-[#0B0F19] font-inter overflow-hidden relative text-gray-300">
@@ -141,28 +145,31 @@ const AdminLayout = () => {
 
       {/* Mobile Bottom Navigation (Sticky) */}
       <div className="fixed bottom-0 left-0 w-full bg-[#131722]/95 backdrop-blur-xl border-t border-gray-800 shadow-[0_-4px_25px_rgba(0,0,0,0.5)] z-50 md:hidden">
-        <div className="flex justify-around items-center h-16 px-2">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${
-                  isActive ? 'text-[#D4AF37] font-bold' : 'text-gray-400 hover:text-white font-medium'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <item.icon size={20} className={isActive ? 'text-[#D4AF37]' : ''} />
-                  <span className={`text-[10px] font-semibold ${isActive ? 'text-[#D4AF37] font-bold' : ''}`}>
-                    {item.name}
-                  </span>
-                </>
-              )}
+        <div className="flex items-center h-16 px-1">
+          {mobileNavItems.map((item) => (
+            <NavLink key={item.name} to={item.path} className={({ isActive }) => `flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${isActive ? 'text-[#D4AF37] font-bold' : 'text-gray-400 hover:text-white font-medium'}`}>
+              {({ isActive }) => <><item.icon size={20} className={isActive ? 'text-[#D4AF37]' : ''} /><span className={`text-[10px] font-semibold ${isActive ? 'text-[#D4AF37] font-bold' : ''}`}>{item.name}</span></>}
             </NavLink>
           ))}
+          <button type="button" onClick={() => setIsMoreOpen(true)} className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${moreNavItems.some(item => window.location.pathname.startsWith(item.path)) ? 'text-[#D4AF37] font-bold' : 'text-gray-400 hover:text-white font-medium'}`} aria-label="Open more admin options">
+            <FaEllipsisH size={20} />
+            <span className="text-[10px] font-semibold">More</span>
+          </button>
         </div>
+
+        <AnimatePresence>
+          {isMoreOpen && (
+            <div className="fixed inset-0 z-50 flex items-end md:hidden">
+              <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMoreOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" aria-label="Close menu" />
+              <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', bounce: 0, duration: 0.35 }} className="relative z-10 w-full rounded-t-[2rem] border-t border-white/10 bg-[#131722] p-5 pb-8 shadow-[0_-15px_45px_rgba(0,0,0,0.45)]">
+                <div className="mb-4 flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4AF37]">Admin Portal</p><h2 className="mt-1 text-lg font-black text-white">More options</h2></div><button type="button" onClick={() => setIsMoreOpen(false)} className="rounded-full bg-white/5 p-2.5 text-gray-400 hover:text-white" aria-label="Close more options"><FaTimes size={14} /></button></div>
+                <div className="grid grid-cols-2 gap-3">
+                  {moreNavItems.map(item => <NavLink key={item.path} to={item.path} onClick={() => setIsMoreOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-2xl border p-4 text-sm font-bold transition-colors ${isActive || window.location.pathname.startsWith(item.path) ? 'border-[#D4AF37]/40 bg-[#D4AF37]/10 text-[#F3D36A]' : 'border-white/10 bg-white/[0.035] text-gray-300 hover:bg-white/[0.08]'}`}><item.icon size={16} /><span>{item.name}</span></NavLink>)}
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
       
     </div>

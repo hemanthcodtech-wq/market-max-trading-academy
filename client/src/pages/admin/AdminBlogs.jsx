@@ -114,60 +114,32 @@ const AdminBlogs = () => {
         </button>
       </div>
 
-      <div className="bg-[#131722]/80 backdrop-blur-xl rounded-[2.5rem] border border-gray-800 shadow-sm overflow-hidden">
-        <div className="p-6 lg:p-8 overflow-x-auto">
-          {loading ? (
-             <div className="flex justify-center p-12"><div className="w-8 h-8 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div></div>
-          ) : (
-            <table className="w-full text-left border-collapse min-w-[800px]">
-              <thead>
-                <tr className="border-b border-gray-800 text-gray-400">
-                  <th className="pb-4 font-bold text-xs uppercase tracking-wider pl-4">Title</th>
-                  <th className="pb-4 font-bold text-xs uppercase tracking-wider">Excerpt</th>
-                  <th className="pb-4 font-bold text-xs uppercase tracking-wider">Category</th>
-                  <th className="pb-4 font-bold text-xs uppercase tracking-wider">Read Time</th>
-                  <th className="pb-4 font-bold text-xs uppercase tracking-wider text-right pr-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.length === 0 ? (
-                  <tr><td colSpan="6" className="text-center py-8 text-gray-500">No records found.</td></tr>
-                ) : items.map((item) => (
-                  <tr key={item._id} className="border-b border-gray-800 hover:bg-[#1A202C]/50 transition-colors group">
-                    <td className="py-4 pl-4">
-                      <div className="font-bold text-gray-200">{item.title}</div>
-                    </td>
-                    <td className="py-4 text-sm font-medium text-gray-400">{item.excerpt}</td>
-                    <td className="py-4 text-sm font-medium text-gray-400">{item.category}</td>
-                    <td className="py-4 text-sm font-medium text-gray-400">{item.readTime}</td>
-                    <td className="py-4 pr-4">
-                      <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => handleOpenModal(item)} className="p-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-xl transition-colors" title="Edit">
-                          <FaEdit size={14} />
-                        </button>
-                        <button onClick={() => handleDelete(item._id)} className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-xl transition-colors" title="Delete">
-                          <FaTrash size={14} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+      {loading ? (
+        <div className="flex justify-center p-20"><div className="w-10 h-10 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div></div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-7">
+          {items.map(item => (
+            <motion.article key={item._id} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#131722]/80 backdrop-blur-2xl rounded-[2rem] border border-gray-800 shadow-sm hover:-translate-y-1 hover:border-[#D4AF37]/40 transition-all duration-300 p-6 flex flex-col min-w-0 group">
+              {item.image && <img src={item.image} alt="" className="w-full h-36 object-cover rounded-2xl mb-5 border border-gray-800" />}
+              <div className="flex items-start justify-between gap-3"><div className="min-w-0"><span className="text-[10px] font-extrabold uppercase tracking-widest text-[#D4AF37]">{item.category || 'Market Insights'}</span><h2 className="mt-2 text-lg font-black text-white leading-snug break-words">{item.title}</h2></div><div className="flex items-center gap-1.5 shrink-0"><button onClick={() => handleOpenModal(item)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-all" title="Edit"><FaEdit size={12} /></button><button onClick={() => handleDelete(item._id)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all" title="Delete"><FaTrash size={12} /></button></div></div>
+              <p className="mt-4 text-sm leading-relaxed text-gray-400 line-clamp-3">{item.excerpt || 'No excerpt provided.'}</p>
+              <div className="mt-auto pt-5 mt-6 border-t border-gray-800 flex items-center justify-between gap-3 text-xs"><span className="font-semibold text-gray-500">{item.author || 'MarketMax Research'}</span><span className="font-bold text-[#D4AF37]">{item.readTime || 'Article'}</span></div>
+            </motion.article>
+          ))}
+          {items.length === 0 && <div className="col-span-full py-16 text-center text-gray-500 bg-[#0B0F19]/40 rounded-3xl border border-dashed border-gray-700">No blogs found. Click "Add Blog" to create one.</div>}
         </div>
-      </div>
+      )}
 
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex justify-end">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-[#0B0F19]/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-2xl bg-[#131722] rounded-[2rem] border border-gray-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-              <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-[#0B0F19]">
+            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', bounce: 0, duration: 0.4 }} className="relative w-full max-w-2xl h-full bg-[#131722] border-l border-gray-800 shadow-2xl overflow-hidden flex flex-col">
+              <div className="p-5 md:p-6 border-b border-gray-800 flex justify-between items-center bg-[#0B0F19]">
                 <h3 className="text-xl font-bold text-white">{editingId ? 'Edit' : 'Add'} Blog</h3>
                 <button onClick={() => setIsModalOpen(false)} className="p-2 text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-full transition-colors"><FaTimes size={14}/></button>
               </div>
-              <div className="p-6 overflow-y-auto custom-scrollbar">
+              <div className="p-5 md:p-8 overflow-y-auto custom-scrollbar">
                 <form id="blogForm" onSubmit={handleSubmit} className="space-y-5">
                   
                   <div>
@@ -216,7 +188,7 @@ const AdminBlogs = () => {
                   </div>
                 </form>
               </div>
-              <div className="p-6 border-t border-gray-800 bg-[#0B0F19] flex justify-end gap-3">
+              <div className="p-5 md:p-6 border-t border-gray-800 bg-[#0B0F19] flex flex-col-reverse sm:flex-row justify-end gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-3 rounded-xl font-bold text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">Cancel</button>
                 <button type="submit" form="blogForm" disabled={submitting} className="bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-all disabled:opacity-70 flex items-center gap-2">
                   {submitting && <div className="w-4 h-4 border-2 border-[#0B0F19] border-t-transparent rounded-full animate-spin"></div>}
