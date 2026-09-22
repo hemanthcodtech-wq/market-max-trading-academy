@@ -5,7 +5,7 @@ const User = require('../models/User');
 const { protect } = require('../middleware/authMiddleware');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
-const { generateInvoicePDF } = require('../utils/pdfGenerator');
+const { generateInvoicePDF, normalizeInvoiceNumber } = require('../utils/pdfGenerator');
 const { sendCourseEnrollmentEmail } = require('../utils/emailService');
 
 const router = express.Router();
@@ -40,8 +40,9 @@ router.get('/invoice/:enrollmentId/download', protect, async (req, res) => {
       studentName = enrollment.studentEmail.split('@')[0];
     }
 
+    const invoiceNumber = normalizeInvoiceNumber(enrollment.invoiceNumber || `MARMAX-INV-${enrollment._id.toString().slice(-6).toUpperCase()}`);
     const invoiceBuffer = await generateInvoicePDF({
-      invoiceNumber: enrollment.invoiceNumber || `SDF-INV-${enrollment._id.toString().slice(-6).toUpperCase()}`,
+      invoiceNumber,
       studentName,
       studentEmail: enrollment.studentEmail,
       courseTitle: enrollment.course?.title || 'Yoga Course',
@@ -51,7 +52,10 @@ router.get('/invoice/:enrollmentId/download', protect, async (req, res) => {
     });
 
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=Invoice-${enrollment.invoiceNumber || 'SDF-Receipt'}.pdf`);
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Content-Disposition', `attachment; filename=Invoice-${invoiceNumber}.pdf`);
     res.send(invoiceBuffer);
   } catch (error) {
     console.error('Error downloading invoice:', error);
@@ -130,7 +134,7 @@ router.post('/verify-payment', protect, async (req, res) => {
     const isAuthentic = expectedSignature === razorpay_signature;
 
     if (isAuthentic || process.env.NODE_ENV === 'development') {
-      const invoiceNumber = `SDF-INV-${Date.now().toString().slice(-6)}${Math.floor(100 + Math.random() * 900)}`;
+      const invoiceNumber = `MARMAX-INV-${Date.now().toString().slice(-6)}${Math.floor(100 + Math.random() * 900)}`;
       const finalAmount = amountPaid !== undefined ? amountPaid : course.price;
 
       // Create Enrollment

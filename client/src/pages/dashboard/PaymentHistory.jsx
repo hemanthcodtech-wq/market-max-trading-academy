@@ -9,6 +9,7 @@ const PaymentHistory = () => {
   const [loading, setLoading] = useState(true);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const navigate = useNavigate();
+  const invoiceLabel = (invoiceNumber, fallback) => String(invoiceNumber || fallback).replace(/^SDF-/i, 'MARMAX-');
 
   useEffect(() => {
     fetchHistory();
@@ -33,7 +34,7 @@ const PaymentHistory = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/payments/invoice/${record._id}/download`,
+        `${import.meta.env.VITE_API_BASE_URL}/payments/invoice/${record._id}/download?refresh=${Date.now()}`,
         {
           headers: { Authorization: `Bearer ${token}` },
           responseType: 'blob'
@@ -44,7 +45,7 @@ const PaymentHistory = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `Invoice-${record.invoiceNumber || record._id}.pdf`);
+      link.setAttribute('download', `Invoice-${invoiceLabel(record.invoiceNumber, record._id)}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();

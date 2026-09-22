@@ -45,6 +45,7 @@ const AdminRecords = () => {
   });
   const [customSubmitting, setCustomSubmitting] = useState(false);
   const [customPreviewing, setCustomPreviewing] = useState(false);
+  const invoiceLabel = (invoiceNumber, fallback) => String(invoiceNumber || fallback).replace(/^SDF-/i, 'MARMAX-');
 
   useEffect(() => {
     fetchRecords();
@@ -81,6 +82,30 @@ const AdminRecords = () => {
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 4000);
+  };
+
+  const handleDownloadInvoice = async (record) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/payments/invoice/${record._id}/download?refresh=${Date.now()}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` },
+          responseType: 'blob'
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Invoice-${invoiceLabel(record.invoiceNumber, record._id)}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      showToast('New invoice downloaded successfully.');
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
+      showToast('Unable to download invoice. Please try again.');
+    }
   };
 
   // Helper to generate a random authentic certificate ID
@@ -547,27 +572,15 @@ const AdminRecords = () => {
                     <td className="p-5">
                       <div className="space-y-1">
                         <span className="font-mono text-xs font-bold text-slate-700 block">
-                          {r.invoiceNumber || 'MarketMax-INV-Generated'}
+                          {invoiceLabel(r.invoiceNumber, 'MARMAX-INV-Generated')}
                         </span>
-                        {r.invoiceUrl ? (
-                          <a
-                            href={r.invoiceUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#D4AF37] hover:underline"
-                          >
-                            <FaExternalLinkAlt size={9} /> Cloudinary PDF
-                          </a>
-                        ) : (
-                          <a
-                            href={`${import.meta.env.VITE_API_BASE_URL}/payments/invoice/${r._id}/download`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-400 hover:text-[#D4AF37]"
-                          >
-                            <FaDownload size={9} /> Download Invoice
-                          </a>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadInvoice(r)}
+                          className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-400 hover:text-[#D4AF37]"
+                        >
+                          <FaDownload size={9} /> Download New Invoice
+                        </button>
                       </div>
                     </td>
 
@@ -633,16 +646,15 @@ const AdminRecords = () => {
                         </button>
 
                         {/* Direct Open / View Invoice Button */}
-                        <a
-                          href={r.invoiceUrl || `${import.meta.env.VITE_API_BASE_URL}/payments/invoice/${r._id}/download`}
-                          target="_blank"
-                          rel="noreferrer"
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadInvoice(r)}
                           className="px-3.5 py-2 bg-[#0B0F19] hover:bg-[#0B0F19] border border-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5"
-                          title="Open Tax Invoice PDF in new tab"
+                          title="Download freshly generated tax invoice PDF"
                         >
-                          <FaEye size={12} className="text-gray-500" />
+                          <FaDownload size={12} className="text-gray-500" />
                           <span>Invoice</span>
-                        </a>
+                        </button>
 
                         {/* Direct Open / View Certificate if completed */}
                         {r.completed && (

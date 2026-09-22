@@ -1,69 +1,45 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 import {
-  FaAward, FaIdCard, FaCheckCircle, FaSearch, FaShieldAlt,
-  FaFilePdf, FaExternalLinkAlt, FaGraduationCap, FaExclamationTriangle,
+  FaAward, FaIdCard, FaSearch, FaShieldAlt,
+  FaExternalLinkAlt, FaGraduationCap, FaExclamationTriangle,
   FaQrcode, FaCheck, FaTimes
 } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
-
-// Pre-loaded verified demo certificates for testing and validation
-const SAMPLE_CERTIFICATES = {
-  'MM-2026-FND-101': {
-    id: 'MM-2026-FND-101',
-    studentName: 'Rahul Varma',
-    courseName: 'Stock Market Foundation',
-    issuedDate: 'January 15, 2026',
-    status: 'Verified Active',
-    grade: 'Distinction (Grade A+)',
-    instructor: 'MarketMax Senior Faculty',
-    type: 'Course Completion Certificate'
-  },
-  'MM-2026-OPT-204': {
-    id: 'MM-2026-OPT-204',
-    studentName: 'Suresh Kumar Reddy',
-    courseName: 'Options Trading Strategies & Greeks',
-    issuedDate: 'February 28, 2026',
-    status: 'Verified Active',
-    grade: 'Mastery Pass (Grade A)',
-    instructor: 'Lead Derivatives Strategist',
-    type: 'Course Completion Certificate'
-  },
-  'MM-2026-PA-309': {
-    id: 'MM-2026-PA-309',
-    studentName: 'Ananya Sharma',
-    courseName: 'Price Action & Chart Reading',
-    issuedDate: 'March 10, 2026',
-    status: 'Verified Active',
-    grade: 'Distinction (Grade A+)',
-    instructor: 'Price Action Specialist',
-    type: 'Course Completion Certificate'
-  }
-};
 
 const Certificates = () => {
   const [searchId, setSearchId] = useState('');
   const [searched, setSearched] = useState(false);
   const [result, setResult] = useState(null);
+  const [verifying, setVerifying] = useState(false);
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
-    if (!searchId.trim()) return;
-
-    setSearched(true);
     const cleaned = searchId.trim().toUpperCase();
-    const found = SAMPLE_CERTIFICATES[cleaned];
-    if (found) {
-      setResult(found);
-    } else {
-      setResult(null);
-    }
-  };
+    if (!cleaned) return;
 
-  const handleDemoFill = (id) => {
-    setSearchId(id);
     setSearched(true);
-    setResult(SAMPLE_CERTIFICATES[id]);
+    setResult(null);
+    setVerifying(true);
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/admin/verify-certificate/${encodeURIComponent(cleaned)}`);
+      const certificate = response.data?.data;
+      setResult({
+        id: certificate.certificateId,
+        studentName: certificate.studentName,
+        courseName: certificate.courseTitle || 'Course Completion Program',
+        issuedDate: certificate.issueDate ? new Date(certificate.issueDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : 'Not available',
+        status: certificate.status || 'Authentic & Verified',
+        grade: 'Course Completion',
+        type: 'Institutional Course Completion Certificate',
+        certificateUrl: certificate.certificateUrl
+      });
+    } catch {
+      setResult(null);
+    } finally {
+      setVerifying(false);
+    }
   };
 
   return (
@@ -186,24 +162,12 @@ const Certificates = () => {
                 type="submit"
                 className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#C99C29] hover:from-[#F3E5AB] hover:to-[#D4AF37] text-[#0B0F19] font-black text-sm transition-all shadow-md flex items-center justify-center gap-2 shrink-0"
               >
-                Verify ID
+                {verifying ? 'Checking...' : 'Verify ID'}
               </button>
             </div>
           </form>
 
-          {/* Quick Demo ID pills */}
-          <div className="flex items-center justify-center gap-2 flex-wrap text-xs text-gray-400 mb-8">
-            <span className="text-[11px] text-gray-500">Quick Test IDs:</span>
-            {Object.keys(SAMPLE_CERTIFICATES).map((cid) => (
-              <button
-                key={cid}
-                onClick={() => handleDemoFill(cid)}
-                className="px-2.5 py-1 rounded-lg bg-gray-800/80 hover:bg-gray-700 text-[#D4AF37] font-mono text-[11px] border border-gray-700 transition-colors"
-              >
-                {cid}
-              </button>
-            ))}
-          </div>
+          <p className="text-center text-[11px] text-gray-500 mb-8">Verification checks the live certificate registry.</p>
 
           {/* Verification Result Card */}
           <AnimatePresence>
@@ -256,6 +220,11 @@ const Certificates = () => {
                         <span className="text-gray-400">Certificate ID:</span>
                         <span className="font-mono font-bold text-white">{result.id}</span>
                       </div>
+                      {result.certificateUrl && (
+                        <a href={result.certificateUrl} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-xs font-bold text-[#F3D36A] hover:text-white">
+                          <FaExternalLinkAlt size={10} /> View Certificate PDF
+                        </a>
+                      )}
                     </div>
                   </div>
                 ) : (

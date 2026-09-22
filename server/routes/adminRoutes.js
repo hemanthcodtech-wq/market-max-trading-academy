@@ -5,7 +5,7 @@ const Course = require('../models/Course');
 const Class = require('../models/Class');
 const Enrollment = require('../models/Enrollment');
 const courseRoutes = require('./courseRoutes');
-const { generateInvoicePDF, generateCertificatePDF } = require('../utils/pdfGenerator');
+const { generateInvoicePDF, generateCertificatePDF, normalizeInvoiceNumber } = require('../utils/pdfGenerator');
 const { uploadBufferToCloudinary } = require('../utils/cloudinaryUploader');
 const { sendCourseEnrollmentEmail, sendCourseCompletionEmail } = require('../utils/emailService');
 
@@ -135,11 +135,16 @@ router.get('/records', protect, admin, async (req, res) => {
 // Public / Admin Certificate Verification by ID
 router.get('/verify-certificate/:certId', async (req, res) => {
   try {
-    const { certId } = req.params;
+    const certId = decodeURIComponent(req.params.certId || '').trim();
+    if (!certId || certId.length > 100) {
+      return res.status(400).json({ success: false, message: 'A valid certificate ID is required' });
+    }
+
+    const escapedCertId = certId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const enrollment = await Enrollment.findOne({
       $or: [
         { certificateId: certId },
-        { certificateId: new RegExp(certId, 'i') }
+        { certificateId: new RegExp(`^${escapedCertId}$`, 'i') }
       ],
       completed: true
     }).populate('course', 'title category accessValidity');
@@ -216,7 +221,7 @@ router.post('/resend-invoice/:enrollmentId', protect, admin, async (req, res) =>
       studentName = enrollment.studentEmail.split('@')[0];
     }
 
-    const invoiceNumber = enrollment.invoiceNumber || `SDF-INV-${Date.now().toString().slice(-6)}`;
+    const invoiceNumber = normalizeInvoiceNumber(enrollment.invoiceNumber || `MARMAX-INV-${Date.now().toString().slice(-6)}`);
 
     // Generate Invoice PDF
     const invoicePdfBuffer = await generateInvoicePDF({

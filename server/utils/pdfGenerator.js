@@ -22,6 +22,18 @@ function numberToWords(num) {
   return str.trim();
 }
 
+const formatAmount = (amount) => {
+  const numericAmount = Number(amount);
+  return Number.isFinite(numericAmount)
+    ? numericAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : '0.00';
+};
+
+const normalizeInvoiceNumber = (invoiceNumber) => {
+  const value = String(invoiceNumber || 'MARMAX-INV-001').trim();
+  return value.replace(/^SDF-/i, 'MARMAX-');
+};
+
 /**
  * Generate an Official Corporate / Institutional Tax Invoice PDF
  * @param {Object} data - { invoiceNumber, studentName, studentEmail, courseTitle, amountPaid, paymentDate, accessValidity }
@@ -39,34 +51,39 @@ const generateInvoicePDF = (data) => {
         resolve(pdfData);
       });
 
-      // Path to logo
+      const amount = Number(data.amountPaid);
+      const amountValue = Number.isFinite(amount) ? amount : 0;
+      const formattedAmount = formatAmount(amountValue);
+
+      // Use the current website branding first; keep the server asset only as a fallback.
       const logoCandidates = [
-        path.join(__dirname, '../assets/logo.png'),
-        path.join(__dirname, '../../client/public/logo.png')
+        path.join(__dirname, '../../client/public/logo.png'),
+        path.join(__dirname, '../assets/logo.png')
       ];
       let logoPath = logoCandidates.find(p => fs.existsSync(p));
 
-      // 1. Website-aligned black and gold header
-      doc.rect(40, 40, 515, 110).fill('#0B0F19');
+      // 1. Website-aligned light and gold header
+      doc.rect(40, 40, 515, 110).fill('#FFFFFF');
       doc.rect(40, 40, 515, 4).fill('#D4AF37');
+      doc.rect(40, 146, 515, 4).fill('#D4AF37');
 
       // 2. Organization Branding (Left)
       let headerTextX = 40;
       if (logoPath) {
         try {
-          doc.image(logoPath, 40, 52, { width: 55 });
-          headerTextX = 105;
+          doc.image(logoPath, 48, 50, { fit: [58, 74], align: 'center', valign: 'center' });
+          headerTextX = 116;
         } catch (e) {
           console.error("Logo image load error in PDF:", e);
         }
       }
 
-      doc.fillColor('#F3D36A')
-         .fontSize(16)
+      doc.fillColor('#111827')
+        .fontSize(16.5)
          .font('Helvetica-Bold')
          .text('MarketMax Trading Academy', headerTextX, 52);
 
-      doc.fillColor('#CBD5E1')
+      doc.fillColor('#4B5563')
          .fontSize(8.5)
          .font('Helvetica')
          .text('Academy of Trading, Technical Analysis & Financial Market Sciences', headerTextX, 70)
@@ -77,7 +94,7 @@ const generateInvoicePDF = (data) => {
       // 3. Invoice Badge & Meta Box (Right)
       const rightColX = 370;
       doc.rect(rightColX, 52, 185, 24).fill('#D4AF37');
-      doc.fillColor('#FFFFFF')
+      doc.fillColor('#111827')
          .fontSize(12)
          .font('Helvetica-Bold')
          .text('TAX INVOICE / RECEIPT', rightColX, 59, { width: 185, align: 'center' });
@@ -186,7 +203,7 @@ const generateInvoicePDF = (data) => {
          .fillColor('#111827')
          .font('Helvetica-Bold')
          .fontSize(9.5)
-         .text(`Rs. ${data.amountPaid || 0}.00`, 460, rowTop + 12, { width: 90, align: 'right' });
+         .text(`Rs. ${formattedAmount}`, 460, rowTop + 12, { width: 90, align: 'right', lineBreak: false });
 
       // 6. Summary and Calculation Box (Right) & Words Box (Left)
       const sumTop = rowTop + 48;
@@ -200,7 +217,7 @@ const generateInvoicePDF = (data) => {
          .fontSize(9)
          .font('Helvetica-Bold')
          .fillColor('#D4AF37')
-         .text(numberToWords(data.amountPaid), 48, sumTop + 20, { width: 270 })
+         .text(numberToWords(amountValue), 48, sumTop + 20, { width: 270 })
          .font('Helvetica')
          .fillColor('#6B7280')
          .fontSize(7.5)
@@ -218,7 +235,7 @@ const generateInvoicePDF = (data) => {
          .fontSize(8)
          .font('Helvetica')
          .text('Taxable Subtotal:', calcX, sumTop + 8)
-         .text(`Rs. ${data.amountPaid || 0}.00`, valX, sumTop + 8, { width: 70, align: 'right' })
+         .text(`Rs. ${formattedAmount}`, valX, sumTop + 8, { width: 70, align: 'right' })
 
          .text('CGST (0%):', calcX, sumTop + 20)
          .text('Rs. 0.00', valX, sumTop + 20, { width: 70, align: 'right' })
@@ -235,7 +252,7 @@ const generateInvoicePDF = (data) => {
          .font('Helvetica-Bold')
          .text('TOTAL PAID:', calcX, sumTop + 54)
            .fontSize(18)
-         .text(`Rs. ${data.amountPaid || 0}.00`, valX - 10, sumTop + 62, { width: 80, align: 'right' });
+           .text(`Rs. ${formattedAmount}`, 415, sumTop + 58, { width: 130, align: 'right', lineBreak: false });
 
       // 7. Live Program Access Notes
       const notesTop = sumTop + 96;
@@ -434,7 +451,8 @@ const generateCertificatePDF = (data) => {
 
 module.exports = {
   generateInvoicePDF,
-  generateCertificatePDF
+  generateCertificatePDF,
+  normalizeInvoiceNumber
 };
 
 
