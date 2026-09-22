@@ -138,12 +138,24 @@ const CourseList = () => {
     }
   };
 
-  const categories = ['All', 'Trading', 'Meditation', 'Nutrition', 'Options Trading', 'Other'];
+  const categories = [
+    'All',
+    ...Array.from(
+      new Set(
+        courses
+          .map(course => course.category)
+          .filter(Boolean)
+          .map(category => String(category).trim())
+      )
+    ).sort((a, b) => a.localeCompare(b))
+  ];
 
   const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          course.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || course.category === selectedCategory;
+    const title = String(course.title || '').toLowerCase();
+    const description = String(course.description || '').toLowerCase();
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const matchesSearch = !normalizedSearch || title.includes(normalizedSearch) || description.includes(normalizedSearch);
+    const matchesCategory = selectedCategory === 'All' || String(course.category || '').trim().toLowerCase() === String(selectedCategory || '').trim().toLowerCase();
     return matchesSearch && matchesCategory;
   });
 
