@@ -110,8 +110,8 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Email Us</p>
-                    <a href="mailto:support@marketmaxtrading.com" className="font-bold text-sm sm:text-base text-white hover:text-[#D4AF37] transition-colors block mt-0.5">
-                      support@marketmaxtrading.com
+                    <a href="mailto:support@marketmaxtradingacademy.com" className="font-bold text-sm sm:text-base text-white hover:text-[#D4AF37] transition-colors block mt-0.5">
+                      support@marketmaxtradingacademy.com
                     </a>
                     <span className="text-[11px] text-gray-500 block mt-0.5">24/7 Electronic Helpdesk Support</span>
                   </div>

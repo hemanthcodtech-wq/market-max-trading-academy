@@ -30,6 +30,7 @@ const PublicNavbar = () => {
     { name: 'Home', path: '/' },
     { name: 'Courses', path: '/courses' },
     { name: 'Services', path: '/services' },
+    { name: 'Tools', path: '/tools' },
     { name: 'Certificates', path: '/certificates' },
     { name: 'E-Books', path: '/ebooks' },
     { name: 'Blog', path: '/blog' },
@@ -41,6 +42,7 @@ const PublicNavbar = () => {
     { name: 'Home', path: '/' },
     { name: 'Courses', path: '/courses' },
     { name: 'Services', path: '/services' },
+    { name: 'Tools', path: '/tools' },
     { name: 'About Us', path: '/about' },
   ];
 
@@ -278,18 +280,24 @@ const PublicNavbar = () => {
             <FaBook className="text-xl" />
             <span className="text-[11px] font-outfit font-bold tracking-wide">{t('nav_bottom_classes')}</span>
           </Link>
+          <Link to="/tools" className={`flex flex-col items-center gap-1.5 transition-colors ${isActive('/tools') ? 'text-[#D4AF37]' : 'text-gray-500 hover:text-[#D4AF37]'}`}>
+            <FaChartLine className="text-xl" />
+            <span className="text-[11px] font-outfit font-bold tracking-wide">Tools</span>
+          </Link>
           <Link to="/live-market" className={`flex flex-col items-center gap-1.5 transition-colors ${isActive('/live-market') ? 'text-[#D4AF37]' : 'text-gray-500 hover:text-[#D4AF37]'}`}>
             <FaChartLine className="text-xl" />
             <span className="text-[11px] font-outfit font-bold tracking-wide">Live</span>
           </Link>
-          <Link to="/about" className={`flex flex-col items-center gap-1.5 transition-colors ${isActive('/about') ? 'text-[#D4AF37]' : 'text-gray-500 hover:text-[#D4AF37]'}`}>
-            <FaInfoCircle className="text-xl" />
-            <span className="text-[11px] font-outfit font-bold tracking-wide">{t('nav_bottom_about')}</span>
-          </Link>
-          <Link to={token ? (user?.role === 'admin' ? '/admin/dashboard' : '/dashboard') : '/login'} className={`flex flex-col items-center gap-1.5 transition-colors ${location.pathname.includes('/dashboard') || location.pathname.includes('/login') ? 'text-[#D4AF37]' : 'text-gray-500 hover:text-[#D4AF37]'}`}>
-            <FaUser className="text-xl" />
-            <span className="text-[11px] font-outfit font-bold tracking-wide">{token ? t('nav_dashboard') : t('nav_bottom_login')}</span>
-          </Link>
+
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className={`flex flex-col items-center gap-1.5 transition-colors ${isMoreActive || isMobileMenuOpen ? 'text-[#D4AF37]' : 'text-gray-500 hover:text-[#D4AF37]'}`}
+            aria-label="Open more navigation"
+          >
+            <FaBars className="text-xl" />
+            <span className="text-[11px] font-outfit font-bold tracking-wide">More</span>
+          </button>
         </div>
       </div>
     </>

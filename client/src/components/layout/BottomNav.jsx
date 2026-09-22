@@ -26,11 +26,12 @@ const BottomNav = () => {
   const navItems = [
     { name: t('dash_nav_home'), path: '/dashboard', icon: FaHome, active: isHomeActive },
     { name: t('dash_nav_courses'), path: '/courses', icon: FaGraduationCap, active: isCoursesActive },
+    { name: 'Tools', path: '/tools', icon: FaChartLine, active: pathname === '/tools' },
     { name: t('dash_nav_learning'), path: '/dashboard/learning', icon: FaBookOpen, active: isLearningActive },
-    { name: t('dash_nav_profile'), path: '/dashboard/profile', icon: FaUser, active: isProfileActive },
   ];
 
   const moreItems = [
+    { name: t('dash_nav_profile'), path: '/dashboard/profile', icon: FaUser },
     { name: 'Live Market', path: '/live-market', icon: FaChartLine },
     { name: 'Certificates', path: '/dashboard/certificates', icon: FaCertificate },
     { name: 'Payment History', path: '/dashboard/payment-history', icon: FaHistory },

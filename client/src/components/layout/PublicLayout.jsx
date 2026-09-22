@@ -79,7 +79,7 @@ const PublicLayout = () => {
                 </div>
                 <div className="flex items-center gap-2.5">
                   <FaEnvelope className="text-[#D4AF37] shrink-0" size={13} />
-                  <a href="mailto:support@marketmaxtrading.com" className="hover:text-white transition-colors">support@marketmaxtrading.com</a>
+                  <a href="mailto:support@marketmaxtradingacademy.com" className="hover:text-white transition-colors">support@marketmaxtradingacademy.com</a>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <FaPhoneAlt className="text-[#D4AF37] shrink-0" size={12} />
@@ -167,8 +167,8 @@ const PublicLayout = () => {
                 <li><Link to="/" className="hover:text-[#D4AF37] transition-colors">{t('nav_home')}</Link></li>
                 <li><Link to="/about" className="hover:text-[#D4AF37] transition-colors">{t('nav_about')}</Link></li>
                 <li><Link to="/courses" className="hover:text-[#D4AF37] transition-colors">{t('nav_courses')}</Link></li>
+                <li><Link to="/tools" className="hover:text-[#D4AF37] transition-colors">Trading Tools</Link></li>
                 <li><Link to="/contact" className="hover:text-[#D4AF37] transition-colors">{t('nav_contact')}</Link></li>
-                <li><Link to="/admin/login" className="text-gray-500 hover:text-gray-300 transition-colors">Admin Portal</Link></li>
               </ul>
             </div>
 
@@ -180,7 +180,7 @@ const PublicLayout = () => {
               </h4>
               <ul className="space-y-2.5 text-xs sm:text-sm text-gray-400 font-medium">
                 <li><Link to="/terms" className="hover:text-[#D4AF37] transition-colors">Terms & Conditions</Link></li>
-                <li><Link to="/privacy" className="hover:text-[#D4AF37] transition-colors">Privacy & Data Policy</Link></li>
+                <li><Link to="/privacy-policy" className="hover:text-[#D4AF37] transition-colors">Privacy Policy</Link></li>
                 <li><Link to="/refund-policy" className="hover:text-[#D4AF37] transition-colors">Refund & Cancellation Policy</Link></li>
                 <li><Link to="/dashboard/certificates" className="hover:text-[#D4AF37] transition-colors flex items-center gap-1.5"><FaAward className="text-[#D4AF37]" /> Official Certificates</Link></li>
               </ul>

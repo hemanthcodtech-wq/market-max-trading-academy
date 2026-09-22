@@ -524,8 +524,8 @@ const Home = () => {
       <SEO
         title="MarketMax Trading Academy | Master the Markets with Live Institutional Mentorship"
         description="Learn professional Indian stock market trading, live F&O strategies, price action, SMC order blocks, and risk management with MarketMax Trading Academy."
-        keywords="Stock market academy, Nifty options trading, SMC trading, Price action, BankNifty scalping, Live market trading room, MarketMax"
-        url="https://marketmaxtrading.com"
+        keywords="Stock market academy, Nifty options trading, SMC trading, Price action, BankNifty scalping, Live market trading room, MarketMax, marketmaxtradingacademy"
+        url="https://marketmaxtradingacademy.com"
       />
 
       {/* ── TOP SCROLL PROGRESS BAR ── */}
@@ -809,10 +809,10 @@ const Home = () => {
               </div>
             </div>
             <Link
-              to="/courses"
+              to="/register"
               className="px-6 py-3 rounded-full bg-[#D4AF37] hover:bg-[#F3E5AB] text-[#0B0F19] font-black text-xs transition-all duration-300 whitespace-nowrap shadow-lg shadow-[#D4AF37]/20 hover:scale-105"
             >
-              Join Next Live Cohort →
+              Book a Free Demo Class →
             </Link>
           </div>
         </div>
@@ -1301,13 +1301,13 @@ const Home = () => {
               to="/register"
               className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#D4AF37] text-[#0B0F19] font-black text-base hover:bg-[#F3E5AB] transition-all duration-300 shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:scale-105"
             >
-              Book Free Live Demo Seat →
+              Reserve Your Free Demo Seat →
             </Link>
             <Link
               to="/live-market"
               className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#131722] text-white border border-gray-700 hover:border-[#D4AF37] hover:text-[#D4AF37] font-bold text-base transition-all duration-300"
             >
-              Inspect Live Charts & Markets
+              View Live Market Pulse
             </Link>
           </div>
         </div>

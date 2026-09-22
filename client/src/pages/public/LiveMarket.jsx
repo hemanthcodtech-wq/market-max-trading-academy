@@ -168,8 +168,8 @@ const LiveMarket = () => {
       <SEO
         title="Live Market Dashboard | MarketMax Trading Academy"
         description="Real-time live market charts for stocks, F&O, intraday trading and crypto powered by TradingView. Track NIFTY, BANKNIFTY, SENSEX, BTC and more."
-        keywords="Live Market, NIFTY, BANKNIFTY, Intraday, F&O, Options, Crypto, Bitcoin, TradingView"
-        url="https://marketmaxtrading.com/live-market"
+        keywords="Live Market, NIFTY, BANKNIFTY, Intraday, F&O, Options, Crypto, Bitcoin, TradingView, MarketMax Trading Academy"
+        url="https://marketmaxtradingacademy.com/live-market"
       />
 
       {/* ── TICKER TAPE ── */}

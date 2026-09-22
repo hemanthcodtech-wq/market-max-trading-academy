@@ -21,6 +21,7 @@ import About from '../pages/public/About';
 import Contact from '../pages/public/Contact';
 import LiveMarket from '../pages/public/LiveMarket';
 import Services from '../pages/public/Services';
+import Tools from '../pages/public/Tools';
 import PublicCertificates from '../pages/public/Certificates';
 import Ebooks from '../pages/public/Ebooks';
 import Blog from '../pages/public/Blog';
@@ -83,6 +84,7 @@ const AppRoutes = () => {
           <Route path="/courses" element={<CourseList />} />
           <Route path="/courses/:slug" element={<CourseDetails />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/tools" element={<Tools />} />
           <Route path="/certificates" element={<PublicCertificates />} />
           <Route path="/ebooks" element={<Ebooks />} />
           <Route path="/blog" element={<Blog />} />
