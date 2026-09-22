@@ -32,6 +32,7 @@ const BottomNav = () => {
 
   const moreItems = [
     { name: t('dash_nav_profile'), path: '/dashboard/profile', icon: FaUser },
+    { name: 'Tools', path: '/tools', icon: FaChartLine },
     { name: 'Live Market', path: '/live-market', icon: FaChartLine },
     { name: 'Certificates', path: '/dashboard/certificates', icon: FaCertificate },
     { name: 'Payment History', path: '/dashboard/payment-history', icon: FaHistory },

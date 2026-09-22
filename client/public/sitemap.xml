@@ -1,78 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-  
-  <!-- Homepage -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://swamydwija.org/</loc>
-    <lastmod>2026-08-20</lastmod>
+    <loc>https://marketmaxtradingacademy.com/</loc>
+    <lastmod>2026-09-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Courses Catalog -->
   <url>
-    <loc>https://swamydwija.org/courses</loc>
-    <lastmod>2026-08-20</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- About Academy -->
-  <url>
-    <loc>https://swamydwija.org/about</loc>
-    <lastmod>2026-08-20</lastmod>
+    <loc>https://marketmaxtradingacademy.com/about</loc>
+    <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Contact & Support -->
   <url>
-    <loc>https://swamydwija.org/contact</loc>
-    <lastmod>2026-08-20</lastmod>
+    <loc>https://marketmaxtradingacademy.com/courses</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://marketmaxtradingacademy.com/services</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://marketmaxtradingacademy.com/tools</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://marketmaxtradingacademy.com/live-market</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://marketmaxtradingacademy.com/certificates</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://marketmaxtradingacademy.com/ebooks</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://marketmaxtradingacademy.com/blog</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://marketmaxtradingacademy.com/contact</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://marketmaxtradingacademy.com/login</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://marketmaxtradingacademy.com/register</loc>
+    <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Legal: Terms & Conditions -->
   <url>
-    <loc>https://swamydwija.org/terms</loc>
-    <lastmod>2026-08-20</lastmod>
+    <loc>https://marketmaxtradingacademy.com/terms</loc>
+    <lastmod>2026-09-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
-  <!-- Legal: Privacy Policy -->
   <url>
-    <loc>https://swamydwija.org/privacy</loc>
-    <lastmod>2026-08-20</lastmod>
+    <loc>https://marketmaxtradingacademy.com/terms-and-conditions</loc>
+    <lastmod>2026-09-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
-  <!-- Legal: Refund & Return Policy -->
   <url>
-    <loc>https://swamydwija.org/refund-policy</loc>
-    <lastmod>2026-08-20</lastmod>
+    <loc>https://marketmaxtradingacademy.com/privacy</loc>
+    <lastmod>2026-09-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
-  <!-- Authentication Pages -->
   <url>
-    <loc>https://swamydwija.org/login</loc>
-    <lastmod>2026-08-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://marketmaxtradingacademy.com/privacy-policy</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://swamydwija.org/register</loc>
-    <lastmod>2026-08-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://marketmaxtradingacademy.com/refund-policy</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
   </url>
-
 </urlset>

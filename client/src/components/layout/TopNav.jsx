@@ -26,6 +26,7 @@ const TopNav = () => {
     { name: t('dash_nav_home'), path: '/dashboard', icon: FaHome },
     { name: t('dash_nav_courses'), path: '/courses', icon: FaGraduationCap },
     { name: 'Live Market', path: '/live-market', icon: FaChartLine },
+    { name: 'Tools', path: '/tools', icon: FaChartLine },
     { name: t('dash_nav_learning'), path: '/dashboard/learning', icon: FaBookOpen },
     { name: 'Blogs', path: '/blog', icon: FaBookOpen },
     { name: 'E-Books', path: '/ebooks', icon: FaBookOpen },
