@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FaGraduationCap, FaClock, FaAward, FaPlay, FaChevronRight, FaBookOpen, FaUser, FaBlog, FaBook } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import LiveMarketCards from '../../components/common/LiveMarketCards';
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -94,6 +95,24 @@ const Home = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* Live market snapshot for authenticated users */}
+        <section className="rounded-3xl border border-gray-800 bg-[#131722]/80 p-5 md:p-6 shadow-sm">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-400">Live market</span>
+              </div>
+              <h2 className="mt-1 text-xl font-black text-white">Track the market before you trade</h2>
+              <p className="mt-1 text-sm text-gray-500">Real-time index prices and daily movement.</p>
+            </div>
+            <button onClick={() => navigate('/live-market')} className="w-max rounded-xl border border-[#D4AF37]/30 px-4 py-2 text-xs font-bold text-[#F3D36A] transition-colors hover:bg-[#D4AF37] hover:text-[#0B0F19]">
+              Open full market
+            </button>
+          </div>
+          <LiveMarketCards filter="indices" compact onSelectSymbol={() => navigate('/live-market')} />
+        </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           

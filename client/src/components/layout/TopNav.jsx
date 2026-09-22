@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaChalkboardTeacher, FaBookOpen, FaUser, FaBell, FaGraduationCap, FaGlobe, FaArrowLeft } from 'react-icons/fa';
+import { FaHome, FaChalkboardTeacher, FaBookOpen, FaUser, FaBell, FaGraduationCap, FaGlobe, FaArrowLeft, FaChartLine } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -25,6 +25,7 @@ const TopNav = () => {
   const navItems = [
     { name: t('dash_nav_home'), path: '/dashboard', icon: FaHome },
     { name: t('dash_nav_courses'), path: '/courses', icon: FaGraduationCap },
+    { name: 'Live Market', path: '/live-market', icon: FaChartLine },
     { name: t('dash_nav_learning'), path: '/dashboard/learning', icon: FaBookOpen },
     { name: 'Blogs', path: '/blog', icon: FaBookOpen },
     { name: 'E-Books', path: '/ebooks', icon: FaBookOpen },

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { FaHome, FaBookOpen, FaUser, FaGraduationCap, FaEllipsisH, FaTimes, FaCog, FaHistory, FaHeart, FaHeadset, FaCertificate } from 'react-icons/fa';
+import { FaHome, FaBookOpen, FaUser, FaGraduationCap, FaEllipsisH, FaTimes, FaCog, FaHistory, FaHeart, FaHeadset, FaCertificate, FaChartLine } from 'react-icons/fa';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -31,6 +31,7 @@ const BottomNav = () => {
   ];
 
   const moreItems = [
+    { name: 'Live Market', path: '/live-market', icon: FaChartLine },
     { name: 'Certificates', path: '/dashboard/certificates', icon: FaCertificate },
     { name: 'Payment History', path: '/dashboard/payment-history', icon: FaHistory },
     { name: 'Wishlist', path: '/dashboard/wishlist', icon: FaHeart },
