@@ -46,9 +46,19 @@ const AdminDashboard = () => {
   const [savingStats, setSavingStats] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [contactInfo, setContactInfo] = useState({
+    address: 'B Block - 505, Northface Grandeur Apartments, Hyderabad, Telangana - 500001',
+    phone: '+91 96523 57824',
+    whatsappNumber: '919652357824',
+    email: 'support@marketmaxtradingacademy.com'
+  });
+  const [savingContact, setSavingContact] = useState(false);
+
   useEffect(() => {
     fetchStats();
     fetchPublicStats();
+    fetchContactInfo();
   }, []);
 
   const fetchStats = async () => {
@@ -78,6 +88,22 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchContactInfo = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/settings/contact`);
+      if (res.data.success && res.data.data) {
+        setContactInfo({
+          address: res.data.data.address || '',
+          phone: res.data.data.phone || '',
+          whatsappNumber: res.data.data.whatsappNumber || '',
+          email: res.data.data.email || ''
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching contact info', err);
+    }
+  };
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 4000);
@@ -101,6 +127,39 @@ const AdminDashboard = () => {
       alert(err.response?.data?.message || 'Error updating platform stats');
     } finally {
       setSavingStats(false);
+    }
+  };
+
+  const handleSaveContactInfo = async (e) => {
+    e.preventDefault();
+    setSavingContact(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      const payload = {
+        address: contactInfo.address,
+        phone: contactInfo.phone,
+        whatsappNumber: contactInfo.whatsappNumber,
+        email: contactInfo.email
+      };
+      const res = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/admin/settings/contact`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.data.success) {
+        showToast('Contact details updated successfully across the frontend!');
+        setContactModalOpen(false);
+        setContactInfo({
+          address: res.data.data.address || contactInfo.address,
+          phone: res.data.data.phone || contactInfo.phone,
+          whatsappNumber: res.data.data.whatsappNumber || contactInfo.whatsappNumber,
+          email: res.data.data.email || contactInfo.email
+        });
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Error updating contact details');
+    } finally {
+      setSavingContact(false);
     }
   };
 
@@ -186,6 +245,15 @@ const AdminDashboard = () => {
           >
             <FaSlidersH size={13} />
             <span>Edit Public Stats</span>
+          </button>
+
+          <button
+            onClick={() => setContactModalOpen(true)}
+            className="px-4 py-3 bg-emerald-500/10 hover:bg-emerald-500 hover:text-white text-emerald-400 border border-emerald-300 rounded-2xl text-xs lg:text-sm font-bold shadow-xs transition-all flex items-center gap-2"
+            title="Edit footer and contact information shown across the frontend"
+          >
+            <FaGlobe size={13} />
+            <span>Edit Contact Info</span>
           </button>
 
           <button
@@ -338,6 +406,103 @@ const AdminDashboard = () => {
         </div>
 
       </div>
+
+      {/* 🌟 EDIT CONTACT INFORMATION MODAL */}
+      <AnimatePresence>
+        {contactModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="bg-[#131722] rounded-[2.5rem] max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-gray-800 my-8 space-y-6 max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between border-b border-gray-800 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl border border-emerald-200">
+                    <FaGlobe />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-white">Manage Contact Information</h3>
+                    <p className="text-xs text-gray-400">
+                      Update the address and WhatsApp number shown across the footer and contact page.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setContactModalOpen(false)}
+                  className="w-8 h-8 rounded-full bg-[#1E293B] hover:bg-gray-700 text-gray-400 flex items-center justify-center transition-all"
+                >
+                  <FaTimes size={13} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveContactInfo} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-gray-300 block">Address</label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={contactInfo.address}
+                    onChange={(e) => setContactInfo({ ...contactInfo, address: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm text-white outline-none focus:border-blue-600"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-gray-300 block">Phone</label>
+                    <input
+                      type="text"
+                      value={contactInfo.phone}
+                      onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                      className="w-full px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm text-white outline-none focus:border-blue-600"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-gray-300 block">WhatsApp Number</label>
+                    <input
+                      type="text"
+                      value={contactInfo.whatsappNumber}
+                      onChange={(e) => setContactInfo({ ...contactInfo, whatsappNumber: e.target.value })}
+                      className="w-full px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm text-white outline-none focus:border-blue-600"
+                      placeholder="919652357824"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-gray-300 block">Email</label>
+                  <input
+                    type="email"
+                    value={contactInfo.email}
+                    onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#131722] border border-gray-700 rounded-xl text-sm text-white outline-none focus:border-blue-600"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setContactModalOpen(false)}
+                    className="px-5 py-2.5 rounded-xl bg-[#1E293B] text-gray-300 font-bold text-sm hover:bg-gray-700 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={savingContact}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-sm shadow-[0_6px_18px_rgba(34,197,94,0.25)] disabled:opacity-60 transition-all"
+                  >
+                    {savingContact ? 'Saving...' : 'Save Contact Info'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* 🌟 EDIT PUBLIC PLATFORM METRICS MODAL */}
       <AnimatePresence>

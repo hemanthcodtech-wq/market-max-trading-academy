@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaTelegramPlane, 
@@ -13,6 +13,34 @@ const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
+  const [contactInfo, setContactInfo] = useState({
+    address: 'B Block - 505, Northface Grandeur Apartments, Hyderabad, Telangana - 500001',
+    phone: '+91 96523 57824',
+    phoneHref: '+919652357824',
+    whatsappUrl: 'https://wa.me/919652357824',
+    email: 'support@marketmaxtradingacademy.com'
+  });
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/settings/contact`);
+        if (res.data.success && res.data.data) {
+          setContactInfo({
+            address: res.data.data.address || contactInfo.address,
+            phone: res.data.data.phone || contactInfo.phone,
+            phoneHref: res.data.data.phoneHref || res.data.data.phone || contactInfo.phoneHref,
+            whatsappUrl: res.data.data.whatsappUrl || `https://wa.me/${res.data.data.whatsappNumber || '919652357824'}`,
+            email: res.data.data.email || contactInfo.email
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching contact info:', err);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,8 +124,8 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Call Us</p>
-                    <a href="tel:+919652357824" className="font-bold text-sm sm:text-base text-white hover:text-[#D4AF37] transition-colors block mt-0.5">
-                      +91 96523 57824
+                    <a href={`tel:${contactInfo.phoneHref}`} className="font-bold text-sm sm:text-base text-white hover:text-[#D4AF37] transition-colors block mt-0.5">
+                      {contactInfo.phone}
                     </a>
                     <span className="text-[11px] text-gray-500 block mt-0.5">Mon - Sat: 9:00 AM - 6:00 PM IST</span>
                   </div>
@@ -110,8 +138,8 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Email Us</p>
-                    <a href="mailto:support@marketmaxtradingacademy.com" className="font-bold text-sm sm:text-base text-white hover:text-[#D4AF37] transition-colors block mt-0.5">
-                      support@marketmaxtradingacademy.com
+                    <a href={`mailto:${contactInfo.email}`} className="font-bold text-sm sm:text-base text-white hover:text-[#D4AF37] transition-colors block mt-0.5">
+                      {contactInfo.email}
                     </a>
                     <span className="text-[11px] text-gray-500 block mt-0.5">24/7 Electronic Helpdesk Support</span>
                   </div>
@@ -125,8 +153,12 @@ const Contact = () => {
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Headquarters</p>
                     <p className="font-medium text-xs sm:text-sm text-gray-300 leading-relaxed mt-1">
-                      B Block - 505, Northface Grandeur Apartments,<br />
-                      Hyderabad, Telangana - 500001
+                      {contactInfo.address.split(',').map((line, index) => (
+                        <React.Fragment key={index}>
+                          {line}
+                          {index < contactInfo.address.split(',').length - 1 && <br />}
+                        </React.Fragment>
+                      ))}
                     </p>
                   </div>
                 </div>

@@ -17,6 +17,13 @@ const PublicLayout = () => {
   const isLoggedIn = !!token;
 
   const [livePrograms, setLivePrograms] = useState([]);
+  const [contactInfo, setContactInfo] = useState({
+    address: 'B Block - 505, Northface Grandeur Apartments, Hyderabad, Telangana - 500001',
+    phone: '+91 96523 57824',
+    phoneHref: '+919652357824',
+    whatsappUrl: 'https://wa.me/919652357824',
+    email: 'support@marketmaxtradingacademy.com'
+  });
 
   useEffect(() => {
     const fetchLivePrograms = async () => {
@@ -29,7 +36,26 @@ const PublicLayout = () => {
         console.error('Error fetching live courses for footer:', err);
       }
     };
+
+    const fetchContactInfo = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/settings/contact`);
+        if (res.data.success && res.data.data) {
+          setContactInfo({
+            address: res.data.data.address || contactInfo.address,
+            phone: res.data.data.phone || contactInfo.phone,
+            phoneHref: res.data.data.phoneHref || res.data.data.phone || contactInfo.phoneHref,
+            whatsappUrl: res.data.data.whatsappUrl || `https://wa.me/${res.data.data.whatsappNumber || '919652357824'}`,
+            email: res.data.data.email || contactInfo.email
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching contact info for footer:', err);
+      }
+    };
+
     fetchLivePrograms();
+    fetchContactInfo();
   }, []);
 
   return (
@@ -73,22 +99,20 @@ const PublicLayout = () => {
               <div className="space-y-2.5 text-xs text-gray-300 pt-1">
                 <div className="flex items-start gap-2.5">
                   <FaMapMarkerAlt className="text-[#D4AF37] shrink-0 mt-0.5" size={13} />
-                  <span className="leading-relaxed">
-                    B Block - 505, Northface Grandeur Apartments, Hyderabad, Telangana - 500001
-                  </span>
+                  <span className="leading-relaxed">{contactInfo.address}</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <FaEnvelope className="text-[#D4AF37] shrink-0" size={13} />
-                  <a href="mailto:support@marketmaxtradingacademy.com" className="hover:text-white transition-colors">support@marketmaxtradingacademy.com</a>
+                  <a href={`mailto:${contactInfo.email}`} className="hover:text-white transition-colors">{contactInfo.email}</a>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <FaPhoneAlt className="text-[#D4AF37] shrink-0" size={12} />
-                  <a href="tel:+919652357824" className="hover:text-white transition-colors">+91 96523 57824 (Mon - Sat, 9 AM - 6 PM IST)</a>
+                  <a href={`tel:${contactInfo.phoneHref}`} className="hover:text-white transition-colors">{contactInfo.phone} (Mon - Sat, 9 AM - 6 PM IST)</a>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <FaWhatsapp className="text-[#25D366] shrink-0" size={14} />
                   <a
-                    href="https://wa.me/919652357824"
+                    href={contactInfo.whatsappUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="hover:text-white transition-colors"

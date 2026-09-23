@@ -7,7 +7,7 @@ const Enrollment = require('../models/Enrollment');
 const courseRoutes = require('./courseRoutes');
 const { generateInvoicePDF, generateCertificatePDF, normalizeInvoiceNumber } = require('../utils/pdfGenerator');
 const { uploadBufferToCloudinary } = require('../utils/cloudinaryUploader');
-const { sendCourseEnrollmentEmail, sendCourseCompletionEmail } = require('../utils/emailService');
+const { sendCourseEnrollmentEmail, sendCourseCompletionEmail, sendCourseAccessGrantedEmail } = require('../utils/emailService');
 
 const router = express.Router();
 
@@ -292,6 +292,79 @@ router.get('/users/:id', protect, admin, async (req, res) => {
   }
 });
 
+router.post('/courses/:courseId/grant-access', protect, admin, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { email, studentName } = req.body || {};
+    const normalizedEmail = (email || '').trim().toLowerCase();
+
+    if (!normalizedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return res.status(400).json({ success: false, message: 'A valid student email is required.' });
+    }
+
+    const learner = await User.findOne({
+      role: 'student',
+      status: 'active',
+      $or: [
+        { email: normalizedEmail },
+        { emailOrPhone: normalizedEmail }
+      ]
+    }).select('email emailOrPhone name firstName lastName');
+
+    if (!learner) {
+      return res.status(404).json({
+        success: false,
+        message: 'No active learner account was found with this email. The learner must register first.'
+      });
+    }
+
+    const learnerEmail = (learner.email || learner.emailOrPhone).trim().toLowerCase();
+    const resolvedStudentName = learner.name ||
+      (learner.firstName ? `${learner.firstName} ${learner.lastName || ''}`.trim() : '') ||
+      learnerEmail.split('@')[0];
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found.' });
+    }
+
+    let enrollment = await Enrollment.findOne({ course: courseId, studentEmail: learnerEmail });
+    if (!enrollment) {
+      enrollment = await Enrollment.create({
+        course: courseId,
+        studentEmail: learnerEmail,
+        amountPaid: 0,
+        paymentStatus: 'granted_by_admin',
+        progress: 0,
+        completed: false
+      });
+    } else {
+      enrollment.paymentStatus = 'granted_by_admin';
+      enrollment.amountPaid = enrollment.amountPaid || 0;
+      enrollment.progress = enrollment.progress || 0;
+      await enrollment.save();
+    }
+
+    const emailResult = await sendCourseAccessGrantedEmail({
+      to: learnerEmail,
+      studentName: studentName || resolvedStudentName,
+      course,
+      accessValidity: course.accessValidity || '2 Months'
+    });
+
+    res.status(emailResult.success ? 200 : 502).json({
+      success: emailResult.success,
+      message: emailResult.success
+        ? `Course access granted to ${learnerEmail} and a confirmation email has been sent.`
+        : `Course access granted to ${learnerEmail}. Email delivery failed, but the student access was created.`,
+      data: enrollment
+    });
+  } catch (error) {
+    console.error('Grant course access error:', error);
+    res.status(500).json({ success: false, message: 'Error granting course access', error: error.message });
+  }
+});
+
 // Admin: Custom Certificate Generation & Email Dispatch
 router.post('/certificate/custom-generate-and-send', protect, admin, async (req, res) => {
   try {
@@ -508,6 +581,15 @@ router.post('/certificate/preview-pdf', protect, admin, async (req, res) => {
 // Site Setting for Platform Stats
 const SiteSetting = require('../models/SiteSetting');
 
+const defaultContactInfo = {
+  address: 'B Block - 505, Northface Grandeur Apartments, Hyderabad, Telangana - 500001',
+  phone: '+91 96523 57824',
+  phoneHref: '+919652357824',
+  whatsappNumber: '919652357824',
+  whatsappUrl: 'https://wa.me/919652357824',
+  email: 'support@marketmaxtradingacademy.com'
+};
+
 // Get Platform Stats Settings (Public)
 router.get('/settings/stats', async (req, res) => {
   try {
@@ -557,6 +639,56 @@ router.put('/settings/stats', protect, admin, async (req, res) => {
     res.json({ success: true, message: 'Platform stats updated successfully!', data: setting.stats });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error updating stats settings', error: error.message });
+  }
+});
+
+// Get Contact Information Settings (Public)
+router.get('/settings/contact', async (req, res) => {
+  try {
+    let setting = await SiteSetting.findOne({ key: 'platform_stats' });
+    if (!setting) {
+      setting = await SiteSetting.create({
+        key: 'platform_stats',
+        contactInfo: defaultContactInfo
+      });
+    }
+
+    const contactInfo = { ...defaultContactInfo, ...(setting.contactInfo || {}) };
+    res.json({ success: true, data: contactInfo });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching contact settings', error: error.message });
+  }
+});
+
+// Update Contact Information Settings (Admin Only)
+router.put('/settings/contact', protect, admin, async (req, res) => {
+  try {
+    const incomingContact = req.body || {};
+    let setting = await SiteSetting.findOne({ key: 'platform_stats' });
+
+    if (!setting) {
+      setting = new SiteSetting({
+        key: 'platform_stats',
+        contactInfo: { ...defaultContactInfo, ...incomingContact }
+      });
+    } else {
+      setting.contactInfo = { ...defaultContactInfo, ...(setting.contactInfo || {}), ...incomingContact };
+    }
+
+    if (incomingContact.whatsappNumber && !incomingContact.whatsappUrl) {
+      const cleanedNumber = incomingContact.whatsappNumber.replace(/\D/g, '');
+      setting.contactInfo.whatsappUrl = `https://wa.me/${cleanedNumber}`;
+      setting.contactInfo.whatsappNumber = cleanedNumber;
+    }
+
+    if (incomingContact.phone && !incomingContact.phoneHref) {
+      setting.contactInfo.phoneHref = incomingContact.phone.replace(/\D/g, '');
+    }
+
+    await setting.save();
+    res.json({ success: true, message: 'Contact information updated successfully!', data: setting.contactInfo });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error updating contact settings', error: error.message });
   }
 });
 

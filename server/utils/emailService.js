@@ -26,9 +26,14 @@ const createTransporter = () => {
   });
 };
 
+const getSenderAddress = (fallbackName) => {
+  const sender = process.env.SMTP_FROM || process.env.SMTP_USER || fallbackName;
+  return sender.includes('<') ? sender : `"MarketMax Trading Academy" <${sender}>`;
+};
+
 const sendCourseEnrollmentEmail = async ({ to, studentName, course, invoiceNumber, amountPaid, invoicePdfBuffer }) => {
   try {
-    const from = `"MarketMax Trading Academy" <${process.env.SMTP_USER || 'support@marketmaxtrading.com'}>`;
+    const from = getSenderAddress('support@marketmaxtrading.com');
     const transporter = createTransporter();
     const dashboardUrl = `${getClientBaseUrl()}/dashboard/learning`;
 
@@ -79,7 +84,7 @@ const sendCourseEnrollmentEmail = async ({ to, studentName, course, invoiceNumbe
 
 const sendCourseCompletionEmail = async ({ to, studentName, course, certId, certificatePdfBuffer }) => {
   try {
-    const from = `"MarketMax Trading Academy" <${process.env.SMTP_USER || 'support@marketmaxtrading.com'}>`;
+    const from = getSenderAddress('support@marketmaxtrading.com');
     const transporter = createTransporter();
     
     const mailOptions = {
@@ -102,6 +107,54 @@ const sendCourseCompletionEmail = async ({ to, studentName, course, certId, cert
     const info = await transporter.sendMail(mailOptions);
     return { success: true, messageId: info.messageId };
   } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+const sendCourseAccessGrantedEmail = async ({ to, studentName, course, accessValidity }) => {
+  try {
+    const from = getSenderAddress('support@marketmaxtrading.com');
+    const transporter = createTransporter();
+    const dashboardUrl = `${getClientBaseUrl()}/dashboard/learning`;
+
+    const mailOptions = {
+      from,
+      to,
+      subject: `✅ Course Access Granted: ${course.title}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0B0F19; padding: 25px; border-radius: 16px; color: #e5e7eb;">
+          <div style="text-align: center; margin-bottom: 25px;">
+            <h1 style="color: #D4AF37; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px;">MarketMax</h1>
+          </div>
+          <div style="background-color: #141b2d; padding: 25px; border-radius: 12px; border: 1px solid #1f2937;">
+            <h2 style="color: #f3f4f6; font-size: 18px; margin-top: 0;">Hello ${studentName || 'Learner'},</h2>
+            <p style="font-size: 14px; line-height: 1.6; color: #d1d5db;">
+              Your access to <strong style="color: #D4AF37;">${course.title}</strong> has been granted by the admin.
+            </p>
+            <div style="background-color: rgba(212, 175, 55, 0.05); border-left: 4px solid #D4AF37; padding: 15px; border-radius: 6px; margin: 20px 0;">
+              <p style="margin: 4px 0; font-size: 13px;"><strong>Course:</strong> ${course.title}</p>
+              <p style="margin: 4px 0; font-size: 13px;"><strong>Access Validity:</strong> ${accessValidity || '2 Months'}</p>
+              <p style="margin: 4px 0; font-size: 13px;"><strong>Status:</strong> Active</p>
+            </div>
+            ${course.whatsappGroupLink ? `
+              <div style="text-align: center; margin: 18px 0;">
+                <a href="${course.whatsappGroupLink}" style="background-color: #25D366; color: #ffffff; padding: 10px 24px; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 13px; display: inline-block;">Join WhatsApp Community →</a>
+              </div>
+            ` : ''}
+            <div style="text-align: center; margin: 25px 0;">
+              <a href="${dashboardUrl}" style="background-color: #D4AF37; color: #0B0F19; padding: 12px 28px; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 14px; display: inline-block;">Open Learning Dashboard</a>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    await transporter.verify();
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`Course access email sent to ${to}: ${info.messageId}`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Course access email error:', error);
     return { success: false, error: error.message };
   }
 };
@@ -201,6 +254,7 @@ const sendContactInquiryEmail = async ({ name, email, phone, queryType, message 
 module.exports = {
   sendCourseEnrollmentEmail,
   sendCourseCompletionEmail,
+  sendCourseAccessGrantedEmail,
   sendForgotPasswordOtpEmail,
   sendRegistrationOtpEmail,
   sendContactInquiryEmail

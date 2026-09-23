@@ -275,12 +275,11 @@ const CourseDetails = () => {
       navigate(`/dashboard/learning/${course._id}`);
       return;
     }
-    const token = localStorage.getItem('token');
-    if (token) {
-      navigate(`/checkout/${course._id}`);
-    } else {
-      navigate(`/login?redirect=/checkout/${course._id}`);
-    }
+
+    const adminWhatsApp = import.meta.env.VITE_ADMIN_WHATSAPP_URL || 'https://wa.me/919652357824';
+    const message = `Hi MarketMax Admin, I want to enroll in ${course?.title || 'this course'}. Please grant me access and share the details.`;
+    const url = `${adminWhatsApp}${adminWhatsApp.includes('?') ? '&' : '?'}text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const handleToggleWishlist = async () => {

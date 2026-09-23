@@ -3,8 +3,6 @@ const Enrollment = require('../models/Enrollment');
 const Course = require('../models/Course');
 const User = require('../models/User');
 const { protect } = require('../middleware/authMiddleware');
-const Razorpay = require('razorpay');
-const crypto = require('crypto');
 const { generateInvoicePDF, normalizeInvoiceNumber } = require('../utils/pdfGenerator');
 const { sendCourseEnrollmentEmail } = require('../utils/emailService');
 
@@ -63,145 +61,18 @@ router.get('/invoice/:enrollmentId/download', protect, async (req, res) => {
   }
 });
 
-// Create Razorpay Order
 router.post('/create-order', protect, async (req, res) => {
-  try {
-    const { courseId } = req.body;
-    const keyId = process.env.RAZORPAY_KEY_ID?.trim();
-    const keySecret = process.env.RAZORPAY_KEY_SECRET?.trim();
-
-    if (!keyId || !keySecret) {
-      return res.status(503).json({
-        success: false,
-        message: 'Payment gateway is not configured. Add Razorpay key credentials on the server.'
-      });
-    }
-    
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ success: false, message: 'Course not found' });
-    }
-
-    const instance = new Razorpay({
-      key_id: keyId,
-      key_secret: keySecret,
-    });
-
-    const price = course.price !== undefined ? course.price : 0;
-    const options = {
-      amount: Math.round(price * 100), // paise
-      currency: "INR",
-      receipt: `rcpt_${Date.now().toString().slice(-6)}`
-    };
-
-    const order = await instance.orders.create(options);
-
-    res.json({ 
-      success: true, 
-      order, 
-      key: process.env.RAZORPAY_KEY_ID 
-    });
-  } catch (error) {
-    console.error("Order creation error", error);
-    const razorpayMessage = error.error?.description || error.message;
-    const isAuthError = error.statusCode === 401 || error.error?.code === 'BAD_REQUEST_ERROR' && /auth/i.test(razorpayMessage || '');
-    res.status(isAuthError ? 503 : 500).json({
-      success: false,
-      message: isAuthError
-        ? 'Razorpay authentication failed. Check that RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET belong to the same account and mode.'
-        : 'Error creating order',
-      error: razorpayMessage
-    });
-  }
+  return res.status(410).json({
+    success: false,
+    message: 'Course enrollment is handled through WhatsApp. Razorpay has been disabled.'
+  });
 });
 
-// Verify Razorpay Payment and send confirmation email with invoice PDF
 router.post('/verify-payment', protect, async (req, res) => {
-  try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, courseId, amountPaid } = req.body;
-
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ success: false, message: 'Course not found' });
-    }
-
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-      .update(body.toString())
-      .digest('hex');
-
-    const isAuthentic = expectedSignature === razorpay_signature;
-
-    if (isAuthentic || process.env.NODE_ENV === 'development') {
-      const invoiceNumber = `MARMAX-INV-${Date.now().toString().slice(-6)}${Math.floor(100 + Math.random() * 900)}`;
-      const finalAmount = amountPaid !== undefined ? amountPaid : course.price;
-
-      // Create Enrollment
-      const enrollment = await Enrollment.create({
-        course: courseId,
-        studentEmail: req.user.emailOrPhone,
-        amountPaid: finalAmount,
-        invoiceNumber: invoiceNumber,
-        paymentStatus: 'completed',
-        progress: 0
-      });
-
-      // Get student name for invoice
-      const user = await User.findById(req.user._id);
-      let studentName = user?.name;
-      if (!studentName && user?.firstName) {
-        studentName = `${user.firstName} ${user.lastName || ''}`.trim();
-      }
-      if (!studentName) {
-        studentName = req.user.emailOrPhone.split('@')[0];
-      }
-
-const { uploadBufferToCloudinary } = require('../utils/cloudinaryUploader');
-
-      // Generate Invoice PDF, upload to Cloudinary, and send email asynchronously
-      generateInvoicePDF({
-        invoiceNumber,
-        studentName,
-        studentEmail: req.user.emailOrPhone,
-        courseTitle: course.title,
-        amountPaid: finalAmount,
-        paymentDate: new Date().toLocaleDateString('en-IN'),
-        accessValidity: course.accessValidity || '2 Months'
-      }).then(async (invoicePdfBuffer) => {
-        // Upload to Cloudinary
-        try {
-          const cloudUrl = await uploadBufferToCloudinary(invoicePdfBuffer, invoiceNumber, 'sdf_invoices');
-          if (cloudUrl) {
-            enrollment.invoiceUrl = cloudUrl;
-            await enrollment.save();
-          }
-        } catch (cErr) {
-          console.error("Cloudinary invoice upload error:", cErr);
-        }
-
-        sendCourseEnrollmentEmail({
-          to: req.user.emailOrPhone,
-          studentName,
-          course,
-          invoiceNumber,
-          amountPaid: finalAmount,
-          invoicePdfBuffer
-        }).catch(emailErr => console.error("Enrollment email sending error:", emailErr));
-      }).catch(pdfErr => console.error("Invoice PDF generation error:", pdfErr));
-
-      res.json({ 
-        success: true, 
-        message: 'Payment verified and enrollment confirmed!', 
-        data: enrollment 
-      });
-    } else {
-      res.status(400).json({ success: false, message: 'Invalid Payment Signature' });
-    }
-  } catch (error) {
-    console.error("Payment verification error:", error);
-    res.status(500).json({ success: false, message: 'Error verifying payment', error: error.message });
-  }
+  return res.status(410).json({
+    success: false,
+    message: 'Razorpay payment verification is disabled. Please enroll via WhatsApp.'
+  });
 });
 
 module.exports = router;

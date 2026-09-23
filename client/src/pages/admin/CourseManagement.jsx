@@ -40,6 +40,11 @@ const CourseManagement = () => {
   const [enrolledCourse, setEnrolledCourse] = useState(null);
   const [isEnrolledModalOpen, setIsEnrolledModalOpen] = useState(false);
   const [loadingEnrollments, setLoadingEnrollments] = useState(false);
+  const [grantEmail, setGrantEmail] = useState('');
+  const [learnerEmails, setLearnerEmails] = useState([]);
+  const [grantingAccess, setGrantingAccess] = useState(false);
+  const [grantAccessMessage, setGrantAccessMessage] = useState('');
+  const [grantAccessError, setGrantAccessError] = useState(false);
 
   // Timetable & Rescheduling State
   const [isTimetableOpen, setIsTimetableOpen] = useState(false);
@@ -68,8 +73,24 @@ const CourseManagement = () => {
 
   useEffect(() => {
     fetchCourses();
+    fetchLearnerEmails();
     fetchHolidays(new Date().getFullYear());
   }, []);
+
+  const fetchLearnerEmails = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/users`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+      });
+      const emails = (res.data.data || [])
+        .map(user => user.email || user.emailOrPhone)
+        .filter(email => email && email.includes('@'))
+        .map(email => email.toLowerCase());
+      setLearnerEmails([...new Set(emails)]);
+    } catch (err) {
+      console.error('Error fetching learner emails', err);
+    }
+  };
 
   const fetchHolidays = async (year) => {
     try {
@@ -190,6 +211,35 @@ const CourseManagement = () => {
       console.error('Error fetching course timetable:', err);
     } finally {
       setLoadingTimetable(false);
+    }
+  };
+
+  const handleGrantCourseAccess = async () => {
+    if (!enrolledCourse || !grantEmail.trim()) {
+      setGrantAccessMessage('Please enter a valid student email.');
+      return;
+    }
+
+    setGrantingAccess(true);
+    setGrantAccessMessage('');
+    setGrantAccessError(false);
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/admin/courses/${enrolledCourse._id}/grant-access`,
+        { email: grantEmail.trim() },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } }
+      );
+
+      if (res.data.success) {
+        setGrantEmail('');
+        setGrantAccessMessage(res.data.message);
+        await handleViewEnrollments(enrolledCourse);
+      }
+    } catch (err) {
+      setGrantAccessError(true);
+      setGrantAccessMessage(err.response?.data?.message || 'Error granting course access.');
+    } finally {
+      setGrantingAccess(false);
     }
   };
 
@@ -434,7 +484,7 @@ const CourseManagement = () => {
                       </button>
                       <button 
                         onClick={() => handleOpenTimetable(course)} 
-                        className="px-3 py-1.5 bg-blue-600/20/80 text-emerald-950 hover:bg-emerald-700 hover:text-white transition-all rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer border border-emerald-300/60"
+                        className="px-3 py-1.5 bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500 hover:text-white transition-all rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer border border-emerald-400/40 shadow-[0_0_0_1px_rgba(52,211,153,0.15)]"
                         title="Manage Sessions & Reschedule Classes"
                       >
                         <FaCalendarAlt size={10} />
@@ -492,7 +542,35 @@ const CourseManagement = () => {
               </button>
               
               <h2 className="text-xl font-bold text-white mb-2 mt-2">Enrolled Students</h2>
-              <p className="text-[#D4AF37] font-semibold text-sm mb-6 line-clamp-1">{enrolledCourse?.title}</p>
+              <p className="text-[#D4AF37] font-semibold text-sm mb-4 line-clamp-1">{enrolledCourse?.title}</p>
+
+              <div className="mb-5 space-y-2.5 rounded-2xl border border-[#D4AF37]/20 bg-[#D4AF37]/5 p-3">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37]">Grant access to registered learner</label>
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    value={grantEmail}
+                    onChange={(e) => setGrantEmail(e.target.value)}
+                    placeholder="student@example.com"
+                    list="registered-learner-emails"
+                    className="flex-1 px-3 py-2.5 rounded-xl border border-gray-700 bg-[#0B0F19] text-sm text-white outline-none focus:border-[#D4AF37]"
+                  />
+                  <datalist id="registered-learner-emails">
+                    {learnerEmails.map(email => <option key={email} value={email} />)}
+                  </datalist>
+                  <button
+                    onClick={handleGrantCourseAccess}
+                    disabled={grantingAccess}
+                    className="px-3 py-2.5 rounded-xl bg-[#D4AF37] text-[#0B0F19] text-xs font-bold disabled:opacity-60"
+                  >
+                    {grantingAccess ? 'Granting...' : 'Grant Access'}
+                  </button>
+                </div>
+                {grantAccessMessage && (
+                  <p className={`text-xs ${grantAccessError ? 'text-red-300' : 'text-emerald-300'}`}>{grantAccessMessage}</p>
+                )}
+                <p className="text-[11px] text-gray-500">Only active learner accounts already registered on the platform can receive access.</p>
+              </div>
               
               <div className="flex-1 overflow-y-auto pr-2">
                 {loadingEnrollments ? (
