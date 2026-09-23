@@ -49,7 +49,7 @@ const TermsAndConditions = () => {
               Acceptance of Terms
             </h2>
             <p className="text-sm text-gray-300">
-              Welcome to <strong className="text-white">MarketMax Trading Academy</strong> (“MarketMax”, “we”, “our”, or “us”). By visiting <a href="https://marketmaxtradingacademy.com" className="text-[#D4AF37] underline">marketmaxtradingacademy.com</a>, creating an account, enrolling in a course, joining a live trading room, or using any digital services offered by MarketMax, you agree to these Terms & Conditions. If you do not agree, please do not access or use our platform.
+              Welcome to <strong className="text-white">MarketMax</strong> (“MarketMax”, “we”, “our”, or “us”). By visiting <a href="https://marketmaxtradingacademy.com" className="text-[#D4AF37] underline">marketmaxtradingacademy.com</a>, creating an account, enrolling in an online course, joining a live learning session, or using any educational services offered by MarketMax, you agree to these Terms & Conditions. This platform is intended for educational and informational use only. It is not a trading platform, brokerage service, investment adviser, exchange, or financial intermediary.
             </p>
           </section>
 
@@ -61,7 +61,7 @@ const TermsAndConditions = () => {
             <div className="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 text-sm text-amber-200">
               <p className="font-bold flex items-center gap-2 mb-2"><FaExclamationTriangle className="text-amber-400" /> Important Notice</p>
               <p>
-                All learning content, market commentary, trade ideas, educational videos, strategies, and live sessions are provided strictly for educational and informational purposes only. They do not constitute investment advice, financial advice, or a solicitation to buy or sell securities, derivatives, or cryptocurrencies. MarketMax does not guarantee profits or outcomes from any strategy or educational program.
+                All course content, market education materials, tutorials, strategy explanations, recorded lessons, live sessions, and learning resources are provided strictly for educational and informational purposes only. They do not constitute investment advice, financial advice, trading advice, portfolio management, or a solicitation to buy or sell securities, derivatives, or cryptocurrencies. MarketMax does not operate a brokerage account, execute trades, or guarantee profits, returns, or outcomes from any course, strategy, or learning program.
               </p>
             </div>
           </section>
@@ -73,9 +73,9 @@ const TermsAndConditions = () => {
             </h2>
             <ul className="space-y-2 text-sm list-disc pl-5 text-gray-300">
               <li>Students must provide accurate details while registering and keep login credentials secure.</li>
-              <li>Access to courses, classes, live rooms, materials, and downloadable content is granted only for the active enrolled user.</li>
-              <li>Account sharing, credential transfer, or unauthorized access to live sessions is strictly prohibited.</li>
-              <li>We reserve the right to suspend or terminate access for misuse, abuse, or violation of these terms.</li>
+              <li>Access to courses, classes, live sessions, learning materials, and downloadable content is granted only for the active enrolled user.</li>
+              <li>Account sharing, credential transfer, or unauthorized access to live classes is strictly prohibited.</li>
+              <li>We reserve the right to suspend or terminate access for misuse, abuse, platform misconduct, or violation of these terms.</li>
             </ul>
           </section>
 
@@ -89,7 +89,7 @@ const TermsAndConditions = () => {
                 <FaCreditCard /> Payment Processing
               </div>
               <p className="text-sm text-gray-300">
-                All course fees are payable in INR unless explicitly stated otherwise. Payments are processed through Razorpay or other approved payment gateways. By making a payment via a payment gateway, you consent to the gateway’s terms, privacy policy, and processing of your payment information. MarketMax does not store full debit card, credit card, or UPI credentials on its servers. We use secure payment processing services in compliance with applicable security standards.
+                All course and education service fees are payable in INR unless explicitly stated otherwise. Payments are processed through Razorpay or other approved payment gateways. By making a payment via a payment gateway, you consent to the gateway’s terms, privacy policy, and processing of your payment information. MarketMax does not store full debit card, credit card, or UPI credentials on its servers. We use secure payment processing services in compliance with applicable security standards. Fees cover access to digital educational content and services only, not brokerage, investment custody, or execution services.
               </p>
             </div>
           </section>
@@ -100,7 +100,7 @@ const TermsAndConditions = () => {
               Course Access & Materials
             </h2>
             <p className="text-sm text-gray-300">
-              The platform may include recordings, live class access, study notes, strategy PDFs, dashboards, charts, and community resources. These are licensed for personal educational use only. Reproduction, resale, redistribution, unauthorized sharing, or commercial use is not permitted.
+              The platform may include recordings, live class access, study notes, educational PDFs, learning dashboards, charts, and community resources. These are licensed for personal educational use only. Reproduction, resale, redistribution, unauthorized sharing, or commercial use is not permitted. The content is intended to support learning and understanding of financial markets, and does not grant any rights to trade on behalf of the company or receive investment advice.
             </p>
           </section>
 
@@ -110,7 +110,7 @@ const TermsAndConditions = () => {
               Intellectual Property
             </h2>
             <p className="text-sm text-gray-300">
-              All content published on the platform, including training modules, logos, strategy frameworks, videos, course materials, designs, and branding, remains the intellectual property of MarketMax Trading Academy and may not be copied, modified, sold, or distributed without prior written authorization.
+              All content published on the platform, including course modules, educational materials, videos, notes, logos, training frameworks, designs, and branding, remains the intellectual property of MarketMax and may not be copied, modified, sold, or distributed without prior written authorization. This includes all educational content created for learning purposes and does not transfer any rights for commercial or financial exploitation.
             </p>
           </section>
 
@@ -132,7 +132,7 @@ const TermsAndConditions = () => {
               Liability & Disclaimers
             </h2>
             <p className="text-sm text-gray-300">
-              MarketMax is not liable for any loss, financial damage, emotional distress, or business interruption arising from the use of educational content, strategies, or third-party market tools referenced on the website. Trading and investing involve risk, and all users must use judgment and risk management.
+              MarketMax is not liable for any loss, financial damage, emotional distress, or business interruption arising from the use of educational content, strategies, or third-party market tools referenced on the website. Learning about financial markets and using educational resources involves risk, and all users must exercise their own judgment, decision-making, and risk management. MarketMax does not provide live trading execution, portfolio management, or financial advisory services.
             </p>
           </section>
 

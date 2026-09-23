@@ -67,7 +67,7 @@ const RefundPolicy = () => {
               Nature of Services
             </h2>
             <p className="text-sm text-gray-300">
-              MarketMax Trading Academy offers digital educational services, live market training, mentoring, and recorded learning modules. Because class seats are limited and mentors allocate time and resources per batch, our cancellation and refund policy is designed to be fair to both students and instructors.
+              MarketMax Trading Academy offers digital educational services, live learning sessions, mentoring, and recorded study modules. Because class seats are limited and mentors allocate time and resources per batch, our cancellation and refund policy is designed to be fair to both learners and instructors. These services are for educational access and learning support, not for brokerage, trading execution, or investment account management.
             </p>
           </section>
 
@@ -89,7 +89,7 @@ const RefundPolicy = () => {
               After Course Begins
             </h2>
             <p className="text-sm text-gray-300">
-              Once a course or live batch has started, direct refunds are generally not provided. However, in cases of genuine hardship, medical situations, or documented emergencies, we may allow a credit transfer or extended access to the recorded content.
+              Once a course or live learning batch has started, direct refunds are generally not provided. However, in cases of genuine hardship, medical situations, or documented emergencies, we may allow a credit transfer or extended access to recorded educational content. This does not apply to any trading or investment service, as no such service is provided by the platform.
             </p>
           </section>
 
@@ -99,7 +99,7 @@ const RefundPolicy = () => {
               Payment Processing & Refund Timeline
             </h2>
             <p className="text-sm text-gray-300">
-              Approved refunds are returned to the original payment method through the payment provider used at checkout. The exact settlement time depends on the payment provider and banking partner. In most cases, refunds reflect within 5 to 7 business days.
+              Approved refunds are returned to the original payment method through the payment provider used at checkout. The exact settlement time depends on the payment provider and banking partner. In most cases, refunds reflect within 5 to 7 business days. Fees relate only to educational content and services purchased through the platform.
             </p>
           </section>
 
@@ -111,7 +111,7 @@ const RefundPolicy = () => {
             <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-200">
               <p className="font-bold flex items-center gap-2 mb-2"><FaCheckCircle className="text-emerald-400" /> No physical shipping</p>
               <p>
-                All services are digital and delivered instantly after successful payment verification. Students receive dashboard access, course access links, and class-related details without delay. Because digital access is provided immediately, cash refunds are generally not available after content access has begun unless approved under exceptional circumstances.
+                All services are digital and delivered instantly after successful payment verification. Students receive dashboard access, course access links, and class-related details without delay. Because digital access is provided immediately, cash refunds are generally not available after content access has begun unless approved under exceptional circumstances. The platform delivers educational access only and does not provide trading or brokerage services.
               </p>
             </div>
           </section>

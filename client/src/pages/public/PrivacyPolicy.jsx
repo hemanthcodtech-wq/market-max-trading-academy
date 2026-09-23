@@ -44,7 +44,7 @@ const PrivacyPolicy = () => {
               Our Commitment
             </h2>
             <p className="text-sm text-gray-300">
-              MarketMax Trading Academy respects the privacy of every student, visitor, and client. This Privacy Policy explains how we collect, process, store, and protect personal information when you interact with our website, trading programs, live sessions, and digital services.
+              MarketMax respects the privacy of every student, visitor, learner, and client. This Privacy Policy explains how we collect, process, store, and protect personal information when you interact with our educational website, learning programs, live classes, study resources, and digital services. This is an educational platform and does not provide brokerage, trading, custody, or investment account services.
             </p>
           </section>
 
@@ -56,15 +56,15 @@ const PrivacyPolicy = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div className="rounded-2xl border border-gray-800 bg-[#0E131C] p-4">
                 <div className="font-bold text-white flex items-center gap-2 mb-2"><FaDatabase className="text-[#D4AF37]" /> Account Information</div>
-                <p className="text-gray-400">Name, email, phone number, profile details, preferred language, and account activity.</p>
+                <p className="text-gray-400">Name, email, phone number, profile details, preferred language, and account activity for course access and learning support.</p>
               </div>
               <div className="rounded-2xl border border-gray-800 bg-[#0E131C] p-4">
                 <div className="font-bold text-white flex items-center gap-2 mb-2"><FaLock className="text-[#D4AF37]" /> Payment Information</div>
-                <p className="text-gray-400">Transaction IDs, payment status, order value, and invoice records. We do not store sensitive card or UPI credentials.</p>
+                <p className="text-gray-400">Transaction IDs, payment status, order value, and invoice records for educational program purchases. We do not store sensitive card or UPI credentials.</p>
               </div>
               <div className="rounded-2xl border border-gray-800 bg-[#0E131C] p-4">
                 <div className="font-bold text-white flex items-center gap-2 mb-2"><FaUserShield className="text-[#D4AF37]" /> Learning Activity</div>
-                <p className="text-gray-400">Course enrollment, attendance, purchase history, progress, and certificate data.</p>
+                <p className="text-gray-400">Course enrollment, attendance, study progress, purchase history, certificates, and support requests.</p>
               </div>
               <div className="rounded-2xl border border-gray-800 bg-[#0E131C] p-4">
                 <div className="font-bold text-white flex items-center gap-2 mb-2"><FaCookieBite className="text-[#D4AF37]" /> Technical Data</div>
@@ -92,11 +92,11 @@ const PrivacyPolicy = () => {
               How We Use Your Information
             </h2>
             <ul className="space-y-2 text-sm list-disc pl-5 text-gray-300">
-              <li>To grant access to your enrolled courses and learning dashboard.</li>
-              <li>To send course updates, reminders, session links, and payment receipts.</li>
-              <li>To support student queries, technical troubleshooting, and onboarding.</li>
-              <li>To detect fraud, prevent misuse, and maintain platform security.</li>
-              <li>To generate certificates and maintain account records in accordance with operational needs.</li>
+              <li>To grant access to your enrolled courses, digital study resources, and learning dashboard.</li>
+              <li>To send course updates, reminders, session links, educational communication, and payment receipts.</li>
+              <li>To support learner queries, onboarding, technical troubleshooting, and student assistance.</li>
+              <li>To detect fraud, prevent misuse, and maintain platform security for educational services.</li>
+              <li>To generate certificates, maintain academic records, and support the delivery of learning programs.</li>
             </ul>
           </section>
 
@@ -106,7 +106,7 @@ const PrivacyPolicy = () => {
               Third Parties & Data Sharing
             </h2>
             <p className="text-sm text-gray-300">
-              We do not sell or rent your personal information. We may share it only with trusted service providers that are necessary to operate the business, such as payment gateways, video conferencing platforms, cloud hosting providers, and support systems. Any such sharing is limited to what is necessary for those services.
+              We do not sell or rent your personal information. We may share it only with trusted service providers that are necessary to operate the educational platform, such as payment gateways, video conferencing platforms, cloud hosting providers, and support systems. Any such sharing is limited to what is necessary for those services and does not extend to trading, brokerage, or investment management operations.
             </p>
           </section>
 
