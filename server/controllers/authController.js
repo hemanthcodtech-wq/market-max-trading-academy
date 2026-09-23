@@ -289,6 +289,10 @@ exports.googleLogin = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'No Google credential provided' });
     }
 
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return res.status(503).json({ success: false, message: 'Google login is not configured on the server.' });
+    }
+
     // Verify the Google ID token
     const ticket = await client.verifyIdToken({
       idToken: credential,
@@ -302,9 +306,17 @@ exports.googleLogin = async (req, res, next) => {
     let user = await User.findOne({ $or: [{ googleId }, { emailOrPhone: email }] });
 
     if (user) {
+      if (user.status === 'inactive') {
+        return res.status(403).json({
+          success: false,
+          message: 'Account is currently inactive. Please contact the administrator.'
+        });
+      }
+
       // Update googleId if not set
-      if (!user.googleId) {
+      if (!user.googleId || !user.email) {
         user.googleId = googleId;
+        user.email = email.toLowerCase();
         user.avatar = picture || user.avatar;
         user.name = name || user.name;
         await user.save();
@@ -313,6 +325,7 @@ exports.googleLogin = async (req, res, next) => {
       // Create new user with Google
       user = await User.create({
         emailOrPhone: email,
+        email: email.toLowerCase(),
         googleId,
         name,
         avatar: picture,
