@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaEye, FaEyeSlash, FaApple } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -224,12 +224,8 @@ const Login = () => {
           </div>
 
           {/* Social Buttons */}
-          <div className="flex flex-col justify-center gap-4 mb-2 w-full">
-            <div className="w-full min-h-12 flex items-center justify-center overflow-hidden" ref={googleButtonRef} />
-            <button className="w-full h-12 rounded-xl bg-[#0B0F19] border border-gray-700 flex items-center justify-center gap-3 hover:border-gray-500 hover:bg-gray-800 transition-all duration-300">
-              <FaApple size={22} className="text-white" />
-              <span className="text-gray-300 font-semibold text-[14px]">{t('login_apple')}</span>
-            </button>
+          <div className="w-full mb-2 rounded-xl border border-gray-700 bg-[#0B0F19] p-1.5 shadow-inner transition-all hover:border-[#D4AF37]/50 hover:shadow-[0_0_18px_rgba(212,175,55,0.12)]">
+            <div className="flex min-h-12 w-full items-center justify-center overflow-hidden rounded-lg" ref={googleButtonRef} />
           </div>
         </div>
       </div>
