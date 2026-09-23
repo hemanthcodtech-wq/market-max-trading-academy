@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaApple } from 'react-icons/fa';
-import { FcGoogle } from 'react-icons/fc';
 import axios from 'axios';
 import { useLanguage } from '../context/LanguageContext';
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '844742458800-el1l2d3uogbp2vdg4b4k794e1cemqf47.apps.googleusercontent.com';
 
 const Login = () => {
   const { t } = useLanguage();
@@ -15,6 +14,7 @@ const Login = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [agreed, setAgreed] = useState(true);
   const [error, setError] = useState('');
+  const googleButtonRef = React.useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -100,26 +100,25 @@ const Login = () => {
         window.google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
           callback: handleGoogleResponse,
+          ux_mode: 'popup',
+          use_fedcm_for_prompt: false,
         });
+        if (googleButtonRef.current) {
+          googleButtonRef.current.innerHTML = '';
+          window.google.accounts.id.renderButton(googleButtonRef.current, {
+            type: 'standard',
+            theme: 'filled_black',
+            size: 'large',
+            text: 'signin_with',
+            shape: 'rectangular',
+            width: 360
+          });
+        }
       }
     };
 
     loadGoogleScript();
   }, []);
-
-  const handleGoogleButtonClick = () => {
-    if (!agreed) {
-      setError('Please agree to the Terms & Conditions and Privacy Policy.');
-      return;
-    }
-    if (!GOOGLE_CLIENT_ID) {
-      setError('Google login is not configured yet. Please add your Google Client ID.');
-      return;
-    }
-    if (window.google) {
-      window.google.accounts.id.prompt();
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0B0F19] to-[#0A0D14] flex flex-col items-center justify-center relative overflow-hidden font-inter py-12 px-4">
@@ -226,21 +225,7 @@ const Login = () => {
 
           {/* Social Buttons */}
           <div className="flex flex-col justify-center gap-4 mb-2 w-full">
-            <button
-              type="button"
-              onClick={handleGoogleButtonClick}
-              disabled={isGoogleLoading}
-              className="w-full h-12 rounded-xl bg-[#0B0F19] border border-gray-700 flex items-center justify-center gap-3 hover:border-gray-500 hover:bg-gray-800 transition-all duration-300 disabled:opacity-60"
-            >
-              {isGoogleLoading ? (
-                <div className="w-5 h-5 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <FcGoogle size={22} />
-              )}
-              <span className="text-gray-300 font-semibold text-[14px]">
-                {isGoogleLoading ? t('login_google_loading') : t('login_google')}
-              </span>
-            </button>
+            <div className="w-full min-h-12 flex items-center justify-center overflow-hidden" ref={googleButtonRef} />
             <button className="w-full h-12 rounded-xl bg-[#0B0F19] border border-gray-700 flex items-center justify-center gap-3 hover:border-gray-500 hover:bg-gray-800 transition-all duration-300">
               <FaApple size={22} className="text-white" />
               <span className="text-gray-300 font-semibold text-[14px]">{t('login_apple')}</span>
