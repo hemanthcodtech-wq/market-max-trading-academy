@@ -13,6 +13,7 @@ import { useLanguage, useAutoTranslate } from '../../context/LanguageContext';
 import SEO from '../../components/common/SEO';
 import TradingViewWidget from '../../components/common/TradingViewWidget';
 import LiveMarketCards from '../../components/common/LiveMarketCards';
+import HomeLiveInsights from '../../components/common/HomeLiveInsights';
 
 // ──────────────────────────────────────────────────────────────────
 // 1. ANIMATED COUNTER
@@ -743,6 +744,7 @@ const Home = () => {
 
         </div>
       </section>
+        <HomeLiveInsights />
 
       {/* ─────────────────────────────────────────────────────────────
           SECTION 3: PRO TRADING SETUPS & PLAYBOOK (HOVER PIC VISIBLE EFFECT)

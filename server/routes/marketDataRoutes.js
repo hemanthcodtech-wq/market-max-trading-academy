@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const https = require('https');
+const axios = require('axios');
 
 /**
  * 1-Second Live Market Data & Realtime Candlestick Streaming Service
@@ -116,6 +117,18 @@ let lastCacheTime = Date.now();
 
 // In-memory cache for chart candles (keyed by symbol_interval_range)
 const chartCache = new Map();
+const giftNiftyHistoryCache = { updatedAt: 0, candles: [] };
+const homeInsightsCache = { updatedAt: 0, data: null };
+
+const HOME_SECTOR_INDICES = [
+  { key: 'energy', name: 'Energy', yahoo: '%5ECNXENERGY' },
+  { key: 'banking', name: 'Banking', yahoo: '%5ENSEBANK' },
+  { key: 'it', name: 'IT', yahoo: '%5ECNXIT' },
+  { key: 'fmcg', name: 'FMCG', yahoo: '%5ECNXFMCG' },
+  { key: 'metals', name: 'Metal', yahoo: '%5ECNXMETAL' },
+  { key: 'pharma', name: 'Pharma', yahoo: '%5ECNXPHARMA' },
+  { key: 'auto', name: 'Auto', yahoo: '%5ECNXAUTO' },
+];
 
 // Active SSE client connections
 const sseClients = new Set();
@@ -479,5 +492,208 @@ router.get('/chart', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+router.get('/gift-nifty', async (req, res) => {
+  try {
+    const requestOptions = {
+      timeout: 15000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0',
+        Referer: 'https://www.nseix.com/',
+      },
+    };
+    const [chartResponse, marketResponse] = await Promise.all([
+      axios.get('https://www.nseix.com/api/deep-intraday-graph', requestOptions),
+      axios.get('https://www.nseix.com/api/market-rate?type=derivative', requestOptions),
+    ]);
+
+    const liveSeries = chartResponse.data?.data || [];
+    let history = [];
+
+    if (!liveSeries.some((series) => series.data?.length)) {
+      history = await fetchGiftNiftyHistory(requestOptions);
+    }
+
+    const contracts = (marketResponse.data?.data || [])
+      .filter((item) => item.INSTRUMENTTYPE === 'FUTIDX' && item.SYMBOL === 'NIFTY')
+      .sort((a, b) => Date.parse(a.EXPIRYDATE) - Date.parse(b.EXPIRYDATE));
+    const contract = contracts[0];
+
+    if (!contract || !Number.isFinite(Number(contract.LASTPRICE))) {
+      return res.status(502).json({ success: false, error: 'GIFT Nifty data is unavailable' });
+    }
+
+    const reportedPreviousClose = Number(liveSeries[0]?.zones?.[0]?.value);
+    const previousClose = Number.isFinite(reportedPreviousClose)
+      ? reportedPreviousClose
+      : Number(contract.LASTPRICE) - Number(contract.DAYCHANGE);
+
+    res.setHeader('Cache-Control', 'public, max-age=10');
+    res.json({
+      success: true,
+      symbol: 'NSEIX:NIFTY1!',
+      name: 'GIFT NIFTY 50 INDEX FUTURES',
+      expiry: contract.EXPIRYDATE,
+      price: Number(contract.LASTPRICE),
+      change: Number(contract.DAYCHANGE),
+      changePct: Number.parseFloat(contract.PERCHANGE),
+      previousClose,
+      updatedAt: contract.TIMESTMP,
+      series: liveSeries,
+      history,
+    });
+  } catch (error) {
+    console.error('[GIFT Nifty] Data fetch failed:', error.message);
+    res.status(502).json({ success: false, error: 'Unable to fetch GIFT Nifty data' });
+  }
+});
+
+router.get('/home-insights', async (req, res) => {
+  try {
+    if (homeInsightsCache.data && Date.now() - homeInsightsCache.updatedAt < 60000) {
+      return res.json({ success: true, cached: true, ...homeInsightsCache.data });
+    }
+
+    const [nifty, vix, ...sectorQuotes] = await Promise.all([
+      fetchYahooChart('%5ENSEI', '1d', '5d'),
+      fetchYahooChart('%5EINDIAVIX', '1d', '5d'),
+      ...HOME_SECTOR_INDICES.map(({ yahoo }) => fetchYahooChart(yahoo, '1d', '5d')),
+    ]);
+    const istNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const isNseOpen = ![0, 6].includes(istNow.getDay()) &&
+      (istNow.getHours() * 60 + istNow.getMinutes()) >= 555 &&
+      (istNow.getHours() * 60 + istNow.getMinutes()) <= 930;
+    const candles = nifty?.candles || [];
+    const latestCandle = candles[candles.length - 1];
+    const latestCandleDate = latestCandle
+      ? new Date(latestCandle.time * 1000).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
+      : null;
+    const todayDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    const referenceCandle = isNseOpen && latestCandleDate === todayDate
+      ? candles[candles.length - 2]
+      : latestCandle;
+
+    let pivots = null;
+    if (referenceCandle) {
+      const pivot = (referenceCandle.high + referenceCandle.low + referenceCandle.close) / 3;
+      pivots = {
+        sourceDate: new Date(referenceCandle.time * 1000).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }),
+        r2: pivot + (referenceCandle.high - referenceCandle.low),
+        r1: (2 * pivot) - referenceCandle.low,
+        pivot,
+        s1: (2 * pivot) - referenceCandle.high,
+        s2: pivot - (referenceCandle.high - referenceCandle.low),
+      };
+    }
+
+    const sectors = HOME_SECTOR_INDICES.flatMap((sector, index) => {
+      const quote = sectorQuotes[index];
+      return quote ? [{
+        key: sector.key,
+        name: sector.name,
+        price: quote.price,
+        changePct: quote.changePct,
+        updatedAt: quote.updatedAt,
+      }] : [];
+    });
+    const data = {
+      updatedAt: new Date().toISOString(),
+      nifty: nifty ? { price: nifty.price, changePct: nifty.changePct, updatedAt: nifty.updatedAt } : null,
+      pivots,
+      vix: vix ? { price: vix.price, changePct: vix.changePct, updatedAt: vix.updatedAt } : null,
+      sectors,
+    };
+
+    homeInsightsCache.updatedAt = Date.now();
+    homeInsightsCache.data = data;
+    res.setHeader('Cache-Control', 'public, max-age=30');
+    res.json({ success: true, cached: false, ...data });
+  } catch (error) {
+    console.error('[Home Insights] Data fetch failed:', error.message);
+    res.status(502).json({ success: false, error: 'Unable to fetch homepage market insights' });
+  }
+});
+
+async function fetchGiftNiftyHistory(requestOptions) {
+  if (Date.now() - giftNiftyHistoryCache.updatedAt < 300000) {
+    return giftNiftyHistoryCache.candles;
+  }
+
+  const istParts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const dateParts = Object.fromEntries(istParts.map(({ type, value }) => [type, value]));
+  const today = Date.UTC(Number(dateParts.year), Number(dateParts.month) - 1, Number(dateParts.day));
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const reportDates = [];
+
+  for (let offset = 0; offset < 18 && reportDates.length < 10; offset += 1) {
+    const date = new Date(today - offset * 86400000);
+    if (date.getUTCDay() === 0 || date.getUTCDay() === 6) continue;
+
+    reportDates.push({
+      label: `${String(date.getUTCDate()).padStart(2, '0')}-${monthNames[date.getUTCMonth()]}-${date.getUTCFullYear()}`,
+      year: date.getUTCFullYear(),
+      month: date.getUTCMonth() + 1,
+      day: date.getUTCDate(),
+      timestamp: Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+    });
+  }
+
+  try {
+    const reportResponses = await Promise.allSettled(reportDates.map(({ label }) =>
+      axios.get('https://www.nseix.com/api/historical-reports', {
+        ...requestOptions,
+        params: { date: label },
+      }),
+    ));
+    const reportFiles = reportResponses.flatMap((result, index) => {
+      if (result.status !== 'fulfilled') return [];
+      const sessions = result.value.data?.data?.[0];
+      const report = sessions?.Session2?.find((item) => item.key?.startsWith('G_T1_Bhavcopy_FO_'));
+      return report ? [{ date: reportDates[index], fileurl: report.fileurl }] : [];
+    });
+
+    const fileResponses = await Promise.allSettled(reportFiles.map(({ fileurl }) =>
+      axios.get(fileurl, { ...requestOptions, responseType: 'text' }),
+    ));
+    const candles = fileResponses.flatMap((result, index) => {
+      if (result.status !== 'fulfilled') return [];
+      const { date } = reportFiles[index];
+      const reportDate = Date.UTC(date.year, date.month - 1, date.day);
+      const contracts = String(result.value.data).split(/\r?\n/).flatMap((row) => {
+        const columns = row.split(',');
+        const match = columns[0]?.match(/^FUTIDXNIFTY(\d{1,2}-[A-Z]{3}-\d{4})$/i);
+        if (!match || Number(columns[9]) <= 0) return [];
+
+        const expiry = Date.parse(match[1]);
+        const candle = {
+          open: Number(columns[2]),
+          high: Number(columns[3]),
+          low: Number(columns[4]),
+          close: Number(columns[5] || columns[6]),
+          volume: Number(columns[9]) || 0,
+        };
+        if (expiry < reportDate || !Object.values(candle).slice(0, 4).every(Number.isFinite)) return [];
+        if (candle.open <= 0 || candle.high <= 0 || candle.low <= 0 || candle.close <= 0) return [];
+        return [{ expiry, candle }];
+      }).sort((a, b) => a.expiry - b.expiry);
+
+      if (!contracts.length) return [];
+      return [{ time: { year: date.year, month: date.month, day: date.day }, ...contracts[0].candle }];
+    });
+
+    candles.sort((a, b) => Date.UTC(a.time.year, a.time.month - 1, a.time.day) - Date.UTC(b.time.year, b.time.month - 1, b.time.day));
+    giftNiftyHistoryCache.updatedAt = Date.now();
+    giftNiftyHistoryCache.candles = candles;
+    return candles;
+  } catch (error) {
+    console.error('[GIFT Nifty] History fetch failed:', error.message);
+    return giftNiftyHistoryCache.candles;
+  }
+}
 
 module.exports = router;

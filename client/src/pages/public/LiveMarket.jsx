@@ -12,6 +12,24 @@ import LiveMarketCards from '../../components/common/LiveMarketCards';
 import LiveRealtimeChart from '../../components/common/LiveRealtimeChart';
 import IndianSectorHeatmap from '../../components/common/IndianSectorHeatmap';
 import TrendlyneWidget from '../../components/common/TrendlyneWidget';
+import GiftNiftyChart from '../../components/common/GiftNiftyChart';
+
+const analyticsStocks = [
+  { symbol: 'NIFTYREALTY', name: 'Nifty Realty', country: 'India' },
+  { symbol: 'AMZN', name: 'Amazon.com Inc.', country: 'US' },
+  { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', country: 'India' },
+  { symbol: 'WMT', name: 'Walmart Inc.', country: 'US' },
+  { symbol: 'SUNPHARMA', name: 'Sun Pharmaceutical Industries Ltd.', country: 'India' },
+  { symbol: 'HINDUNILVR', name: 'Hindustan Unilever Ltd.', country: 'India' },
+  { symbol: 'COST', name: 'Costco Wholesale Corp.', country: 'US' },
+  { symbol: 'M&M', name: 'Mahindra & Mahindra Ltd.', country: 'India' },
+  { symbol: 'LRCX', name: 'Lam Research Corp.', country: 'US' },
+  { symbol: 'ULTRACEMCO', name: 'UltraTech Cement Ltd.', country: 'India' },
+  { symbol: 'BABA', name: 'Alibaba Group Holding Ltd. - ADR', country: 'US' },
+  { symbol: 'INFY', name: 'Infosys Ltd.', country: 'India' },
+  { symbol: 'TCS', name: 'Tata Consultancy Services Ltd.', country: 'India' },
+];
+const GIFT_NIFTY_SYMBOL = 'NSEIX:NIFTY1!';
 
 
 // ──────────────────────────────────────────────────────────────────
@@ -66,6 +84,9 @@ const LiveMarket = () => {
   const [cryptoInterval, setCryptoInterval] = useState('15');
   const [analyticsSymbol, setAnalyticsSymbol] = useState('INFY');
   const [analyticsSearch, setAnalyticsSearch] = useState('INFY');
+  const [analyticsSearchFocused, setAnalyticsSearchFocused] = useState(false);
+  const [indiaOnly, setIndiaOnly] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -79,7 +100,38 @@ const LiveMarket = () => {
   const applyAnalyticsSearch = (event) => {
     event.preventDefault();
     const nextSymbol = analyticsSearch.trim().toUpperCase().replace(/[^A-Z0-9&-]/g, '');
-    if (nextSymbol) setAnalyticsSymbol(nextSymbol);
+    if (nextSymbol) {
+      setAnalyticsSymbol(nextSymbol);
+      setAnalyticsSearch(nextSymbol);
+      setAnalyticsSearchFocused(false);
+    }
+  };
+
+  const analyticsSuggestions = analyticsStocks.filter((stock) => {
+    const query = analyticsSearch.trim().toLowerCase();
+    return (!indiaOnly || stock.country === 'India') &&
+      (!query || stock.symbol.toLowerCase().includes(query) || stock.name.toLowerCase().includes(query));
+  });
+
+  const selectAnalyticsSuggestion = (stock) => {
+    setAnalyticsSearch(stock.symbol);
+    setAnalyticsSymbol(stock.symbol);
+    setAnalyticsSearchFocused(false);
+  };
+
+  const handleAnalyticsSearchKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      setAnalyticsSearchFocused(false);
+    } else if (event.key === 'ArrowDown' && analyticsSuggestions.length) {
+      event.preventDefault();
+      setActiveSuggestionIndex((index) => (index + 1) % analyticsSuggestions.length);
+    } else if (event.key === 'ArrowUp' && analyticsSuggestions.length) {
+      event.preventDefault();
+      setActiveSuggestionIndex((index) => (index - 1 + analyticsSuggestions.length) % analyticsSuggestions.length);
+    } else if (event.key === 'Enter' && analyticsSearchFocused && analyticsSuggestions.length) {
+      event.preventDefault();
+      selectAnalyticsSuggestion(analyticsSuggestions[activeSuggestionIndex] || analyticsSuggestions[0]);
+    }
   };
 
   const isMarketOpen = () => {
@@ -105,6 +157,7 @@ const LiveMarket = () => {
   ];
 
   const intradaySymbols = [
+    { label: 'GIFT NIFTY', value: GIFT_NIFTY_SYMBOL },
     { label: 'SENSEX', value: 'BSE:SENSEX' },
     { label: 'BANKEX', value: 'BSE:BANKEX' },
     { label: 'BSE 500', value: 'BSE:BSE500' },
@@ -286,7 +339,7 @@ const LiveMarket = () => {
               </div>
 
               {/* Economic Calendar + News Side by Side */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 <div>
                   <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <FaCalendarAlt className="text-[#D4AF37]" />
@@ -305,6 +358,13 @@ const LiveMarket = () => {
                     <TradingViewWidget type="news" theme="dark" height="500px" width="100%" market="india" />
                   </div>
                 </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <FaChartLine className="text-[#D4AF37]" />
+                    GIFT Nifty 50 Index
+                  </h2>
+                  <GiftNiftyChart />
+                </div>
               </div>
 
               {/* Trendlyne Advanced Analytics */}
@@ -314,20 +374,63 @@ const LiveMarket = () => {
                   Advanced Analytics & Insights
                 </h2>
                 <div className="bg-white rounded-3xl p-6 shadow-2xl">
-                  <form onSubmit={applyAnalyticsSearch} className="mb-6 flex flex-col sm:flex-row gap-3 rounded-2xl bg-[#0B0F19] p-4 border border-gray-800">
+                  <form onSubmit={applyAnalyticsSearch} className="relative z-20 mb-6 flex flex-col sm:flex-row gap-3 rounded-2xl bg-[#0B0F19] p-4 border border-gray-800">
                     <div className="flex-1 relative">
                       <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs" />
                       <input
                         value={analyticsSearch}
-                        onChange={(event) => setAnalyticsSearch(event.target.value)}
+                        onChange={(event) => {
+                          setAnalyticsSearch(event.target.value);
+                          setActiveSuggestionIndex(0);
+                        }}
+                        onFocus={() => setAnalyticsSearchFocused(true)}
+                        onKeyDown={handleAnalyticsSearchKeyDown}
                         placeholder="Search stock symbol e.g. INFY, TCS, RELIANCE"
                         aria-label="Search analytics stock symbol"
+                        aria-autocomplete="list"
+                        aria-expanded={analyticsSearchFocused}
+                        aria-controls="analytics-stock-suggestions"
                         className="w-full rounded-xl border border-gray-700 bg-[#131722] py-3 pl-9 pr-3 text-sm font-semibold text-white outline-none focus:border-[#D4AF37]"
                       />
                     </div>
                     <button type="submit" className="rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#0B0F19] transition-colors hover:bg-[#F3D36A]">
                       Search Stock
                     </button>
+                    {analyticsSearchFocused && (
+                      <div id="analytics-stock-suggestions" role="listbox" aria-label="Stock suggestions" className="absolute left-4 right-4 top-[calc(100%+4px)] max-h-80 overflow-y-auto rounded-xl border border-gray-200 bg-white py-2 shadow-xl">
+                        <label className="flex cursor-pointer items-center gap-3 border-b border-gray-100 px-4 py-3 text-sm text-gray-700">
+                          <input
+                            type="checkbox"
+                            checked={indiaOnly}
+                            onChange={(event) => {
+                              setIndiaOnly(event.target.checked);
+                              setActiveSuggestionIndex(0);
+                            }}
+                            className="h-4 w-4 accent-[#1769c2]"
+                          />
+                          Show only India results
+                        </label>
+                        {analyticsSuggestions.length ? analyticsSuggestions.map((stock, index) => (
+                          <button
+                            key={stock.symbol}
+                            type="button"
+                            role="option"
+                            aria-selected={index === activeSuggestionIndex}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => selectAnalyticsSuggestion(stock)}
+                            className={`block w-full px-4 py-2.5 text-left transition-colors hover:bg-blue-50 ${index === activeSuggestionIndex ? 'bg-blue-50' : ''}`}
+                          >
+                            <span className="flex items-center gap-2 text-base font-medium text-[#1769c2]">
+                              {stock.symbol}
+                              <span aria-label={stock.country === 'India' ? 'India' : 'United States'}>{stock.country === 'India' ? '🇮🇳' : '🇺🇸'}</span>
+                            </span>
+                            <span className="mt-1 block text-sm text-gray-600">{stock.name} ({stock.symbol})</span>
+                          </button>
+                        )) : (
+                          <p className="px-4 py-5 text-sm text-gray-500">No matching stocks</p>
+                        )}
+                      </div>
+                    )}
                   </form>
                   <p className="mb-5 text-xs text-gray-500">
                     Showing company analytics for <strong className="text-[#D4AF37]">{analyticsSymbol}</strong>. The IPO widget below remains a market-wide feed.
@@ -373,7 +476,10 @@ const LiveMarket = () => {
                     {intradaySymbols.map((s) => (
                       <button
                         key={s.value}
-                        onClick={() => setChartSymbol(s.value)}
+                        onClick={() => {
+                          setChartSymbol(s.value);
+                          if (s.value === GIFT_NIFTY_SYMBOL) setChartEngine('tradingview');
+                        }}
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                           chartSymbol === s.value
                             ? 'bg-[#D4AF37] text-[#0B0F19]'
@@ -405,10 +511,12 @@ const LiveMarket = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-2.5 bg-[#131722] rounded-xl border border-gray-800 text-xs gap-3">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="font-bold text-white tracking-wide">{chartSymbol.replace('NSE:', '').replace('BSE:', '')}</span>
+                  <span className="font-bold text-white tracking-wide">
+                    {chartSymbol === GIFT_NIFTY_SYMBOL ? 'GIFT NIFTY 50 INDEX' : chartSymbol.replace('NSE:', '').replace('BSE:', '')}
+                  </span>
                   <span className="text-gray-400">· {chartInterval === 'D' ? 'Daily' : `${chartInterval}m`} Timeframe</span>
                   <span className="bg-[#1E293B] text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] font-semibold">
-                    {isMarketOpen() ? 'BSE LIVE' : 'BSE CLOSED'}
+                    {chartSymbol === GIFT_NIFTY_SYMBOL ? 'NSEIX · TRADINGVIEW' : isMarketOpen() ? 'BSE LIVE' : 'BSE CLOSED'}
                   </span>
                 </div>
 
@@ -417,8 +525,12 @@ const LiveMarket = () => {
                   <div className="flex items-center bg-[#0B0F19] p-1 rounded-lg border border-gray-700">
                     <button
                       onClick={() => setChartEngine('lightweight')}
+                      disabled={chartSymbol === GIFT_NIFTY_SYMBOL}
+                      title={chartSymbol === GIFT_NIFTY_SYMBOL ? 'Exact Live Feed does not support GIFT Nifty' : undefined}
                       className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all ${
-                        chartEngine === 'lightweight'
+                        chartSymbol === GIFT_NIFTY_SYMBOL
+                          ? 'cursor-not-allowed text-gray-600'
+                          : chartEngine === 'lightweight'
                           ? 'bg-[#D4AF37] text-[#0B0F19] shadow-sm'
                           : 'text-gray-400 hover:text-white'
                       }`}
