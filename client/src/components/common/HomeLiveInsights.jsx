@@ -42,11 +42,13 @@ const HomeLiveInsights = () => {
   const vixLabel = vix == null ? 'Unavailable' : vix < 15 ? 'LOW VOLATILITY' : vix < 25 ? 'MODERATE VOLATILITY' : 'ELEVATED VOLATILITY';
   const vixColor = vix == null ? 'text-gray-400' : vix < 15 ? 'text-emerald-400' : vix < 25 ? 'text-cyan-300' : 'text-rose-400';
   const pivotRows = data?.pivots ? [
+    { label: 'R3', value: data.pivots.r3, type: 'resistance' },
     { label: 'R2', value: data.pivots.r2, type: 'resistance' },
     { label: 'R1', value: data.pivots.r1, type: 'resistance' },
     { label: 'PIVOT', value: data.pivots.pivot, type: 'pivot' },
     { label: 'S1', value: data.pivots.s1, type: 'support' },
     { label: 'S2', value: data.pivots.s2, type: 'support' },
+    { label: 'S3', value: data.pivots.s3, type: 'support' },
   ] : [];
   const sourceUpdatedAt = data?.nifty?.updatedAt
     ? new Date(data.nifty.updatedAt).toLocaleString('en-IN', {

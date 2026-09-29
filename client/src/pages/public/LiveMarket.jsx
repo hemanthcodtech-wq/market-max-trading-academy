@@ -5,6 +5,7 @@ import {
   FaChartPie, FaNewspaper, FaCalendarAlt, FaClock, FaShieldAlt
 } from 'react-icons/fa';
 import { FaSearch } from 'react-icons/fa';
+import axios from 'axios';
 import SEO from '../../components/common/SEO';
 import TradingViewWidget from '../../components/common/TradingViewWidget';
 import TradingViewScreener from '../../components/common/TradingViewScreener';
@@ -14,21 +15,6 @@ import IndianSectorHeatmap from '../../components/common/IndianSectorHeatmap';
 import TrendlyneWidget from '../../components/common/TrendlyneWidget';
 import GiftNiftyChart from '../../components/common/GiftNiftyChart';
 
-const analyticsStocks = [
-  { symbol: 'NIFTYREALTY', name: 'Nifty Realty', country: 'India' },
-  { symbol: 'AMZN', name: 'Amazon.com Inc.', country: 'US' },
-  { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', country: 'India' },
-  { symbol: 'WMT', name: 'Walmart Inc.', country: 'US' },
-  { symbol: 'SUNPHARMA', name: 'Sun Pharmaceutical Industries Ltd.', country: 'India' },
-  { symbol: 'HINDUNILVR', name: 'Hindustan Unilever Ltd.', country: 'India' },
-  { symbol: 'COST', name: 'Costco Wholesale Corp.', country: 'US' },
-  { symbol: 'M&M', name: 'Mahindra & Mahindra Ltd.', country: 'India' },
-  { symbol: 'LRCX', name: 'Lam Research Corp.', country: 'US' },
-  { symbol: 'ULTRACEMCO', name: 'UltraTech Cement Ltd.', country: 'India' },
-  { symbol: 'BABA', name: 'Alibaba Group Holding Ltd. - ADR', country: 'US' },
-  { symbol: 'INFY', name: 'Infosys Ltd.', country: 'India' },
-  { symbol: 'TCS', name: 'Tata Consultancy Services Ltd.', country: 'India' },
-];
 const GIFT_NIFTY_SYMBOL = 'NSEIX:NIFTY1!';
 
 
@@ -89,16 +75,37 @@ const LiveMarket = () => {
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  const [apiSuggestions, setApiSuggestions] = useState([]);
+
   useEffect(() => {
     const t = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
+  useEffect(() => {
+    const query = analyticsSearch.trim();
+    if (!query || query.length < 2) {
+      setApiSuggestions([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/market-data/search?q=${query}`);
+        if (response.data.success) {
+          setApiSuggestions(response.data.data);
+        }
+      } catch (err) {
+        console.error('Search failed', err);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [analyticsSearch]);
+
   const formatTime = (d) =>
     d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
   const applyAnalyticsSearch = (event) => {
-    event.preventDefault();
+    if (event) event.preventDefault();
     const nextSymbol = analyticsSearch.trim().toUpperCase().replace(/[^A-Z0-9&-]/g, '');
     if (nextSymbol) {
       setAnalyticsSymbol(nextSymbol);
@@ -107,11 +114,21 @@ const LiveMarket = () => {
     }
   };
 
-  const analyticsSuggestions = analyticsStocks.filter((stock) => {
-    const query = analyticsSearch.trim().toLowerCase();
-    return (!indiaOnly || stock.country === 'India') &&
-      (!query || stock.symbol.toLowerCase().includes(query) || stock.name.toLowerCase().includes(query));
+  const query = analyticsSearch.trim().toLowerCase();
+  const baseSuggestions = apiSuggestions.filter((stock) => {
+    return (!indiaOnly || stock.country === 'India');
   });
+  
+  const exactMatch = baseSuggestions.find(s => s.symbol.toLowerCase() === query);
+  const analyticsSuggestions = [...baseSuggestions];
+  
+  if (query && !exactMatch) {
+     analyticsSuggestions.unshift({
+        symbol: analyticsSearch.trim().toUpperCase().replace(/[^A-Z0-9&-]/g, ''),
+        name: `Search for "${analyticsSearch.trim().toUpperCase()}"`,
+        country: indiaOnly ? 'India' : 'Global'
+     });
+  }
 
   const selectAnalyticsSuggestion = (stock) => {
     setAnalyticsSearch(stock.symbol);

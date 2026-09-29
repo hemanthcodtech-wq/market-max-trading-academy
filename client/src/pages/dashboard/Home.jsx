@@ -4,6 +4,7 @@ import { FaGraduationCap, FaClock, FaAward, FaPlay, FaChevronRight, FaBookOpen, 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import LiveMarketCards from '../../components/common/LiveMarketCards';
+import HomeLiveInsights from '../../components/common/HomeLiveInsights';
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -113,6 +114,11 @@ const Home = () => {
           </div>
           <LiveMarketCards filter="indices" compact onSelectSymbol={() => navigate('/live-market')} />
         </section>
+
+        {/* Live Market Intelligence Section */}
+        <div className="-mx-4 lg:-mx-8">
+          <HomeLiveInsights />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           

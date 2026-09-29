@@ -159,9 +159,18 @@ function fetchYahooChart(yahooSym, interval = '1m', range = '1d') {
           if (!meta || meta.regularMarketPrice == null) return resolve(null);
 
           const price = meta.regularMarketPrice;
-          const prevClose = meta.previousClose || meta.chartPreviousClose || price;
-          const change = price - prevClose;
-          const changePct = prevClose > 0 ? (change / prevClose) * 100 : 0;
+          
+          let change = meta.regularMarketChange != null ? meta.regularMarketChange : (meta.fulldayChange != null ? meta.fulldayChange : null);
+          let changePct = meta.regularMarketChangePercent != null ? meta.regularMarketChangePercent : (meta.fulldayChangePercent != null ? meta.fulldayChangePercent : null);
+          let prevClose = meta.previousClose || meta.chartPreviousClose || price;
+          
+          if (change != null) {
+             prevClose = price - change;
+          } else {
+             change = price - prevClose;
+             changePct = prevClose > 0 ? (change / prevClose) * 100 : 0;
+          }
+          
           const high = meta.regularMarketDayHigh || meta.dayHigh || price;
           const low = meta.regularMarketDayLow || meta.dayLow || price;
 
@@ -235,9 +244,16 @@ function fetchDummyTraderQuote(dummySym) {
           }));
 
           const first = candles[0];
-          const prevClose = first ? first.open : json.price;
-          const change = json.price - prevClose;
-          const changePct = prevClose > 0 ? (change / prevClose) * 100 : 0;
+          let change = json.day?.netChange != null ? json.day.netChange : null;
+          let changePct = json.day?.changePct != null ? json.day.changePct : null;
+          let prevClose = json.day?.prevClose || (first ? first.open : json.price);
+          
+          if (change != null) {
+             prevClose = json.price - change;
+          } else {
+             change = json.price - prevClose;
+             changePct = prevClose > 0 ? (change / prevClose) * 100 : 0;
+          }
 
           resolve({
             price: +json.price.toFixed(2),
@@ -578,11 +594,13 @@ router.get('/home-insights', async (req, res) => {
       const pivot = (referenceCandle.high + referenceCandle.low + referenceCandle.close) / 3;
       pivots = {
         sourceDate: new Date(referenceCandle.time * 1000).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }),
+        r3: referenceCandle.high + 2 * (pivot - referenceCandle.low),
         r2: pivot + (referenceCandle.high - referenceCandle.low),
         r1: (2 * pivot) - referenceCandle.low,
         pivot,
         s1: (2 * pivot) - referenceCandle.high,
         s2: pivot - (referenceCandle.high - referenceCandle.low),
+        s3: referenceCandle.low - 2 * (referenceCandle.high - pivot),
       };
     }
 
@@ -611,6 +629,40 @@ router.get('/home-insights', async (req, res) => {
   } catch (error) {
     console.error('[Home Insights] Data fetch failed:', error.message);
     res.status(502).json({ success: false, error: 'Unable to fetch homepage market insights' });
+  }
+});
+
+router.get('/search', async (req, res) => {
+  try {
+    const q = req.query.q;
+    if (!q) return res.json({ success: true, data: [] });
+    
+    const response = await axios.get(`https://query2.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&quotesCount=15&newsCount=0`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
+    const quotes = response.data?.quotes || [];
+    
+    const results = quotes.map(quote => {
+      let symbol = quote.symbol;
+      let country = 'Global';
+      if (quote.exchange === 'NSI' || quote.exchange === 'BSE' || quote.exchDisp === 'NSE' || quote.exchDisp === 'Bombay') {
+         country = 'India';
+         symbol = symbol.replace('.NS', '').replace('.BO', '');
+      }
+      return {
+         symbol: symbol,
+         name: quote.shortname || quote.longname || symbol,
+         country: country,
+         type: quote.typeDisp
+      };
+    }).filter((val, idx, arr) => arr.findIndex(t => t.symbol === val.symbol) === idx);
+      
+    res.json({ success: true, data: results });
+  } catch (error) {
+    console.error('[Search API] Data fetch failed:', error.message);
+    res.status(502).json({ success: false, error: 'Unable to fetch search results' });
   }
 });
 
