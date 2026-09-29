@@ -632,6 +632,26 @@ router.get('/home-insights', async (req, res) => {
   }
 });
 
+router.get('/heatmap', async (req, res) => {
+  try {
+    const symbols = req.query.symbols;
+    if (!symbols) return res.json({});
+    
+    const url = `https://query1.finance.yahoo.com/v8/finance/spark?symbols=${encodeURIComponent(symbols)}&interval=1m&range=1d`;
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      },
+      timeout: 5000
+    });
+    
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.json(response.data);
+  } catch (error) {
+    res.status(502).json({ error: 'Heatmap fetch failed' });
+  }
+});
+
 router.get('/search', async (req, res) => {
   try {
     const q = req.query.q;

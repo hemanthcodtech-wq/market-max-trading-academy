@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaFire, FaLayerGroup, FaSearch, FaArrowUp, FaArrowDown, FaChartBar, FaExternalLinkAlt } from 'react-icons/fa';
+import axios from 'axios';
 
 /**
  * Authentic NSE / Indian Market Sector Heatmap
@@ -114,6 +115,41 @@ const SECTORS = [
 const IndianSectorHeatmap = ({ onSelectStock, activeSymbol }) => {
   const [selectedSector, setSelectedSector] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [liveData, setLiveData] = useState({});
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchHeatmapData = async () => {
+      try {
+        const symbols = SECTORS.flatMap(s => s.stocks.map(stk => `${stk.symbol}.NS`)).join(',');
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/market-data/heatmap?symbols=${symbols}&t=${Date.now()}`);
+        const data = response.data;
+        
+        if (data && isMounted) {
+          const newLiveData = {};
+          for (const [sym, quote] of Object.entries(data)) {
+            const cleanSym = sym.replace('.NS', '');
+            const latestClose = quote.close && quote.close.length > 0 ? quote.close[quote.close.length - 1] : 0;
+            newLiveData[cleanSym] = {
+              price: quote.fulldayPrice || latestClose || quote.chartPreviousClose || 0,
+              change: quote.fulldayChange || 0,
+              changePct: quote.fulldayChangePercent || 0,
+            };
+          }
+          setLiveData(newLiveData);
+        }
+      } catch (err) {
+        console.error('Heatmap live data fetch error:', err);
+      }
+    };
+    
+    fetchHeatmapData();
+    const interval = setInterval(fetchHeatmapData, 5000); // refresh every 5 seconds
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   const filteredSectors = SECTORS.map(sec => {
     if (selectedSector !== 'all' && sec.id !== selectedSector) return null;
@@ -220,9 +256,10 @@ const IndianSectorHeatmap = ({ onSelectStock, activeSymbol }) => {
             {/* Stocks Tile Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
               {sector.stocks.map((stk) => {
+                const live = liveData[stk.symbol] || stk;
                 const isSelected = activeSymbol === `NSE:${stk.symbol}`;
-                const isPositive = stk.changePct >= 0;
-                const heatColor = getHeatmapColor(stk.changePct);
+                const isPositive = live.changePct >= 0;
+                const heatColor = getHeatmapColor(live.changePct);
 
                 return (
                   <motion.div
@@ -244,12 +281,12 @@ const IndianSectorHeatmap = ({ onSelectStock, activeSymbol }) => {
                         </p>
                       </div>
                       <span className="text-[10px] font-black">
-                        {isPositive ? '+' : ''}{stk.changePct.toFixed(2)}%
+                        {isPositive ? '+' : ''}{live.changePct.toFixed(2)}%
                       </span>
                     </div>
 
                     <div className="mt-2 pt-1 border-t border-white/10 flex items-baseline justify-between text-[11px] font-mono">
-                      <span className="font-bold">₹{stk.price.toLocaleString('en-IN')}</span>
+                      <span className="font-bold">₹{live.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                       <span className="text-[9px] opacity-75">
                         {isPositive ? <FaArrowUp size={8} className="inline" /> : <FaArrowDown size={8} className="inline" />}
                       </span>
